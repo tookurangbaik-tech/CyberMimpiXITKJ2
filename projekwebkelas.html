@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website CyberMimpi</title>
+
+<style>
+/* DASAR */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+html { scroll-behavior: smooth; }
+
+/* ANIMASI BACKGROUND BERGERAK (CERAH & DINAMIS) */
+html,
+body {
+    overflow-x: hidden;
+}
+body {
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    background: linear-gradient(-45deg, #00d2ff, #3a7bd5, #00f2fe, #4facfe, #00c6ff);
+    background-size: 300% 300%;
+    animation: gradientBG 8s ease infinite;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- ANIMASI SCROLL MULTI-EFEK --- */
+
+/* 1. Animasi Umum / Section (Fade Up) */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(60px) scale(0.95);
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: opacity, transform;
+}
+.scroll-animate.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* 2. Animasi ID Card - Fade Up */
+.card-anim-up {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* 3. Animasi ID Card - Slide dari Kiri */
+.card-anim-left {
+    opacity: 0;
+    transform: translateX(-60px);
+    transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* 4. Animasi ID Card - Slide dari Kanan */
+.card-anim-right {
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Trigger Class saat elemen masuk layar */
+.card-anim-up.show,
+.card-anim-left.show,
+.card-anim-right.show {
+    opacity: 1;
+    transform: translate(0, 0);
+}
+
+/* NAVBAR */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 18px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(10, 45, 80, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgb(255, 255, 255);
+    z-index: 1000;
+}
+.logo { font-size: 22px; font-weight: bold; white-space: nowrap; text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+nav ul { list-style: none; display: flex; gap: 25px; }
+nav a { color: white; text-decoration: none; font-size: 15px; opacity: 0.9; transition: 0.3s; font-weight: 500; }
+nav a:hover { opacity: 1; text-shadow: 0 0 8px rgba(255,255,255,0.8); }
+
+/* BERANDA */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 20px 60px;
+}
+.hero .emoji { margin-bottom: 20px; }
+.hero .emoji img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+.hero h1 { font-size: clamp(40px, 7vw, 75px); margin-bottom: 15px; text-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+.hero h1 span { color: #002b49; }
+.hero p { max-width: 650px; font-size: 18px; line-height: 1.7; opacity: 0.95; font-weight: 500; }
+.tombol {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 14px 28px;
+    border-radius: 30px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+.tombol:hover { transform: translateY(-3px); background: rgba(255,255,255,0.35); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15); }
+
+/* WIDGET JADWAL & COUNTDOWN */
+.widget-hari-ini {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    padding: 15px 25px;
+    border-radius: 20px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+.widget-hari-ini h3 { font-size: 16px; margin-bottom: 8px; color: #ffe600; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.widget-hari-ini p { font-size: 14px; opacity: 0.95; }
+
+/* SECTION */
+section { padding: 100px 7%; }
+.judul-section { text-align: center; margin-bottom: 30px; }
+.judul-section h2 { font-size: 36px; margin-bottom: 10px; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.judul-section p { opacity: 0.85; font-weight: 500; }
+
+/* FILTER PENCARIAN ANGGOTA */
+.kotak-cari {
+    max-width: 450px;
+    margin: 0 auto 35px auto;
+    position: relative;
+}
+.kotak-cari input {
+    width: 100%;
+    padding: 14px 22px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    color: white;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s ease;
+}
+.kotak-cari input::placeholder { color: rgba(255, 255, 255, 0.8); }
+.kotak-cari input:focus {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: #ffe600;
+    box-shadow: 0 0 15px rgba(255, 230, 0, 0.4);
+}
+
+/* ANGGOTA KELAS HIERARKI (ID CARD DESIGN & HOVER ANIMATION) */
+.pembungkus-anggota {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.orang {
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    text-align: center;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+.orang:hover {
+    transform: translateY(-8px) scale(1.03);
+    background: rgba(255, 255, 255, 0.32);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+.baris-ketua { display: flex; justify-content: center; width: 100%; }
+.orang.ketua {
+    width: 100%;
+    max-width: 320px;
+    padding: 30px 20px;
+    background: rgba(255, 215, 0, 0.25);
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+}
+.orang.ketua:hover { background: rgba(255, 215, 0, 0.35); box-shadow: 0 15px 40px rgba(255, 215, 0, 0.45); }
+.orang.ketua .foto { width: 130px; height: 130px; border: 4px solid #ffd700; }
+.orang.ketua h3 { font-size: 22px; color: #fff; }
+.orang.ketua p { font-size: 15px; color: #ffe600; font-weight: bold; }
+.badge-ketua {
+    position: absolute; top: -12px; left: 50%;
+    transform: translateX(-50%);
+    background: #ffd700; color: #000; font-size: 11px; font-weight: bold;
+    padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;
+}
+.baris-pengurus {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    justify-content: center;
+}
+.orang.pengurus { padding: 22px 15px; }
+.orang.pengurus .foto { width: 100px; height: 100px; border: 3px solid rgba(255, 255, 255, 0.8); }
+.orang.pengurus h3 { font-size: 17px; }
+.orang.pengurus p { font-size: 13px; color: #f0f8ff; font-weight: 500; }
+
+.baris-anggota { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+@media (min-width: 600px) { .baris-anggota { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .baris-anggota { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+.orang.anggota-biasa { padding: 18px 12px; }
+.orang.anggota-biasa .foto { width: 80px; height: 80px; border: 2px solid rgba(255, 255, 255, 0.6); }
+.orang.anggota-biasa h3 { font-size: 15px; }
+.orang.anggota-biasa p { font-size: 12px; opacity: 0.85; }
+.foto { object-fit: cover; border-radius: 50%; margin-bottom: 10px; }
+.orang .modal-data { display: none; }
+
+/* JADWAL */
+.jadwal-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.hari-card {
+    flex: 1 1 260px;
+    max-width: 320px;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 20px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.hari-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.28); }
+.hari-card.aktif {
+    border: 2px solid #ffd700;
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+}
+.hari-card h3 {
+    text-align: center; font-size: 20px; padding-bottom: 12px;
+    margin-bottom: 15px; border-bottom: 2px solid rgba(255, 255, 255, 0.3); color: #fff;
+}
+.hari-card ul { list-style: none; padding: 0; margin: 0; }
+.hari-card li {
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+    display: flex; flex-direction: column; gap: 2px;
+}
+.hari-card li:last-child { border-bottom: none; margin-bottom: 0; }
+.hari-card .jam { font-size: 12px; opacity: 0.9; color: #ffe600; font-weight: bold; }
+.hari-card strong { font-size: 15px; color: #ffffff; }
+.hari-card small { font-size: 13px; opacity: 0.9; color: #f0f8ff; }
+
+/* GALERI LANDSCAPE */
+.galeri {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.galeri-item {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    aspect-ratio: 16 / 9;
+}
+.galeri-item:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+.galeri-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.galeri-item .label-galeri {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 12px;
+    background: linear-gradient(transparent, rgba(0, 60, 100, 0.8));
+    font-size: 14px; font-weight: bold; text-align: center;
+}
+.galeri-item .modal-data-galeri { display: none; }
+
+/* MOTTO */
+.motto-box {
+    max-width: 800px; margin: auto; padding: 50px 30px; text-align: center;
+    border-radius: 30px; background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35); backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.motto-box h2 { font-size: 32px; margin-bottom: 20px; }
+.motto-box p { font-size: 20px; line-height: 1.7; opacity: 0.9; font-weight: 500; }
+
+/* KOTAK SARAN */
+.saran-container {
+    max-width: 600px; margin: 0 auto;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    border-radius: 25px; padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+.form-group { margin-bottom: 20px; text-align: left; }
+.form-group label { display: block; font-size: 14px; margin-bottom: 8px; opacity: 0.95; font-weight: bold; }
+.form-group input[type="text"], .form-group textarea {
+    width: 100%; padding: 12px 18px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.15); color: white; font-size: 14px; outline: none; transition: 0.3s ease;
+}
+.form-group input[type="text"]::placeholder, .form-group textarea::placeholder { color: rgba(255, 255, 255, 0.7); }
+.form-group input[type="text"]:focus, .form-group textarea:focus {
+    background: rgba(0, 0, 0, 0.3); border-color: #ffe600; box-shadow: 0 0 10px rgba(255, 230, 0, 0.4);
+}
+.form-group textarea { height: 120px; resize: none; }
+.checkbox-anon { display: flex; align-items: center; gap: 10px; font-size: 13px; margin-bottom: 20px; cursor: pointer; opacity: 0.95; }
+.checkbox-anon input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #ffe600; }
+
+/* FOOTER */
+footer { padding: 60px 20px 30px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.25); }
+.credits-wrapper { max-width: 500px; margin: 0 auto 35px auto; }
+.credits-title { font-size: 22px; margin-bottom: 25px; color: #ffffff; font-weight: bold; }
+.credits-card {
+    background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px); border-radius: 18px; padding: 20px; margin-bottom: 15px; transition: transform 0.3s ease;
+}
+.credits-card:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.22); }
+.role-badge {
+    display: inline-block; padding: 4px 14px; background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4); color: #ffffff; border-radius: 20px;
+    font-size: 12px; font-weight: bold; margin-bottom: 12px;
+}
+.credit-name { font-size: 15px; margin: 5px 0; opacity: 0.95; }
+.credit-name.highlight { font-size: 17px; font-weight: bold; color: #ffe600; }
+.copyright-text { font-size: 13px; opacity: 0.85; }
+.portfolio-link { color: white; text-decoration: none; border: 1px solid white; padding: 8px 15px; border-radius: 8px; transition: 0.3s; }
+.portfolio-link:hover { color: #ffe600; border-color: #ffe600; box-shadow: 0 0 15px #ffe600; }
+
+/* OVERLAY & MODAL */
+.overlay {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    opacity: 0; pointer-events: none; transition: 0.3s ease; z-index: 999;
+}
+.overlay.active { opacity: 1; pointer-events: auto; }
+.modal-popup {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -40%) scale(0.9);
+    width: 90%; max-width: 420px; background: rgba(18, 110, 168, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.3); backdrop-filter: blur(20px);
+    border-radius: 25px; padding: 25px; text-align: center; z-index: 1000;
+    opacity: 0; pointer-events: none; transition: all 0.3s ease;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+.modal-popup.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+.modal-popup .foto-pop { width: 110px; height: 110px; object-fit: cover; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.7); margin-bottom: 12px; }
+.modal-popup .foto-pop-landscape { width: 100%; height: 190px; object-fit: cover; border-radius: 15px; border: 2px solid rgba(255, 255, 255, 0.5); margin-bottom: 15px; }
+.modal-popup h3 { font-size: 20px; margin-bottom: 4px; }
+.modal-popup .jabatan { opacity: 0.85; font-size: 14px; margin-bottom: 12px; }
+.status-badge { display: inline-block; padding: 4px 12px; background: rgba(0, 255, 128, 0.25); border: 1px solid rgba(0, 255, 128, 0.5); color: #51ffaa; border-radius: 12px; font-size: 12px; font-weight: bold; margin-bottom: 15px; }
+.bio-box { background: rgba(0, 0, 0, 0.15); border-radius: 15px; padding: 12px 15px; text-align: left; font-size: 13px; margin-bottom: 15px; border: 1px solid rgba(255, 255, 255, 0.2); }
+.bio-box p { margin-bottom: 5px; opacity: 0.95; }
+.bio-box p:last-child { margin-bottom: 0; }
+.modal-popup audio { width: 100%; margin-top: 5px; }
+
+@media (max-width: 600px) {
+    nav { padding: 15px 20px; }
+    nav ul { gap: 10px; }
+    nav a { font-size: 12px; }
+    .hero h1 { font-size: 42px; }
+    section { padding: 80px 20px; }
+}
+</style>
+</head>
+
+<body>
+<div class="overlay"></div>
+
+<!-- POP-UP MODAL -->
+<div class="modal-popup" id="userModal">
+    <img src="" id="popFoto" class="foto-pop">
+    <h3 id="popNama">Judul</h3>
+    <p class="jabatan" id="popJabatan">Sub Judul</p>
+    <div class="status-badge" id="popStatus">Status</div>
+    
+    <div class="bio-box" id="popBio"></div>
+    <audio id="popAudio"></audio>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+    <div class="logo">Cyber Mimpi</div>
+    <ul>
+        <li><a href="#home">🏠</a></li>
+        <li><a href="#anggota">👥</a></li>
+        <li><a href="#jadwal">📅</a></li>
+        <li><a href="#galeri">📸</a></li>
+        <li><a href="#motto">💫</a></li>
+        <li><a href="#saran style="color: black></a>💬</li>
+        <li><a href="mini.html" style="color: #ffe600;">🎮</a></li>
+    </ul>
+</nav>
+
+<!-- BERANDA -->
+<section class="hero scroll-animate" id="home">
+    <div class="emoji"><img src="logo.jpg" alt="Logo Kelas"></div>
+    <h1><span>Cyber Mimpi XI TKJ 2</span></h1>
+    <p>Selamat datang di website resmi kelas kami. Tempat menyimpan cerita, kenangan, jadwal, dan kebersamaan satu kelas.</p>
+    
+    <!-- WIDGET JADWAL HARI INI -->
+    <div class="widget-hari-ini">
+        <h3>📌 Jadwal Hari Ini (<span id="namaHariIni">-</span>)</h3>
+        <p id="teksJadwalHariIni">Memuat jadwal...</p>
+    </div>
+
+    <!-- WIDGET COUNTDOWN EVENT -->
+    <div class="widget-hari-ini">
+        <h3>⏳ Fashion Show Agustusan</h3>
+        <p id="timerUKK">Memuat hitung mundur...</p>
+    </div>
+
+    <a href="#anggota" class="tombol">Lihat Kelas ↓</a>
+</section>
+
+<!-- ANGGOTA -->
+<section id="anggota" class="scroll-animate">
+    <div class="judul-section">
+        <h2>👥 Anggota Kelas</h2>
+        <p>Klik profil untuk melihat biodata & memutar lagu.</p>
+    </div>
+
+    <!-- KOTAK PENCARIAN ANGGOTA -->
+    <div class="kotak-cari">
+        <input type="text" id="inputCari" placeholder="🔍 Cari nama teman / jabatan...">
+    </div>
+
+    <div class="pembungkus-anggota">
+        <!-- WALI KELAS -->
+        <div class="baris-ketua">
+            <div class="orang ketua card-anim-up">
+                <span class="badge-ketua">👑 Wali Kelas</span>
+                <img src="walikelas.jpg" class="foto">
+                <h3>Pak Agus Sobarudin</h3>
+                <p>Wali Kelas</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Wali Kelas:</strong></p>
+                    </div>
+                    <span class="audio-src">lagu2.mp3</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PENGURUS KELAS (VARIASI ANIMASI SLIDE) -->
+        <div class="baris-pengurus">
+            <div class="orang pengurus card-anim-left">
+                <img src="marsel.jpg" class="foto">
+                <h3>Marcelia Dwi Mulyani</h3>
+                <p>Sekertaris</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Jajan</p>
+                        <p><strong>Cita-cita:</strong> Apa aja boleh cenah</p>
+                        <p><strong>Instagram:</strong> <a href="https://www.instagram.com/mrrcll_0?igsh=NmJybTA3MWVmZWIy">@mrrcll_0</a></p>
+                    </div>
+                    <span class="audio-src">marsel.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang pengurus card-anim-up">
+                <img src="sakinah.jpg" class="foto">
+                <h3>Sakinah Awaliah</h3>
+                <p>Sekertaris</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Nyanyi</p>
+                        <p><strong>Cita-cita:</strong> Dokter</p>
+                        <p><strong>Instagram:</strong> <a href="https://www.instagram.com/kinannrr_?igsh=ajNjejMzNG5ja3Zv&igsi=ajNjejMzNG5ja3Zv">kinannrr_</a></p>
+                    </div>
+                    <span class="audio-src">kina.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang pengurus card-anim-right">
+                <img src="vita.jpg" class="foto">
+                <h3>Devita</h3>
+                <p>Ketua Kelas</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Membaca Buku</p>
+                        <p><strong>Cita-cita:</strong>-</p>
+                        <p><strong>IG:</strong>-</p>
+                    </div>
+                    <span class="audio-src">vita.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang pengurus card-anim-left">
+                <img src="awa.jpg" class="foto">
+                <h3>Salwa Ainul Fauziah</h3>
+                <p>Bendahara</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Make Up</p>
+                        <p><strong>Cita-cita:</strong> MUA</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/wawaw0011?igsh=MWdqeTdyaDZ5MDUwMw==">@wawaw0011</a></p>
+                    </div>
+                    <span class="audio-src"></span>
+                </div>
+            </div>
+
+            <div class="orang pengurus card-anim-up">
+                <img src="denis.jpg" class="foto">
+                <h3>Denis Alfarizi</h3>
+                <p>Wakil Ketua Kelas</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/denis_alpariji?igsh=OWxobjRnZXAxNHIz"> @denis_alparizi</a></p>
+                    </div>
+                    <span class="audio-src">denis.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang pengurus card-anim-right">
+                <img src="asti.jpg" class="foto">
+                <h3>Asti Puspa Dewi</h3>
+                <p>Bendahara</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong>Publik Speaking</p>
+                        <p><strong>Cita-cita:</strong>Pengusaha Sukses</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/dearly4stiiiii_?igsh=MXF0cnE2N2dlMWVmZg==">@dearly4stiiiii_</a></p>
+                    </div>
+                    <span class="audio-src"></span>
+                </div>
+            </div>
+        </div>
+        
+        <h1 style="text-align: center; margin-top: 20px;">ANGGOTA</h1>
+
+        <!-- ANGGOTA BIASA (VARIASI ANIMASI MULTI-EFEK) -->
+        <div class="baris-anggota">
+            <div class="orang anggota-biasa card-anim-left">
+                <img src="aldi.jpg" class="foto">
+                <h3>Aldi Ardiansyah</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/_aldiiiiiii1?igsh=MXh4dml0djk5OWo4aw=="> @_aldiiiiiiii1</a></p>
+                    </div>
+                    <span class="audio-src">aldi.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="ali.jpg" class="foto">
+                <h3>Ali Akbar Siddiq</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                    </div>
+                    <span class="audio-src">ali.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="anggun.jpg" class="foto">
+                <h3>Anggun Pebrianti Permata</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Menyanyi</p>
+                        <p><strong>Cita-Cita:</strong> Pengusaha</p>
+                    </div>
+                    <span class="audio-src">sesipotret.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-right">
+                <img src="arni.jpg" class="foto">
+                <h3>Arni Anggraeni</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Tidur</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/arnianggraeni04?igsh=MWlqeWxqNXNucnBsYw==">@arnianggraeni04</a></p>
+                    </div>
+                    <span class="audio-src">arni.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-left">
+                <img src="serin.jpg" class="foto">
+                <h3>Bilqis Sherin Natasya</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Memasak/Menari/Berenang</p>
+                        <p><strong>Cita-Cita:</strong> Dokter</p>
+                    </div>
+                    <span class="audio-src">serin.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="dikdik.jpg" class="foto">
+                <h3>Dikdik Hilman Maulana</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Nyanyi</p>
+                        <p><strong>Cita-Cita:</strong> Pro Gamer</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/dikhilman_?igsh=Y3lwdnJweXY4aXhz">@dikhilman_</a></p>
+                    </div>
+                    <span class="audio-src">dikdik.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="gwee.jpg" class="foto">
+                <h3>Fito Purnama</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                    <p><strong>Jangan karena sakit hati kita gabisa berkembang</strong> -</p><br>
+                        <a href="too.html" class="portfolio-link">portfolio</a>
+                    </div>
+                    <span class="audio-src">fito.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-right">
+                <img src="Fitrah.jpg" class="foto">
+                <h3>Fitrah Abdullah Fatah</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Memasak</p>
+                        <p><strong>Cita-Cita:</strong> Koki</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">fitrah.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-left">
+                <img src="intan.jpg" class="foto">
+                <h3>Intan Ramadani</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Nari/Makeup</p>
+                        <p><strong>Cita-Cita:</strong> MUA</p>
+                        <p><strong>IG:</strong><a href="link">@rhmawatinn09</a></p>
+                    </div>
+                    <span class="audio-src">intan.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="jajang.jpg" class="foto">
+                <h3>Jajang Sopian</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Olahraga</p>
+                        <p><strong>Cita-Cita:</strong> TNI</p>
+                        <p><strong>IG:</strong><a href="link">jajangsopiann11</a></p>
+                    </div>
+                    <span class="audio-src">sesipotret.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="miftah.jpg" class="foto">
+                <h3>Miftah Fauzi Hariri</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">miftah.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-right">
+                <img src="gathan.jpg" class="foto">
+                <h3>Moch Gathan Naofal</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">gathan.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-left">
+                <img src="irfan.jpg" class="foto">
+                <h3>Muhamad Irfan Permana</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">irfan.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="rafli.jpg" class="foto">
+                <h3>Muhamad Rafli</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Voli</p>
+                        <p><strong>Cita-Cita:</strong> Polisi</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">rafli.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="ramdan.jpg" class="foto">
+                <h3>Muhammad Ramdan Solihin</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> Streaming</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/elkennnn?igsh=NzRudG1vNjlmaHpz">@elkennnn</a></p>
+                    </div>
+                    <span class="audio-src">ramdan.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-right">
+                <img src="dani.jpg" class="foto">
+                <h3>Muhammad Dani Ramdani</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">dani.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-left">
+                <img src="natasya.jpg" class="foto">
+                <h3>Natasya Anggraeni Putri</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Main Game</p>
+                        <p><strong>Cita-Cita:</strong> CEO Muda</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/na.tasya8234?igsh=eHVveXFycHN5MGFz">na.tasya8234</a></p>
+                    </div>
+                    <span class="audio-src">natasya.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="neni.jpg" class="foto">
+                <h3>Neni Anggraeni</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Memasak</p>
+                        <p><strong>Cita-Cita:</strong> Dokter</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">neni.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="pahri.jpg" class="foto">
+                <h3>Pahri Haruna Rosid</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">pahri.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-right">
+                <img src="https://share.google/UztiHo89L4aLULBCv.jpg" class="foto">
+                <h3>Prima Ahmad Maulana</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">prima.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-left">
+                <img src="restu.jpg" class="foto">
+                <h3>Restu Permana</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/iyerstu?igsh=MTlvajFvOTc1Z3VsYw==">@iyerstu</a></p>
+                    </div>
+                    <span class="audio-src">restu.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="reva.jpg" class="foto">
+                <h3>Reva Septi Auliyanti</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Makeup</p>
+                        <p><strong>Cita-Cita:</strong> MUA</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/revaaaaa_11?igsh=MnA3OHFsbHk3M3g4">revaaaaa_11</a></p>
+                    </div>
+                    <span class="audio-src">reva.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="ridwan.jpg" class="foto">
+                <h3>Ridwan Sopian</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">ridwan.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-right">
+                <img src="riska.jpg" class="foto">
+                <h3>Riska Amelia</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Drakoran24/7</p>
+                        <p><strong>Cita-Cita:</strong> Dokter</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/flyn_flower?igsh=MXRleWpkdzZoZmZvbg==">@flyn_flower</a></p>
+                    </div>
+                    <span class="audio-src">riska.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-left">
+                <img src="rahayu.jpg" class="foto">
+                <h3>Riska Nur Rahayu</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Menyanyi</p>
+                        <p><strong>Cita-Cita:</strong> Owner Skincare</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/ikaaa__lucuuimutkiyut/?utm_source=qr&r=nametag">@ikaaa__lucuuimutkiyut</a></p>
+                    </div>
+                    <span class="audio-src">rahayu.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="iki.jpg" class="foto">
+                <h3>Rizqi Maulana</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="link">@ikikatanya16</a></p>
+                    </div>
+                    <span class="audio-src">iki.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="sifa.jpg" class="foto">
+                <h3>Sifa Nur Anisa</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong>Tidur</p>
+                        <p><strong>Cita-Cita:</strong> Istri Destian😋</p>
+                        <p><strong>IG:</strong><a href="link"> -</a></p>
+                    </div>
+                    <span class="audio-src">sifa.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-right">
+                <img src="sopandi.jpg" class="foto">
+                <h3>Sopandi Sopyan</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">sopandi.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-left">
+                <img src="triani.jpg" class="foto">
+                <h3>Triani Desvita Nurmalasari</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Voli</p>
+                        <p><strong>Cita-Cita:</strong> Atlit Voli</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">triani.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-up">
+                <img src="wada.jpg" class="foto">
+                <h3>Wada Maulida Solikhah</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> Nonton Drakor</p>
+                        <p><strong>Cita-Cita:</strong> MUA</p>
+                        <p><strong>IG:</strong><a href="https://www.instagram.com/cheesssloveeeeee?utm_source=qr&igsh=MThpdnJvcWZzYXo3NQ=="> @cheesssloveeeeee</a></p>
+                    </div>
+                    <span class="audio-src">wada.mp3</span>
+                </div>
+            </div>
+
+            <div class="orang anggota-biasa card-anim-right">
+                <img src="zikri.jpg" class="foto">
+                <h3>Zikri Pebrian</h3>
+                <p>Anggota</p>
+                <div class="modal-data">
+                    <span class="status">Aktif</span>
+                    <div class="bio-content">
+                        <p><strong>Hobi:</strong> -</p>
+                        <p><strong>Cita-Cita:</strong> -</p>
+                        <p><strong>IG:</strong><a href="link">-</a></p>
+                    </div>
+                    <span class="audio-src">zikri.mp3</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JADWAL -->
+<section id="jadwal" class="scroll-animate">
+    <div class="judul-section">
+        <h2>📅 Jadwal Pelajaran</h2>
+        <p>Jadwal pelajaran kelas XI TKJ 2</p>
+    </div>
+    <div class="jadwal-grid">
+        <div class="hari-card" data-hari="Senin">
+            <h3>Senin</h3>
+            <ul>
+                <li><span class="jam">07:15 - 10:25</span> <strong>MKTKJ</strong> <small>Pak Asep</small></li>
+                <li><span class="jam">10:25 - 11:45</span> <strong>PJOK</strong> <small>Pak Rezqi</small></li>
+                <li><span class="jam">12:20 - 15:00</span> <strong>MKTKJ</strong> <small>Pak Yana</small></li>
+            </ul>
+        </div>
+        <div class="hari-card" data-hari="Selasa">
+            <h3>Selasa</h3>
+            <ul>
+                <li><span class="jam">07:15 - 10:25</span> <strong>MP</strong> <small>Bu Sopa</small></li>
+                <li><span class="jam">10:25 - 13:40</span> <strong>MKTKJ</strong> <small>Bu Yayan</small></li>
+                <li><span class="jam">13:40 - 15:00</span> <strong>PP</strong> <small>Pak Beni</small></li>
+            </ul>
+        </div>
+        <div class="hari-card" data-hari="Rabu">
+            <h3>Rabu</h3>
+            <ul>
+                <li><span class="jam">07:15 - 09:15</span> <strong>Matematika</strong> <small>Pak Agus</small></li>
+                <li><span class="jam">09:45 - 11:45</span> <strong>B.Indonesia</strong> <small>Pak Rezqi</small></li>
+                <li><span class="jam">12:20 - 15:00</span> <strong>MKTKJ</strong> <small>Pak Rafiq</small></li>
+            </ul>
+        </div>
+        <div class="hari-card" data-hari="Kamis">
+            <h3>Kamis</h3>
+            <ul>
+                <li><span class="jam">07:15 - 08:35</span> <strong>Mulok</strong> <small>Pak Edwin</small></li>
+                <li><span class="jam">08:35 - 13:00</span> <strong>KIK TKJ</strong> <small>Pak Sopian</small></li>
+                <li><span class="jam">13:00 - 15:00</span> <strong>PABP</strong> <small>Bu Sri</small></li>
+            </ul>
+        </div>
+        <div class="hari-card" data-hari="Jumat">
+            <h3>Jumat</h3>
+            <ul>
+                <li><span class="jam">07:15 - 10:25</span> <strong>Inggris</strong> <small>Bu Lina</small></li>
+                <li><span class="jam">10:25 - 11:05</span> <strong>BP/Bk</strong> <small>Bu Wahyuni</small></li>
+                <li><span class="jam">11:05 - 13:40</span> <strong>MKTKJ</strong> <small>Bu Selyn</small></li>
+                <li><span class="jam">13:40 - 15:00</span> <strong>Sejarah</strong> <small>Pak Kujang</small></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- KOTAK SARAN (WHATSAPP) -->
+<section id="saran" class="scroll-animate">
+    <div class="judul-section">
+        <h2>💬 Kotak Saran & Menfess</h2>
+        <p>Punya saran, masukan, atau pesan rahasia buat kelas? Kirimkan di sini!</p>
+    </div>
+    <div class="saran-container">
+        <form id="formSaran" onsubmit="kirimKeWA(event)">
+            <div class="form-group">
+                <label for="namaPengirim">Nama Kamu:</label>
+                <input type="text" id="namaPengirim" placeholder="Masukkan nama..." required>
+            </div>
+            <div class="checkbox-anon">
+                <input type="checkbox" id="checkAnonim" onchange="toggleAnonim(this)">
+                <label for="checkAnonim">Kirim sebagai Anonim (Tanpa Nama)</label>
+            </div>
+            <div class="form-group">
+                <label for="pesanSaran">Pesan / Saran:</label>
+                <textarea id="pesanSaran" placeholder="Tuliskan pesan atau saranmu di sini..." required></textarea>
+            </div>
+            <button type="submit" class="tombol" style="width: 100%; border: none; cursor: pointer;">📩 Kirim Pesan ke WhatsApp</button>
+        </form>
+    </div>
+</section>
+
+<!-- GALERI LANDSCAPE -->
+<section id="galeri" class="scroll-animate">
+    <div class="judul-section">
+        <h2>📸 Galeri Kenangan</h2>
+        <p>Klik foto untuk melihat cerita & memutar musik kenangan ✨</p>
+    </div>
+    <div class="galeri">
+        <div class="galeri-item">
+            <img src="galeri.jpg" alt="Foto 1">
+            <div class="label-galeri">Persiapan Buat Fashion Show</div>
+            <div class="modal-data-galeri">
+                <span class="judul">kerja bakti buat kostum Fashion Show</span>
+                <span class="tanggal">12 Agustus 2026</span>
+                <div class="deskripsi">
+                    <p></p>
+                </div>
+                <span class="audio-src">lagu2.mp3</span>
+            </div>
+        </div>
+
+        <div class="galeri-item">
+            <img src="galeri2.jpg" alt="agustus">
+            <div class="label-galeri">Fashion Show</div>
+            <div class="modal-data-galeri">
+                <span class="judul">Acara Fashion Show </span>
+                <span class="tanggal">20 Agustus 2026</span>
+                <div class="deskripsi">
+                    <p>Fashion Show kelas tkj 2 yang yang kostum nya terbuat dari koran bekas yang di perankan oleh Rafli dan Asti</p>
+                </div>
+                <span class="audio-src">lagu4.mp3</span>
+            </div>
+        </div>
+
+        <div class="galeri-item">
+            <img src="galeri3.jpg" alt="">
+            <div class="label-galeri"></div>
+            <div class="modal-data-galeri">
+                <span class="judul"></span>
+                <span class="tanggal"></span>
+                <div class="deskripsi">
+                    <p></p>
+                </div>
+                <span class="audio-src"></span>
+            </div>
+        </div>
+
+        <div class="galeri-item">
+            <img src="galeri4.jpg" alt="">
+            <div class="label-galeri"></div>
+            <div class="modal-data-galeri">
+                <span class="judul"></span>
+                <span class="tanggal"></span>
+                <div class="deskripsi">
+                    <p></p>
+                </div>
+                <span class="audio-src"></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MOTTO -->
+<section id="motto" class="scroll-animate">
+    <div class="motto-box">
+        <h2>💫 Motto Kelas</h2>
+        <p>"Bukan tentang siapa yang paling hebat, tetapi tentang bagaimana kita tumbuh dan berjuang bersama."</p>
+        <p>"Di Dunia Ini Tidak Ada Yang Mustahil Semua Orang Bisa Jika Mereka Mau Berusaha"</p>
+    </div>
+</section>
+
+<!-- FOOTER & CREDITS -->
+<footer class="scroll-animate">
+    <div class="credits-wrapper">
+        <h2 class="credits-title">✨ Sosok Di Balik Layar ✨</h2>
+        
+        <div class="credits-card">
+            <span class="role-badge">🚀 Lead Developer & Architect</span>
+            <p class="credit-name highlight">Fito Purnama</p>
+        </div>
+
+        <div class="credits-card">
+            <span class="role-badge">🎨 Creative & Content Support</span>
+            <p class="credit-name highlight">Fito Purnama</p>
+            <p class="credit-name">Riska Amelia</p>
+            <p class="credit-name">Fitrah Abdullah Fatah</p>
+            <p class="credit-name">Restu Permana</p>
+            <p class="credit-name">Aldi Ardiansyah</p>
+        </div>
+    </div>
+
+    <p class="copyright-text">© 2026 XI TKJ 2 | CyberMimpi Class Official Website</p>
+</footer>
+
+<script>
+const overlay = document.querySelector('.overlay');
+const modal = document.getElementById('userModal');
+
+const popFoto = document.getElementById('popFoto');
+const popNama = document.getElementById('popNama');
+const popJabatan = document.getElementById('popJabatan');
+const popStatus = document.getElementById('popStatus');
+const popBio = document.getElementById('popBio');
+const popAudio = document.getElementById('popAudio');
+
+/* SCRIPT INTERSECTION OBSERVER UNTUK ANIMASI SCROLL MULTI-ELEMEN */
+const observerOptions = {
+    root: null,
+    threshold: 0.1,
+    rootMargin: "0px 0px -40px 0px"
+};
+
+const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+        }
+    });
+}, observerOptions);
+
+// Daftarkan elemen section dan kartu id anggota untuk diamati
+document.querySelectorAll('.scroll-animate, .card-anim-up, .card-anim-left, .card-anim-right').forEach(el => observer.observe(el));
+
+/* 1. SCRIPT KLIK PROFIL ANGGOTA */
+document.querySelectorAll('.orang').forEach(card => {
+    card.addEventListener('click', () => {
+        const foto = card.querySelector('.foto').src;
+        const nama = card.querySelector('h3').innerText;
+        const jabatan = card.querySelector('p').innerText;
+        
+        const modalData = card.querySelector('.modal-data');
+        const status = modalData ? modalData.querySelector('.status').innerText : 'Aktif';
+        const bioHTML = modalData ? modalData.querySelector('.bio-content').innerHTML : '<p>Belum ada biodata.</p>';
+        const audioSrc = modalData ? modalData.querySelector('.audio-src').innerText : '';
+
+        popFoto.className = "foto-pop";
+        popFoto.src = foto;
+        popNama.innerText = nama;
+        popJabatan.innerText = jabatan;
+        popStatus.style.display = 'inline-block';
+        popStatus.innerText = 'Status: ' + status;
+        popBio.innerHTML = bioHTML;
+
+        putarAudio(audioSrc);
+        bukaModal();
+    });
+});
+
+/* 2. SCRIPT KLIK FOTO GALERI */
+document.querySelectorAll('.galeri-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const foto = item.querySelector('img').src;
+        const modalData = item.querySelector('.modal-data-galeri');
+        
+        const judul = modalData.querySelector('.judul').innerText;
+        const tanggal = modalData.querySelector('.tanggal').innerText;
+        const deskripsiHTML = modalData.querySelector('.deskripsi').innerHTML;
+        const audioSrc = modalData.querySelector('.audio-src').innerText;
+
+        popFoto.className = "foto-pop-landscape";
+        popFoto.src = foto;
+        popNama.innerText = judul;
+        popJabatan.innerText = "📅 " + tanggal;
+        popStatus.style.display = 'none';
+        popBio.innerHTML = deskripsiHTML;
+
+        putarAudio(audioSrc);
+        bukaModal();
+    });
+});
+
+/* 3. SCRIPT FITUR PENCARIAN ANGGOTA */
+const inputCari = document.getElementById('inputCari');
+inputCari.addEventListener('input', (e) => {
+    const kataKunci = e.target.value.toLowerCase().trim();
+    const semuaOrang = document.querySelectorAll('.orang');
+
+    semuaOrang.forEach(orang => {
+        const nama = orang.querySelector('h3').innerText.toLowerCase();
+        const jabatan = orang.querySelector('p').innerText.toLowerCase();
+
+        if (nama.includes(kataKunci) || jabatan.includes(kataKunci)) {
+            orang.style.display = 'block';
+        } else {
+            orang.style.display = 'none';
+        }
+    });
+});
+
+/* 4. SCRIPT OTOMATIS CEK JADWAL HARI INI */
+function cekJadwalHariIni() {
+    const daftarHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const hariIni = daftarHari[new Date().getDay()];
+    
+    document.getElementById('namaHariIni').innerText = hariIni;
+    
+    const kartuHariIni = document.querySelector(`.hari-card[data-hari="${hariIni}"]`);
+    const teksWidget = document.getElementById('teksJadwalHariIni');
+
+    if (kartuHariIni) {
+        kartuHariIni.classList.add('aktif');
+        
+        let mapelList = [];
+        kartuHariIni.querySelectorAll('li').forEach(li => {
+            const jam = li.querySelector('.jam').innerText;
+            const mapel = li.querySelector('strong').innerText;
+            mapelList.push(`${mapel} (${jam})`);
+        });
+        
+        teksWidget.innerHTML = mapelList.join(' • ');
+    } else {
+        teksWidget.innerText = "Hari libur! Tidak ada jadwal pelajaran hari ini 🎉";
+    }
+}
+cekJadwalHariIni();
+
+/* 5. SCRIPT COUNTDOWN EVENT */
+function jalankanCountdown() {
+    const tanggalTarget = new Date("2026-08-20T08:00:00").getTime();
+
+    const intervalTimer = setInterval(() => {
+        const sekarang = new Date().getTime();
+        const selisih = tanggalTarget - sekarang;
+
+        const hari = Math.floor(selisih / (1000 * 60 * 60 * 24));
+        const jam = Math.floor((selisih % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const menit = Math.floor((selisih % (1000 * 60 * 60)) / (1000 * 60));
+        const detik = Math.floor((selisih % (1000 * 60)) / 1000);
+
+        const elemTimer = document.getElementById("timerUKK");
+
+        if (selisih > 0) {
+            elemTimer.innerText = `${hari} Hari : ${jam} Jam : ${menit} Menit : ${detik} Detik`;
+        } else {
+            clearInterval(intervalTimer);
+            elemTimer.innerText = "🎉 Hari H telah tiba! Semangat!";
+        }
+    }, 1000);
+}
+jalankanCountdown();
+
+/* FUNGSI BANTUAN */
+function putarAudio(src) {
+    popAudio.style.display = 'none';
+
+    if (src.trim() !== '') {
+        popAudio.src = src;
+        popAudio.style.display = 'block';
+        popAudio.play().catch(e => console.log("Audio diblokir browser:", e));
+    } else {
+        popAudio.pause();
+        popAudio.removeAttribute('src');
+        popAudio.style.display = 'none';
+    }
+}
+
+function bukaModal() {
+    overlay.classList.add('active');
+    modal.classList.add('active');
+}
+
+overlay.addEventListener('click', () => {
+    overlay.classList.remove('active');
+    modal.classList.remove('active');
+    popAudio.pause();
+    popAudio.currentTime = 0;
+});
+
+function toggleAnonim(checkbox) {
+    const inputNama = document.getElementById('namaPengirim');
+    if (checkbox.checked) {
+        inputNama.value = "Anonim (Hamba Allah)";
+        inputNama.disabled = true;
+    } else {
+        inputNama.value = "";
+        inputNama.disabled = false;
+    }
+}
+
+function kirimKeWA(e) {
+    e.preventDefault();
+    const nomorWA = "6285188418938"; 
+    const nama = document.getElementById('namaPengirim').value;
+    const pesan = document.getElementById('pesanSaran').value;
+    const teksFormat = `Halo, ada pesan Kotak Saran baru!%0A%0A*Pengirim:* ${nama}%0A*Pesan:*%0A${pesan}`;
+    window.open(`https://wa.me/${nomorWA}?text=${teksFormat}`, '_blank');
+}
+</script>
+
+</body>
+</html>

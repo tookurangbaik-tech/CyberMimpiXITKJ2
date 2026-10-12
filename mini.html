@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Space - Mini Game</title>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    background: #090a0f;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+/* TOMBOL KEMBALI SEPERTI NAVBAR */
+.btn-kembali {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: white;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: 0.3s;
+}
+.btn-kembali:hover { background: rgba(255, 255, 255, 0.3); }
+
+/* WADAH GAME */
+.game-container {
+    position: relative;
+    box-shadow: 0 0 30px rgba(0, 200, 255, 0.3);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+canvas {
+    background: radial-gradient(circle, #101428 0%, #050608 100%);
+    display: block;
+}
+
+/* OVERLAY MODAL / GAME OVER */
+.overlay-game {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+.overlay-game h1 { font-size: 28px; margin-bottom: 10px; color: #00d2ff; }
+.overlay-game p { font-size: 14px; opacity: 0.8; margin-bottom: 20px; }
+.btn-mulai {
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #000;
+    background: #00d2ff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+    transition: 0.3s;
+}
+.btn-mulai:hover { transform: scale(1.05); background: #38ef7d; }
+
+/* KONTROL HP (TOUCH) */
+.kontrol-hp {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+.btn-touch {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
+.btn-touch:active { background: rgba(0, 210, 255, 0.4); }
+</style>
+</head>
+<body>
+
+<a href="projekwebkelas_4.html" class="btn-kembali">← Kembali ke Web Kelas</a>
+
+<div class="game-container">
+    <canvas id="canvasGame" width="360" height="500"></canvas>
+    
+    <div class="overlay-game" id="overlayGame">
+        <h1 id="judulOverlay">🚀 CYBER DEFENDER</h1>
+        <p id="subOverlay">Gunakan Panah Kiri/Kanan & Spasi untuk Menembak Asteroid!</p>
+        <button class="btn-mulai" onclick="mulaiGame()">MAIN SEKARANG</button>
+    </div>
+</div>
+
+<div class="kontrol-hp">
+    <div class="btn-touch" id="btnKiri">◀</div>
+    <div class="btn-touch" id="btnTembak">🔥</div>
+    <div class="btn-touch" id="btnKanan">▶</div>
+</div>
+
+<script>
+const canvas = document.getElementById("canvasGame");
+const ctx = canvas.getContext("2d");
+const overlay = document.getElementById("overlayGame");
+
+let player, peluru, asteroid, partikel;
+let skor = 0;
+let highScore = localStorage.getItem("highScoreCyber") || 0;
+let gameJalan = false;
+let intervalAsteroid;
+
+const tombol = { Kiri: false, Kanan: false, Tembak: false };
+
+// SCRIPT UTAMA GAME
+function inisialisasi() {
+    player = { x: canvas.width / 2 - 15, y: canvas.height - 50, lebar: 30, tinggi: 30, kecepatan: 5 };
+    peluru = [];
+    asteroid = [];
+    partikel = [];
+    skor = 0;
+}
+
+function mulaiGame() {
+    inisialisasi();
+    overlay.style.display = "none";
+    gameJalan = true;
+    
+    clearInterval(intervalAsteroid);
+    intervalAsteroid = setInterval(buatAsteroid, 900);
+    
+    loopGame();
+}
+
+function buatAsteroid() {
+    if (!gameJalan) return;
+    const ukuran = Math.random() * 20 + 20;
+    const x = Math.random() * (canvas.width - ukuran);
+    const kecepatan = Math.random() * 2 + 1.5 + (skor * 0.05); // Semakin tinggi skor, semakin cepat
+    asteroid.push({ x, y: -ukuran, ukuran, kecepatan });
+}
+
+function buatPartikelLedakan(x, y) {
+    for (let i = 0; i < 10; i++) {
+        partikel.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 4,
+            vy: (Math.random() - 0.5) * 4,
+            ukuran: Math.random() * 3 + 1,
+            umur: 20
+        });
+    }
+}
+
+function perbaruiData() {
+    // Gerakan Player
+    if (tombol.Kiri && player.x > 0) player.x -= player.kecepatan;
+    if (tombol.Kanan && player.x < canvas.width - player.lebar) player.x += player.kecepatan;
+    
+    // Tembak Peluru
+    if (tombol.Tembak) {
+        peluru.push({ x: player.x + player.lebar / 2 - 2, y: player.y, lebar: 4, tinggi: 10, kecepatan: 7 });
+        tombol.Tembak = false; // Tembak per-klik/per-tap
+    }
+
+    // Perbarui Peluru
+    peluru.forEach((p, index) => {
+        p.y -= p.kecepatan;
+        if (p.y < 0) peluru.splice(index, 1);
+    });
+
+    // Perbarui Asteroid
+    asteroid.forEach((a, indexA) => {
+        a.y += a.kecepatan;
+
+        // Cek Tabrakan Asteroid vs Player (Game Over)
+        if (
+            player.x < a.x + a.ukuran &&
+            player.x + player.lebar > a.x &&
+            player.y < a.y + a.ukuran &&
+            player.y + player.tinggi > a.y
+        ) {
+            selesaiGame();
+        }
+
+        // Cek Tabrakan Peluru vs Asteroid
+        peluru.forEach((p, indexP) => {
+            if (
+                p.x < a.x + a.ukuran &&
+                p.x + p.lebar > a.x &&
+                p.y < a.y + a.ukuran &&
+                p.y + p.tinggi > a.y
+            ) {
+                buatPartikelLedakan(a.x + a.ukuran / 2, a.y + a.ukuran / 2);
+                asteroid.splice(indexA, 1);
+                peluru.splice(indexP, 1);
+                skor += 10;
+            }
+        });
+
+        // Lewat Batas Bawah
+        if (a.y > canvas.height) asteroid.splice(indexA, 1);
+    });
+
+    // Perbarui Partikel
+    partikel.forEach((part, index) => {
+        part.x += part.vx;
+        part.y += part.vy;
+        part.umur--;
+        if (part.umur <= 0) partikel.splice(index, 1);
+    });
+}
+
+function gambar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Gambar Player (Segitiga Rocket)
+    ctx.fillStyle = "#00d2ff";
+    ctx.beginPath();
+    ctx.moveTo(player.x + player.lebar / 2, player.y);
+    ctx.lineTo(player.x, player.y + player.tinggi);
+    ctx.lineTo(player.x + player.lebar, player.y + player.tinggi);
+    ctx.closePath();
+    ctx.fill();
+
+    // Gambar Peluru
+    ctx.fillStyle = "#ff0055";
+    peluru.forEach(p => ctx.fillRect(p.x, p.y, p.lebar, p.tinggi));
+
+    // Gambar Asteroid (Lingkaran)
+    ctx.fillStyle = "#ffaa00";
+    asteroid.forEach(a => {
+        ctx.beginPath();
+        ctx.arc(a.x + a.ukuran / 2, a.y + a.ukuran / 2, a.ukuran / 2, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // Gambar Partikel
+    ctx.fillStyle = "#ffff00";
+    partikel.forEach(part => ctx.fillRect(part.x, part.y, part.ukuran, part.ukuran));
+
+    // Tampilkan Skor
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "14px Arial";
+    ctx.fillText(`Skor: ${skor}`, 10, 25);
+    ctx.fillText(`High: ${highScore}`, canvas.width - 80, 25);
+}
+
+function loopGame() {
+    if (!gameJalan) return;
+    perbaruiData();
+    gambar();
+    requestAnimationFrame(loopGame);
+}
+
+function selesaiGame() {
+    gameJalan = false;
+    clearInterval(intervalAsteroid);
+    
+    if (skor > highScore) {
+        highScore = skor;
+        localStorage.setItem("highScoreCyber", highScore);
+    }
+
+    document.getElementById("judulOverlay").innerText = "💥 GAME OVER 💥";
+    document.getElementById("subOverlay").innerText = `Skor Kamu: ${skor} | Rekor Tertinggi: ${highScore}`;
+    overlay.style.display = "flex";
+}
+
+// KONTROL KEYBOARD
+window.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft" || e.key === "a") tombol.Kiri = true;
+    if (e.key === "ArrowRight" || e.key === "d") tombol.Kanan = true;
+    if (e.key === " " || e.key === "ArrowUp") tombol.Tembak = true;
+});
+window.addEventListener("keyup", e => {
+    if (e.key === "ArrowLeft" || e.key === "a") tombol.Kiri = false;
+    if (e.key === "ArrowRight" || e.key === "d") tombol.Kanan = false;
+});
+
+// KONTROL TOUCH / TOMBOL HP
+document.getElementById("btnKiri").addEventListener("touchstart", () => tombol.Kiri = true);
+document.getElementById("btnKiri").addEventListener("touchend", () => tombol.Kiri = false);
+document.getElementById("btnKanan").addEventListener("touchstart", () => tombol.Kanan = true);
+document.getElementById("btnKanan").addEventListener("touchend", () => tombol.Kanan = false);
+document.getElementById("btnTembak").addEventListener("touchstart", () => tombol.Tembak = true);
+
+// DUKUNGAN KLIK MOUSE DI TOMBOL HP UNTUK TEST DI PC
+document.getElementById("btnKiri").addEventListener("mousedown", () => tombol.Kiri = true);
+document.getElementById("btnKiri").addEventListener("mouseup", () => tombol.Kiri = false);
+document.getElementById("btnKanan").addEventListener("mousedown", () => tombol.Kanan = true);
+document.getElementById("btnKanan").addEventListener("mouseup", () => tombol.Kanan = false);
+document.getElementById("btnTembak").addEventListener("click", () => tombol.Tembak = true);
+</script>
+</body>
+</html>

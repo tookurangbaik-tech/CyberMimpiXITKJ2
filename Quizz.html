@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Meta Tags SEO untuk Google -->
+    <meta name="description" content="CyberMimpi adalah portal informasi, kuis interaktif, dan ruang digital kelas XI TKJ 2 SMKN 8 Garut, dikembangkan oleh Fito Purnama.">
+    <meta name="keywords" content="CyberMimpi, XI TKJ 2, SMKN 8 Garut, Fito Purnama">
+    <meta name="author" content="Fito Purnama">
+
+    <!-- Open Graph / Social Media Preview -->
+    <meta property="og:title" content="CyberMimpi • XI TKJ 2">
+    <meta property="og:description" content="Portal edukasi dan ruang digital kelas XI TKJ 2 SMKN 8 Garut.">
+    <meta property="og:type" content="website">
+
+    <title>Quiz TKJ • CyberMimpi</title>
+    <style>
+    /*WELCOME SCREEN*/
+.welcome-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 55%, #e2eaf4 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.welcome-screen.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.welcome-content {
+    width: 90%;
+    max-width: 420px;
+}
+
+.welcome-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 22px;
+    border-radius: 24px;
+    background: #ffffff;
+    border: 1px solid #d1d9e6;
+    box-shadow: 0 20px 50px rgba(29, 53, 87, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.welcome-logo img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+.welcome-small {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #457b9d;
+    margin-bottom: 12px;
+}
+
+.welcome-title {
+    font-size: 42px;
+    line-height: 1;
+    letter-spacing: -2px;
+    color: #1d3557;
+}
+
+.welcome-title span {
+    display: block;
+    color: #1d3557;
+    margin-top: 6px;
+}
+
+.welcome-loading {
+    width: 150px;
+    height: 4px;
+    margin: 28px auto 12px;
+    border-radius: 99px;
+    background: #d1d9e6;
+    overflow: hidden;
+}
+
+.welcome-loading::after {
+    content: "";
+    display: block;
+    width: 45%;
+    height: 100%;
+    border-radius: inherit;
+    background: #1d3557;
+    animation: loading 1.4s ease-in-out infinite;
+}
+
+.welcome-text {
+    font-size: 11px;
+    color: #457b9d;
+}
+
+@keyframes loading {
+    0% { transform: translateX(-120%); }
+    100% { transform: translateX(330%); }
+}
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #ffffff; color: #1d3557; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        
+        .quiz-card { background: #ffffff; border: 2px solid #e2e8f0; border-radius: 20px; width: 100%; max-width: 500px; padding: 25px; box-shadow: 0 10px 30px rgba(29, 53, 87, 0.08); position: relative; }
+        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #f0f4f8; padding-bottom: 15px; }
+        .header h1 { font-size: 22px; color: #1d3557; font-weight: 800; }
+        .header p { font-size: 13px; color: #457b9d; margin-top: 4px; }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #1d3557; }
+        .input-group input { width: 100%; padding: 12px 16px; border: 2px solid #cbd5e1; border-radius: 12px; font-size: 14px; outline: none; }
+        .input-group input:focus { border-color: #1d3557; }
+        
+        .btn { width: 100%; background: #1d3557; color: #ffffff; border: none; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s ease; margin-top: 10px; }
+        .btn:hover { background: #457b9d; }
+
+        .info-bar { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: #457b9d; margin-bottom: 15px; }
+        .timer { color: #e63946; }
+
+        .soal-box { font-size: 16px; font-weight: 700; color: #1d3557; margin-bottom: 15px; line-height: 1.4; }
+        .pilihan-container { display: flex; flex-direction: column; gap: 10px; }
+        .pilihan-btn { background: #f8fafc; border: 2px solid #e2e8f0; color: #1d3557; padding: 12px 16px; border-radius: 12px; text-align: left; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s ease; }
+        .pilihan-btn:hover { background: #f0f4f8; border-color: #1d3557; }
+
+        .leaderboard { margin-top: 20px; border-top: 2px solid #f0f4f8; padding-top: 15px; }
+        .leaderboard h3 { font-size: 15px; color: #1d3557; margin-bottom: 10px; text-align: center; }
+        .rank-list { list-style: none; display: flex; flex-direction: column; gap: 8px; max-height: 150px; overflow-y: auto; }
+        .rank-item { display: flex; justify-content: space-between; background: #f8fafc; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+<!-- WELCOME SCREEN -->
+<div class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-content">
+        <div class="welcome-logo">
+            <img src="logo.jpg" alt="Logo XI TKJ 2">
+        </div>
+        <p class="welcome-small">WELCOME TO</p>
+        <h1 class="welcome-title">
+            CyberMimpi
+            <span>XI TKJ 2</span>
+        </h1>
+        <div class="welcome-loading"></div>
+        <p class="welcome-text">Menyiapkan suasana kelas...</p>
+    </div>
+</div>
+
+<div class="quiz-card">
+    <!-- TAMPILAN AWAL / NAMA -->
+    <div id="screen-start">
+        <div class="header">
+            <h1>💻 Kuis Dasar TKJ</h1>
+            <p>10 Soal Pilihan Ganda • Uji Kecepatan & Ketepatannya!</p>
+        </div>
+        <div class="input-group">
+            <label for="username">Masukkan Nama Kamu:</label>
+            <input type="text" id="username" placeholder="Masukan Nama" autocomplete="off">
+        </div>
+        <button class="btn" onclick="mulaiQuiz()">Mulai Kuis 🚀</button>
+
+        <div class="leaderboard">
+            <h3>🏆 Peringkat Lokal HP Ini</h3>
+            <ul class="rank-list" id="rankListStart"></ul>
+        </div>
+    </div>
+
+    <!-- TAMPILAN SOAL -->
+    <div id="screen-quiz" class="hidden">
+        <div class="info-bar">
+            <span id="soal-counter">Soal 1 / 10</span>
+            <span class="timer">⏱️ <span id="time-display">0</span> detik</span>
+        </div>
+        <div class="soal-box" id="soal-text">Loading Soal...</div>
+        <div class="pilihan-container" id="pilihan-box"></div>
+    </div>
+
+    <!-- TAMPILAN HASIL -->
+    <div id="screen-result" class="hidden">
+        <div class="header">
+            <h1>🎉 Kuis Selesai!</h1>
+            <p id="result-message"></p>
+        </div>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <p style="font-size: 14px; color: #457b9d;">Skor Kamu:</p>
+            <h2 id="final-score" style="font-size: 40px; color: #1d3557; margin: 5px 0;">0</h2>
+            <p style="font-size: 13px; color: #457b9d;">Waktu pengerjaan: <strong id="final-time">0</strong> detik</p>
+        </div>
+        <button class="btn" onclick="resetQuiz()">Main Lagi 🔄</button>
+
+        <div class="leaderboard">
+            <h3>🏆 Peringkat Teratas (Waktu Waktu Tercepat)</h3>
+            <ul class="rank-list" id="rankListEnd"></ul>
+        </div>
+    </div>
+</div>
+
+<script>
+
+// Welcome screen handler
+const welcome = document.getElementById("welcomeScreen");
+window.addEventListener("load", () => {
+    setTimeout(() => { welcome.classList.add("hide"); }, 1800);
+});
+
+    // DATA SOAL (10 SOAL)
+    const bankSoal = [
+        {
+            soal: "1. Tag Semantic HTML manakah yang berfungsi untuk mendefinisikan area navigasi/menu?",
+            opsi: ["<header>", "<nav>", "<section>", "<aside>"],
+            jawaban: 1
+        },
+        {
+            soal: "2. Properti CSS apa yang digunakan untuk mengubah warna latar belakang sebuah elemen?",
+            opsi: ["color", "background-color", "border-color", "fill"],
+            jawaban: 1
+        },
+        {
+            soal: "3. Komponen komputer mana yang berfungsi sebagai pemroses utama (otak komputer)?",
+            opsi: ["RAM", "Harddisk", "CPU (Processor)", "Power Supply"],
+            jawaban: 2
+        },
+        {
+            soal: "4. Jenis memori komputer yang bersifat sementara (volatile) adalah...",
+            opsi: ["ROM", "SSD", "RAM", "Flashdisk"],
+            jawaban: 2
+        },
+        {
+            soal: "5. Jenis konektor/soket LAN yang umum dipasang pada ujung kabel UTP adalah...",
+            opsi: ["RJ-11", "RJ-45", "USB Type-C", "BNC"],
+            jawaban: 1
+        },
+        {
+            soal: "6. Perangkat jaringan yang berfungsi menghubungkan dua atau lebih jaringan yang berbeda subnet adalah...",
+            opsi: ["Hub", "Switch", "Router", "Access Point"],
+            jawaban: 2
+        },
+        {
+            soal: "7. Urutan warna standar susunan kabel Straight (TIA/EIA-568B) dimulai dari warna...",
+            opsi: ["Putih Hijau", "Putih Oranye", "Putih Biru", "Putih Cokelat"],
+            jawaban: 1
+        },
+        {
+            soal: "8. Topologi jaringan yang membentuk lingkaran tertutup di mana setiap node terhubung ke dua node lainnya adalah topologi...",
+            opsi: ["Star", "Bus", "Ring", "Mesh"],
+            jawaban: 2
+        },
+        {
+            soal: "9. Frekuensi Wi-Fi standar yang biasa digunakan pada jaringan nirkabel adalah...",
+            opsi: ["2.4 GHz dan 5 GHz", "1.2 GHz dan 3.4 GHz", "900 MHz dan 1.8 GHz", "10 GHz dan 20 GHz"],
+            jawaban: 0
+        },
+        {
+            soal: "10. Topologi jaringan pusat yang menggunakan perangkat Hub/Switch sebagai titik terpusat dinamakan...",
+            opsi: ["Topologi Tree", "Topologi Bus", "Topologi Star", "Topologi Peer-to-Peer"],
+            jawaban: 2
+        }
+    ];
+
+    let currentSoalIndex = 0;
+    let score = 0;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let namaPemain = "";
+
+    // Fungsi Mulai Kuis
+    function mulaiQuiz() {
+        const inputNama = document.getElementById("username").value.trim();
+        if (!inputNama) {
+            alert("Isi nama kamu dulu ya!");
+            return;
+        }
+        namaPemain = inputNama;
+        
+        document.getElementById("screen-start").classList.add("hidden");
+        document.getElementById("screen-quiz").classList.remove("hidden");
+
+        currentSoalIndex = 0;
+        score = 0;
+        secondsElapsed = 0;
+
+        // Jalan Timer
+        document.getElementById("time-display").innerText = secondsElapsed;
+        timerInterval = setInterval(() => {
+            secondsElapsed++;
+            document.getElementById("time-display").innerText = secondsElapsed;
+        }, 1000);
+
+        tampilkanSoal();
+    }
+
+    // Tampilkan Soal
+    function tampilkanSoal() {
+        const q = bankSoal[currentSoalIndex];
+        document.getElementById("soal-counter").innerText = `Soal ${currentSoalIndex + 1} / ${bankSoal.length}`;
+        document.getElementById("soal-text").innerText = q.soal;
+
+        const pilihanContainer = document.getElementById("pilihan-box");
+        pilihanContainer.innerHTML = "";
+
+        q.opsi.forEach((opsi, idx) => {
+            const btn = document.createElement("button");
+            btn.className = "pilihan-btn";
+            btn.innerText = opsi;
+            btn.onclick = () => pilihJawaban(idx);
+            pilihanContainer.appendChild(btn);
+        });
+    }
+
+    // Pilih Jawaban
+    function pilihJawaban(idxDipilih) {
+        if (idxDipilih === bankSoal[currentSoalIndex].jawaban) {
+            score += 10; // Setiap soal bernilai 10 poin
+        }
+
+        currentSoalIndex++;
+        if (currentSoalIndex < bankSoal.length) {
+            tampilkanSoal();
+        } else {
+            selesaiQuiz();
+        }
+    }
+
+    // Kuis Selesai
+    function selesaiQuiz() {
+        clearInterval(timerInterval);
+
+        document.getElementById("screen-quiz").classList.add("hidden");
+        document.getElementById("screen-result").classList.remove("hidden");
+
+        document.getElementById("final-score").innerText = score;
+        document.getElementById("final-time").innerText = secondsElapsed;
+        document.getElementById("result-message").innerText = `Hebat ${namaPemain}, kamu berhasil menyelesaikan kuis!`;
+
+        simpanPeringkat(namaPemain, score, secondsElapsed);
+        tampilkanLeaderboard();
+    }
+
+    // Simpan ke LocalStorage HP
+    function simpanPeringkat(nama, skor, waktu) {
+        let history = JSON.parse(localStorage.getItem("quiz_tkj_ranks")) || [];
+        
+        history.push({ nama, skor, waktu, tanggal: new Date().toLocaleDateString() });
+
+        // Sortir: Skor Tertinggi Dulu -> Jika skor sama, Waktu Tercepat Dulu
+        history.sort((a, b) => {
+            if (b.skor !== a.skor) return b.skor - a.skor;
+            return a.waktu - b.waktu;
+        });
+
+        // Ambil Top 5 aja
+        history = history.slice(0, 5);
+
+        localStorage.setItem("quiz_tkj_ranks", JSON.stringify(history));
+    }
+
+    // Render Peringkat
+    function tampilkanLeaderboard() {
+        const history = JSON.parse(localStorage.getItem("quiz_tkj_ranks")) || [];
+        const renderList = (elementId) => {
+            const listEl = document.getElementById(elementId);
+            listEl.innerHTML = "";
+            if (history.length === 0) {
+                listEl.innerHTML = `<li class="rank-item"><span>Belum ada data</span></li>`;
+                return;
+            }
+            history.forEach((item, index) => {
+                const li = document.createElement("li");
+                li.className = "rank-item";
+                li.innerHTML = `<span>#${index + 1} <strong>${item.nama}</strong></span> <span>Nilai: ${item.skor} (${item.waktu}s)</span>`;
+                listEl.appendChild(li);
+            });
+        };
+
+        renderList("rankListStart");
+        renderList("rankListEnd");
+    }
+
+    // Reset ke Awal
+    function resetQuiz() {
+        document.getElementById("screen-result").classList.add("hidden");
+        document.getElementById("screen-start").classList.remove("hidden");
+        document.getElementById("username").value = "";
+        tampilkanLeaderboard();
+    }
+
+    // Load Peringkat Pas Pertama kali Halaman Dibuka
+    tampilkanLeaderboard();
+</script>
+</body>
+</html>

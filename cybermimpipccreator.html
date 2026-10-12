@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- Meta Tags SEO untuk Google -->
+    <meta name="description" content="CyberMimpi adalah portal informasi, kuis interaktif, dan ruang digital kelas XI TKJ 2 SMKN 8 Garut, dikembangkan oleh Fito Purnama.">
+    <meta name="keywords" content="CyberMimpi, XI TKJ 2, SMKN 8 Garut, Fito Purnama">
+    <meta name="author" content="Fito Purnama">
+
+    <!-- Open Graph / Social Media Preview -->
+    <meta property="og:title" content="CyberMimpi • XI TKJ 2">
+    <meta property="og:description" content="Portal edukasi dan ruang digital kelas XI TKJ 2 SMKN 8 Garut.">
+    <meta property="og:type" content="website">
+  <title>CyberMimpi | PC Building Simulator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            },
+            darkbg: {
+              main: '#0a0f1d',
+              card: '#131c31',
+              border: '#1f2d4d',
+              hover: '#1a2744'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.4);
+      border-radius: 4px;
+    }
+    .glow-blue {
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    }
+    .slot-pulse {
+      animation: pulse-border 2s infinite;
+    }
+    @keyframes pulse-border {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+      100% { transform: translateY(0px); }
+    }
+    .elaina-float {
+      animation: float 4s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 dark:bg-darkbg-main text-slate-800 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col overflow-x-hidden">
+
+  <!-- HEADER / TOPBAR -->
+  <header class="h-14 bg-white/90 dark:bg-darkbg-card/90 backdrop-blur-md border-b border-slate-200 dark:border-darkbg-border sticky top-0 z-40 px-4 flex items-center justify-between shadow-sm">
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md">
+          <i class="fa-solid font-bold fa-cloud text-base"></i>
+        </div>
+        <span class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">Cyber<span class="text-blue-500">Mimpi</span></span>
+      </div>
+      <div class="hidden sm:flex items-center space-x-2 text-xs text-slate-500 dark:text-slate-400 border-l border-slate-300 dark:border-slate-700 pl-3">
+        <span class="font-medium text-slate-700 dark:text-slate-300">PC Building Simulator</span>
+        <span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 text-[10px] px-2 py-0.5 rounded-full font-semibold">Real Board Edition</span>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <!-- Status Badge -->
+      <div class="flex items-center space-x-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-xs px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800/50 font-medium">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Online</span>
+      </div>
+
+      <!-- Theme Switcher -->
+      <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Ganti Tema">
+        <i id="themeIcon" class="fa-solid fa-moon"></i>
+      </button>
+
+      <!-- Audio Switcher -->
+      <button id="soundToggleBtn" onclick="toggleSound()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Suara">
+        <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-[1700px] w-full mx-auto p-3 md:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+    <!-- LEFT SIDEBAR: Quest & Stats -->
+    <aside class="lg:col-span-3 flex flex-col gap-3">
+      
+      <!-- Quest Info Card -->
+      <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-4 shadow-sm">
+        <div class="flex items-center space-x-2 text-blue-600 dark:text-blue-400 font-bold mb-1">
+          <i class="fa-solid fa-flask text-lg"></i>
+          <h2 class="text-base">Misi Lab</h2>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Rakitan PC: ASUS P8Z77-V PRO</p>
+
+        <!-- Progress -->
+        <div class="mt-4">
+          <div class="flex justify-between items-center text-xs mb-1.5 font-semibold">
+            <span class="text-slate-600 dark:text-slate-300">Progres Rakitan</span>
+            <span id="progressText" class="text-blue-600 dark:text-blue-400">0 / 5</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div id="progressBar" class="h-full bg-blue-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Stat Indicators -->
+        <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+          <div class="bg-slate-50 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+            <div class="text-[10px] uppercase font-bold text-slate-400">XP</div>
+            <div id="statXP" class="text-sm font-extrabold text-blue-600 dark:text-blue-400">0</div>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+            <div class="text-[10px] uppercase font-bold text-slate-400">Percobaan</div>
+            <div id="statAttempts" class="text-sm font-extrabold text-slate-700 dark:text-slate-200">0</div>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+            <div class="text-[10px] uppercase font-bold text-slate-400">Akurasi</div>
+            <div id="statAccuracy" class="text-sm font-extrabold text-emerald-500">100%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Steps List -->
+      <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-4 shadow-sm flex-1 flex flex-col">
+        <div class="bg-blue-50 dark:bg-blue-950/40 p-3 rounded-lg border border-blue-100 dark:border-blue-900/50 mb-3 text-xs">
+          <div class="font-bold text-blue-600 dark:text-blue-400 mb-0.5">
+            <i class="fa-solid fa-circle-info mr-1"></i>Langkah Saat Ini:
+          </div>
+          <div id="currentStepDesc" class="text-slate-600 dark:text-slate-300">
+            Pasang CPU Intel Core i5-3570K pada soket LGA1155 motherboard.
+          </div>
+        </div>
+
+        <!-- Task checklist -->
+        <div id="taskList" class="space-y-2 flex-1 text-xs">
+          <!-- Step items rendered by JS -->
+        </div>
+
+        <!-- Actions -->
+        <div class="pt-3 mt-3 border-t border-slate-100 dark:border-darkbg-border grid grid-cols-2 gap-2">
+          <button onclick="resetLab()" class="px-3 py-2 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center space-x-1.5">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>Reset Lab</span>
+          </button>
+          <button id="soundBtnText" onclick="toggleSound()" class="px-3 py-2 text-xs font-semibold rounded-lg border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition flex items-center justify-center space-x-1.5">
+            <i class="fa-solid fa-volume-high"></i>
+            <span>Suara: On</span>
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- CENTER WORKSPACE: Interactive Motherboard Canvas & Guide -->
+    <section class="lg:col-span-9 flex flex-col gap-3">
+      
+      <!-- Top Guide Banner Popup -->
+      <div id="guideBanner" class="bg-white dark:bg-darkbg-card border border-blue-200 dark:border-blue-900/60 rounded-xl p-3.5 shadow-sm relative flex items-start space-x-3">
+        <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0 font-bold border border-blue-300 dark:border-blue-700">
+          <i class="fa-solid fa-hat-wizard text-lg"></i>
+        </div>
+        <div class="flex-1 pr-6 text-xs sm:text-sm">
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-blue-600 dark:text-blue-400"></span>
+            <span class="text-[10px] bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-300 px-2 py-0.2 rounded font-semibold">Guide</span>
+          </div>
+          <p id="guideText" class="text-slate-700 dark:text-slate-200 mt-1 font-medium">
+            Halo! Selamat datang di <strong class="text-blue-500">CyberMimpi PC Builder!</strong> Hari ini kita akan merakit PC menggunakan motherboard <strong>ASUS P8Z77-V PRO</strong>. Klik atau seret komponen dari inventori di bawah ke slot yang sesuai.
+          </p>
+        </div>
+        <button onclick="dismissGuide()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Motherboard Simulation Area -->
+      <div id="boardContainer" class="bg-slate-900 border border-slate-800 rounded-2xl p-2 md:p-4 relative min-h-[460px] md:min-h-[520px] flex items-center justify-center shadow-2xl overflow-hidden">
+        
+        <!-- SVG Motherboard Render -->
+        <svg id="motherboardSvg" class="w-full max-w-[800px] h-auto max-h-[500px] select-none" viewBox="0 0 1000 700">
+          <defs>
+            <pattern id="pcbGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#132338" stroke-width="1"/>
+            </pattern>
+            <linearGradient id="heatsinkBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0284c7" />
+              <stop offset="50%" stop-color="#0369a1" />
+              <stop offset="100%" stop-color="#075985" />
+            </linearGradient>
+            <linearGradient id="slotBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#0284c7" />
+              <stop offset="100%" stop-color="#0369a1" />
+            </linearGradient>
+            <linearGradient id="boardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#111827" />
+              <stop offset="100%" stop-color="#0f172a" />
+            </linearGradient>
+          </defs>
+
+          <!-- Motherboard Main Body -->
+          <rect x="50" y="30" width="900" height="640" rx="16" fill="url(#boardBg)" stroke="#223654" stroke-width="6"/>
+          <rect x="50" y="30" width="900" height="640" fill="url(#pcbGrid)"/>
+          <text x="500" y="380" font-family="sans-serif" font-weight="900" font-size="28" fill="#2d4263" text-anchor="middle" letter-spacing="2">ASUS P8Z77-V PRO</text>
+
+          <rect x="180" y="90" width="240" height="70" rx="6" fill="url(#heatsinkBlue)"/>
+          <path d="M 200 90 L 200 160 M 230 90 L 230 160 M 260 90 L 260 160 M 290 90 L 290 160 M 320 90 L 320 160 M 350 90 L 350 160 M 380 90 L 380 160" stroke="#38bdf8" stroke-width="2" opacity="0.6"/>
+          <rect x="120" y="180" width="70" height="180" rx="6" fill="url(#heatsinkBlue)"/>
+          <path d="M 120 200 L 190 200 M 120 230 L 190 230 M 120 260 L 190 260 M 120 290 L 190 290 M 120 320 L 190 320 M 120 350 L 190 350" stroke="#38bdf8" stroke-width="2" opacity="0.6"/>
+          <rect x="620" y="450" width="160" height="150" rx="8" fill="url(#heatsinkBlue)"/>
+          <text x="700" y="530" font-family="sans-serif" font-weight="800" font-size="22" fill="#ffffff" text-anchor="middle" opacity="0.8">ASUS</text>
+
+          <g fill="#94a3b8" stroke="#475569" stroke-width="2">
+            <circle cx="210" cy="180" r="10"/><circle cx="240" cy="180" r="10"/><circle cx="270" cy="180" r="10"/><circle cx="300" cy="180" r="10"/><circle cx="330" cy="180" r="10"/><circle cx="360" cy="180" r="10"/>
+            <circle cx="210" cy="380" r="10"/><circle cx="240" cy="380" r="10"/><circle cx="270" cy="380" r="10"/>
+          </g>
+
+          <!-- TARGET SLOT 1: CPU -->
+          <g id="slot-cpu" class="cursor-pointer transition-all hover:opacity-90" onclick="handleSlotClick('cpu')">
+            <rect x="460" y="120" width="170" height="170" rx="8" fill="#334155" stroke="#64748b" stroke-width="4"/>
+            <rect x="480" y="140" width="130" height="130" rx="4" fill="#1e293b" stroke="#94a3b8" stroke-width="3"/>
+            <rect x="495" y="155" width="100" height="100" fill="#0f172a" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="545" y="210" font-family="sans-serif" font-size="12" fill="#64748b" text-anchor="middle">LGA1155</text>
+            
+            <g id="installed-cpu" class="hidden">
+              <rect x="485" y="145" width="120" height="120" rx="6" fill="#cbd5e1" stroke="#475569" stroke-width="3"/>
+              <rect x="505" y="165" width="80" height="80" rx="3" fill="#94a3b8"/>
+              <text x="545" y="200" font-family="sans-serif" font-weight="bold" font-size="11" fill="#1e293b" text-anchor="middle">Intel Core</text>
+              <text x="545" y="215" font-family="sans-serif" font-size="10" fill="#334155" text-anchor="middle">i5-3570K</text>
+            </g>
+
+            <g id="installed-hsf" class="hidden">
+              <circle cx="545" cy="205" r="85" fill="#1e293b" stroke="#0284c7" stroke-width="5"/>
+              <circle cx="545" cy="205" r="70" fill="#0f172a"/>
+              <path d="M 545 205 L 545 140 M 545 205 L 610 205 M 545 205 L 545 270 M 545 205 L 480 205" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"/>
+              <circle cx="545" cy="205" r="30" fill="#0284c7"/>
+              <text x="545" y="209" font-family="sans-serif" font-weight="bold" font-size="10" fill="#ffffff" text-anchor="middle">COOLER</text>
+            </g>
+          </g>
+
+          <!-- TARGET SLOT 2: RAM -->
+          <g id="slot-ram" class="cursor-pointer transition-all hover:opacity-90" onclick="handleSlotClick('ram')">
+            <rect x="680" y="110" width="18" height="230" rx="2" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+            <rect x="710" y="110" width="18" height="230" rx="2" fill="url(#slotBlue)" stroke="#0284c7" stroke-width="2"/>
+            <rect x="740" y="110" width="18" height="230" rx="2" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+            <rect x="770" y="110" width="18" height="230" rx="2" fill="url(#slotBlue)" stroke="#0284c7" stroke-width="2"/>
+
+            <g id="installed-ram" class="hidden">
+              <rect x="708" y="105" width="22" height="240" rx="3" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+              <rect x="768" y="105" width="22" height="240" rx="3" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+              <line x1="719" y1="110" x2="719" y2="340" stroke="#f59e0b" stroke-width="3"/>
+              <line x1="779" y1="110" x2="779" y2="340" stroke="#f59e0b" stroke-width="3"/>
+            </g>
+          </g>
+
+          <!-- TARGET SLOT 3: VGA -->
+          <g id="slot-vga" class="cursor-pointer transition-all hover:opacity-90" onclick="handleSlotClick('vga')">
+            <rect x="230" y="420" width="340" height="22" rx="3" fill="url(#slotBlue)" stroke="#38bdf8" stroke-width="2"/>
+            <rect x="230" y="470" width="340" height="18" rx="3" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+            <rect x="230" y="520" width="340" height="22" rx="3" fill="url(#slotBlue)" stroke="#38bdf8" stroke-width="2"/>
+
+            <g id="installed-vga" class="hidden">
+              <rect x="200" y="390" width="400" height="80" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+              <circle cx="300" cy="430" r="30" fill="#0f172a" stroke="#0284c7" stroke-width="3"/>
+              <circle cx="480" cy="430" r="30" fill="#0f172a" stroke="#0284c7" stroke-width="3"/>
+              <text x="390" y="435" font-family="sans-serif" font-weight="extrabold" font-size="14" fill="#38bdf8" text-anchor="middle">GEFORCE GTX</text>
+            </g>
+          </g>
+
+          <!-- TARGET SLOT 4: SATA -->
+          <g id="slot-sata" class="cursor-pointer transition-all hover:opacity-90" onclick="handleSlotClick('sata')">
+            <rect x="820" y="470" width="70" height="130" rx="4" fill="#1e293b" stroke="#0284c7" stroke-width="2"/>
+            <rect x="830" y="480" width="50" height="18" fill="#0284c7" rx="2"/>
+            <rect x="830" y="505" width="50" height="18" fill="#0284c7" rx="2"/>
+            <rect x="830" y="530" width="50" height="18" fill="#0284c7" rx="2"/>
+            <rect x="830" y="555" width="50" height="18" fill="#0284c7" rx="2"/>
+
+            <g id="installed-sata" class="hidden">
+              <rect x="810" y="460" width="90" height="150" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="3"/>
+              <text x="855" y="540" font-family="sans-serif" font-size="12" font-weight="bold" fill="#10b981" text-anchor="middle">SATA SSD</text>
+            </g>
+          </g>
+
+          <!-- TARGET SLOT 5: POWER -->
+          <g id="slot-power" class="cursor-pointer transition-all hover:opacity-90" onclick="handleSlotClick('power')">
+            <rect x="820" y="200" width="35" height="190" rx="3" fill="url(#slotBlue)" stroke="#38bdf8" stroke-width="2"/>
+            <circle cx="828" cy="215" r="3" fill="#f59e0b"/><circle cx="846" cy="215" r="3" fill="#f59e0b"/>
+            <circle cx="828" cy="235" r="3" fill="#f59e0b"/><circle cx="846" cy="235" r="3" fill="#f59e0b"/>
+            <circle cx="828" cy="255" r="3" fill="#f59e0b"/><circle cx="846" cy="255" r="3" fill="#f59e0b"/>
+            <circle cx="828" cy="275" r="3" fill="#f59e0b"/><circle cx="846" cy="275" r="3" fill="#f59e0b"/>
+
+            <g id="installed-power" class="hidden">
+              <rect x="810" y="190" width="55" height="210" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="3"/>
+              <text x="837" y="300" font-family="sans-serif" font-size="11" font-weight="bold" fill="#10b981" text-anchor="middle" transform="rotate(-90 837 300)">24-PIN ATX</text>
+            </g>
+          </g>
+        </svg>
+
+        <!-- Slot Badges -->
+        <div class="absolute top-[28%] left-[51%] transform -translate-x-1/2 -translate-y-1/2">
+          <button onclick="handleSlotClick('cpu')" class="slot-badge bg-blue-600/90 hover:bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-blue-300 flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-microchip"></i>
+            <span id="badge-cpu"></span>
+          </button>
+        </div>
+
+        <div class="absolute top-[28%] right-[16%]">
+          <button onclick="handleSlotClick('ram')" class="slot-badge bg-blue-600/90 hover:bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-blue-300 flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-memory"></i>
+            <span id="badge-ram"></span>
+          </button>
+        </div>
+
+        <div class="absolute bottom-[35%] left-[34%]">
+          <button onclick="handleSlotClick('vga')" class="slot-badge bg-blue-600/90 hover:bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-blue-300 flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-gamepad"></i>
+            <span id="badge-vga"></span>
+          </button>
+        </div>
+
+        <div class="absolute bottom-[22%] right-[12%]">
+          <button onclick="handleSlotClick('sata')" class="slot-badge bg-blue-600/90 hover:bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-blue-300 flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-hard-drive"></i>
+            <span id="badge-sata"></span>
+          </button>
+        </div>
+
+        <div class="absolute top-[42%] right-[10%]">
+          <button onclick="handleSlotClick('power')" class="slot-badge bg-blue-600/90 hover:bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-blue-300 flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-plug"></i>
+            <span id="badge-power"></span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- BOTTOM INVENTORY BAR -->
+      <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-3.5 shadow-sm">
+        <div class="flex items-center justify-between mb-2.5">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-boxes-packing text-blue-500"></i>
+            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Inventori Komponen</h3>
+            <span class="text-xs text-slate-400 font-normal hidden sm:inline">(Pilih komponen yang akan dipasang ke motherboard)</span>
+          </div>
+          <span class="text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-900">
+            <span id="inventoryCount">6</span> Komponen tersedia
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5" id="inventoryGrid"></div>
+
+        <div class="mt-3 bg-blue-50/70 dark:bg-slate-800/50 rounded-lg p-2.5 border border-blue-100 dark:border-slate-700/60 flex items-center space-x-3 text-xs">
+          <div class="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0 font-bold">
+            <i class="fa-solid fa-lightbulb"></i>
+          </div>
+          <div class="text-slate-600 dark:text-slate-300">
+            <strong>Tips:</strong> Klik komponen di atas untuk memilihnya, lalu klik area slot target yang sesuai di motherboard.
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FLOATING ELAINA ASSISTANT WIDGET (Using <img> tag) -->
+  <div class="fixed bottom-5 right-5 z-50 flex items-end pointer-events-none elaina-float">
+    <div class="relative pointer-events-auto flex items-end space-x-2">
+      <!-- Speech Bubble Card -->
+      <div class="bg-white/95 dark:bg-darkbg-card/95 backdrop-blur-md text-slate-800 dark:text-slate-100 p-3 rounded-2xl shadow-2xl border border-blue-200 dark:border-blue-800 text-xs w-48 font-semibold mb-6">
+        <div class="flex items-center space-x-1 text-blue-600 dark:text-blue-400 font-bold mb-1">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Elaina Assistant</span>
+        </div>
+        <p id="floatingBubbleText">Semangat ya merakit PC-nya! ✨</p>
+      </div>
+
+      <!-- Elaina Image Avatar (Ganti src dengan nama file atau link gambar kamu) -->
+      <div class="w-20 h-28 flex-shrink-0 drop-shadow-xl cursor-pointer flex items-center justify-center" onclick="clickElainaAvatar()" title="Klik Elaina!">
+        <img src="assisten.png" alt="Elaina Guide" class="w-full h-full object-contain" onerror="this.src='https://api.iconify.design/lucide:user-round-pen.svg?color=%233b82f6'">
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL POPUP FOR COMPONENT DETAIL & GUIDE -->
+  <div id="componentModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-300">
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-2xl max-w-md w-full p-5 shadow-2xl relative transform transition-all scale-95" id="modalBox">
+      
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-start space-x-4">
+        <div id="modalIconBg" class="w-16 h-16 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-3xl text-blue-500 flex-shrink-0">
+          <i id="modalIcon" class="fa-solid fa-microchip"></i>
+        </div>
+        <div>
+          <span id="modalBadge" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-300">Komponen</span>
+          <h3 id="modalTitle" class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-1">CPU / Prosesor</h3>
+          <p id="modalSubtitle" class="text-xs text-slate-500 dark:text-slate-400">Intel Core i5-3570K</p>
+        </div>
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-slate-100 dark:border-darkbg-border">
+        <p id="modalDesc" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          CPU berfungsi sebagai otak dari komputer. Letakkan CPU dengan hati-hati di soket LGA1155 pada motherboard.
+        </p>
+      </div>
+
+      <div class="mt-5 flex items-center justify-end space-x-2">
+        <button onclick="closeModal()" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-lg shadow-blue-500/30 transition flex items-center justify-center space-x-2">
+          <span>Lanjutkan Merakit</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let soundEnabled = true;
+    let selectedComponentKey = null;
+    let currentStepIndex = 0;
+    let xp = 0;
+    let attempts = 0;
+    let correctCount = 0;
+
+    const components = {
+      cpu: {
+        id: 'cpu',
+        name: 'CPU / Prosesor',
+        model: 'Intel Core i5-3570K',
+        icon: 'fa-microchip',
+        badge: '1',
+        stepIndex: 0,
+        slotId: 'cpu',
+        desc: 'CPU berfungsi sebagai otak dari komputer. Letakkan CPU dengan hati-hati di soket LGA1155 ini.',
+        installed: false
+      },
+      hsf: {
+        id: 'hsf',
+        name: 'Heatsink & Fan',
+        model: 'Cooler Master Hyper 212',
+        icon: 'fa-fan',
+        badge: '1',
+        stepIndex: 1,
+        slotId: 'cpu',
+        desc: 'Heatsink & Fan pendingin dipasang tepat di atas CPU untuk menjaga suhu processor tetap dingin.',
+        installed: false
+      },
+      ram: {
+        id: 'ram',
+        name: 'RAM DDR3',
+        model: 'Corsair Vengeance (2x4GB)',
+        icon: 'fa-memory',
+        badge: '2',
+        stepIndex: 2,
+        slotId: 'ram',
+        desc: 'RAM menyimpan data sementara sistem. Pasang pada slot memori DDR3 yang berwarna biru.',
+        installed: false
+      },
+      vga: {
+        id: 'vga',
+        name: 'GPU / VGA Card',
+        model: 'MSI GTX 1060 6GB',
+        icon: 'fa-gamepad',
+        badge: '1',
+        stepIndex: 3,
+        slotId: 'vga',
+        desc: 'Kartu grafis mengolah tampilan visual dan game. Tancapkan pada slot utama PCIe x16.',
+        installed: false
+      },
+      sata: {
+        id: 'sata',
+        name: 'SATA Storage',
+        model: 'Samsung 860 EVO SSD',
+        icon: 'fa-hard-drive',
+        badge: '1',
+        stepIndex: 4,
+        slotId: 'sata',
+        desc: 'SSD SATA menyimpan sistem operasi dan berkas file secara permanen dengan kecepatan tinggi.',
+        installed: false
+      },
+      power: {
+        id: 'power',
+        name: 'Power 24-Pin ATX',
+        model: 'Corsair CX550 W',
+        icon: 'fa-plug',
+        badge: '1',
+        stepIndex: 5,
+        slotId: 'power',
+        desc: 'Kabel daya utama 24-Pin menyuplai daya ke motherboard dan seluruh komponen internal.',
+        installed: false
+      }
+    };
+
+    const steps = [
+      { key: 'cpu', title: 'Pasang CPU', desc: 'Pasang CPU Intel Core i5-3570K pada soket LGA1155 motherboard.' },
+      { key: 'hsf', title: 'Pasang Heatsink & Fan', desc: 'Pasang Cooler Master Fan tepat di atas soket CPU.' },
+      { key: 'ram', title: 'Pasang RAM DDR3', desc: 'Tancapkan modul RAM Corsair Vengeance pada slot memori.' },
+      { key: 'vga', title: 'Pasang VGA Card', desc: 'Pasang kartu grafis MSI GTX 1060 ke slot PCIe x16.' },
+      { key: 'sata', title: 'Pasang Storage SSD', desc: 'Hubungkan SSD Samsung 860 EVO ke Port SATA motherboard.' },
+      { key: 'power', title: 'Pasang Power 24-Pin', desc: 'Tancapkan kabel daya 24-Pin ATX dari power supply.' }
+    ];
+
+    const elainaQuotes = [
+      "Keren! Sekarang pasang CPU ke soketnya dulu...",
+      "Bagus! Lanjutkan dengan memasang Heatsink & Fan.",
+      "Hebat! Jangan lupa pasang RAM DDR3 di slot biru.",
+      "Mantap! Sekarang kita pasang GPU / VGA Card.",
+      "Hampir selesai! Pasang SSD SATA untuk penyimpanan.",
+      "Langkah terakhir! Tancapkan kabel Power 24-Pin ATX!"
+    ];
+
+    function playAudio(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.frequency.setValueAtTime(400, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.05);
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.05);
+        } else if (type === 'success') {
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+          osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.35);
+        } else if (type === 'error') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, ctx.currentTime);
+          osc.frequency.setValueAtTime(120, ctx.currentTime + 0.1);
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('themeIcon');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        icon.className = 'fa-solid fa-sun';
+      } else {
+        html.classList.add('dark');
+        icon.className = 'fa-solid fa-moon';
+      }
+      playAudio('click');
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const soundIcon = document.getElementById('soundIcon');
+      const soundBtnText = document.getElementById('soundBtnText');
+      if (soundEnabled) {
+        soundIcon.className = 'fa-solid fa-volume-high';
+        soundBtnText.innerHTML = `<i class="fa-solid fa-volume-high"></i><span>Suara: On</span>`;
+        playAudio('click');
+      } else {
+        soundIcon.className = 'fa-solid fa-volume-xmark';
+        soundBtnText.innerHTML = `<i class="fa-solid fa-volume-xmark"></i><span>Suara: Off</span>`;
+      }
+    }
+
+    function dismissGuide() {
+      document.getElementById('guideBanner').style.display = 'none';
+      playAudio('click');
+    }
+
+    function clickElainaAvatar() {
+      playAudio('click');
+      if (currentStepIndex < elainaQuotes.length) {
+        document.getElementById('floatingBubbleText').textContent = elainaQuotes[currentStepIndex];
+      } else {
+        document.getElementById('floatingBubbleText').textContent = "Semua komponen sudah terpasang dengan sempurna! 🎉";
+      }
+    }
+
+    function renderInventory() {
+      const grid = document.getElementById('inventoryGrid');
+      grid.innerHTML = '';
+
+      Object.keys(components).forEach((key) => {
+        const item = components[key];
+        const isSelected = selectedComponentKey === key;
+        const isInstalled = item.installed;
+
+        const card = document.createElement('div');
+        card.className = `relative p-2.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+          isInstalled 
+            ? 'opacity-40 bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 pointer-events-none'
+            : isSelected
+              ? 'bg-blue-50 dark:bg-blue-950/80 border-blue-500 ring-2 ring-blue-400/50 shadow-md scale-[1.02]'
+              : 'bg-white dark:bg-darkbg-card border-slate-200 dark:border-darkbg-border hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm'
+        }`;
+
+        card.onclick = () => selectComponent(key);
+
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold flex items-center justify-center">
+              ${item.badge}
+            </span>
+            ${isInstalled ? '<span class="text-[10px] text-emerald-500 font-bold"><i class="fa-solid fa-check"></i> Terpasang</span>' : ''}
+          </div>
+          <div class="my-2 flex justify-center text-3xl ${isSelected ? 'text-blue-500' : 'text-slate-600 dark:text-slate-300'}">
+            <i class="fa-solid ${item.icon}"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100 truncate">${item.name}</h4>
+            <p class="text-[10px] text-slate-400 truncate">${item.model}</p>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderTaskList() {
+      const list = document.getElementById('taskList');
+      list.innerHTML = '';
+
+      steps.forEach((step, idx) => {
+        const isCurrent = idx === currentStepIndex;
+        const isCompleted = idx < currentStepIndex;
+
+        const item = document.createElement('div');
+        item.className = `flex items-center space-x-2.5 p-2 rounded-lg border transition ${
+          isCompleted 
+            ? 'bg-emerald-50/60 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/40 text-emerald-700 dark:text-emerald-400'
+            : isCurrent
+              ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-300 dark:border-blue-800 font-bold text-blue-600 dark:text-blue-300'
+              : 'bg-slate-50/50 dark:bg-slate-800/30 border-slate-200 dark:border-slate-800 text-slate-400'
+        }`;
+
+        item.innerHTML = `
+          <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${
+            isCompleted 
+              ? 'bg-emerald-500 text-white'
+              : isCurrent
+                ? 'bg-blue-600 text-white animate-bounce'
+                : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+          }">
+            ${isCompleted ? '<i class="fa-solid fa-check"></i>' : idx + 1}
+          </div>
+          <span class="truncate">${step.title}</span>
+        `;
+        list.appendChild(item);
+      });
+
+      if (currentStepIndex < steps.length) {
+        document.getElementById('currentStepDesc').textContent = steps[currentStepIndex].desc;
+        document.getElementById('floatingBubbleText').textContent = steps[currentStepIndex].desc;
+      } else {
+        document.getElementById('currentStepDesc').textContent = 'Selamat! Semua komponen motherboard telah berhasil dirakit!';
+        document.getElementById('floatingBubbleText').textContent = 'Rakitan PC Selesai! Hebat sekali! 🎉';
+      }
+    }
+
+    function selectComponent(key) {
+      if (components[key].installed) return;
+      selectedComponentKey = key;
+      playAudio('click');
+      renderInventory();
+      showModal(components[key]);
+    }
+
+    function handleSlotClick(slotName) {
+      attempts++;
+      document.getElementById('statAttempts').textContent = attempts;
+
+      if (!selectedComponentKey) {
+        const currentStepKey = steps[currentStepIndex]?.key;
+        if (currentStepKey && components[currentStepKey].slotId === slotName) {
+          selectedComponentKey = currentStepKey;
+        } else {
+          playAudio('error');
+          updateAccuracy();
+          return;
+        }
+      }
+
+      const activeComp = components[selectedComponentKey];
+
+      if (activeComp.slotId === slotName) {
+        if (activeComp.stepIndex === currentStepIndex) {
+          activeComp.installed = true;
+          playAudio('success');
+
+          const svgGraphic = document.getElementById(`installed-${activeComp.id}`);
+          if (svgGraphic) svgGraphic.classList.remove('hidden');
+
+          xp += 100;
+          correctCount++;
+          currentStepIndex++;
+
+          document.getElementById('statXP').textContent = xp;
+          document.getElementById('progressText').textContent = `${currentStepIndex} / ${steps.length}`;
+          document.getElementById('progressBar').style.width = `${(currentStepIndex / steps.length) * 100}%`;
+          
+          selectedComponentKey = null;
+          renderInventory();
+          renderTaskList();
+
+          if (currentStepIndex >= steps.length) {
+            setTimeout(() => {
+              showModal({
+                name: 'Misi Merakit Selesai! 🎉',
+                model: 'ASUS P8Z77-V PRO Board',
+                icon: 'fa-trophy',
+                desc: 'Luar biasa! Kamu telah berhasil memasang seluruh komponen PC dengan benar.'
+              });
+            }, 500);
+          }
+        } else {
+          playAudio('error');
+        }
+      } else {
+        playAudio('error');
+      }
+
+      updateAccuracy();
+    }
+
+    function updateAccuracy() {
+      if (attempts === 0) return;
+      const acc = Math.round((correctCount / attempts) * 100);
+      document.getElementById('statAccuracy').textContent = `${acc}%`;
+    }
+
+    function showModal(data) {
+      document.getElementById('modalTitle').textContent = data.name;
+      document.getElementById('modalSubtitle').textContent = data.model || '';
+      document.getElementById('modalDesc').textContent = data.desc;
+      document.getElementById('modalIcon').className = `fa-solid ${data.icon || 'fa-microchip'}`;
+      
+      const modal = document.getElementById('componentModal');
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.add('opacity-100'), 10);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('componentModal');
+      modal.classList.remove('opacity-100');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+      playAudio('click');
+    }
+
+    function resetLab() {
+      currentStepIndex = 0;
+      selectedComponentKey = null;
+      xp = 0;
+      attempts = 0;
+      correctCount = 0;
+
+      Object.keys(components).forEach((key) => {
+        components[key].installed = false;
+        const svgGraphic = document.getElementById(`installed-${components[key].id}`);
+        if (svgGraphic) svgGraphic.classList.add('hidden');
+      });
+
+      document.getElementById('statXP').textContent = '0';
+      document.getElementById('statAttempts').textContent = '0';
+      document.getElementById('statAccuracy').textContent = '100%';
+      document.getElementById('progressText').textContent = `0 / ${steps.length}`;
+      document.getElementById('progressBar').style.width = '0%';
+
+      renderInventory();
+      renderTaskList();
+      playAudio('click');
+    }
+
+    window.onload = function() {
+      renderInventory();
+      renderTaskList();
+    };
+  </script>
+</body>
+</html>

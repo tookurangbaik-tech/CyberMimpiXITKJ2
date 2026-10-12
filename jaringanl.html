@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Networking Learning • CyberMimpi</title>
+<meta name="description" content="Pembelajaran Jaringan Komputer interaktif XI TKJ 2 CyberMimpi.">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#f5f8fc;color:#172033}
+body{padding:22px 14px 50px}
+button,input{font:inherit}
+button{cursor:pointer}
+.page{width:min(980px,100%);margin:auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:42px;height:42px;object-fit:contain;border-radius:12px;background:#fff;border:1px solid #e5eaf1;padding:5px}
+.brand small{display:block;color:#789;font-size:10px;font-weight:800;letter-spacing:1.4px}
+.brand b{font-size:17px;color:#1d3557}
+.back{border:1px solid #dce4ee;background:#fff;color:#36506e;padding:10px 14px;border-radius:14px;text-decoration:none;font-size:12px;font-weight:800}
+
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#eef8ff,#fff 55%,#f1f8ff);border:1px solid #e0e8f2;border-radius:28px;padding:26px;box-shadow:0 16px 45px rgba(29,53,87,.08)}
+.hero:before{content:"";position:absolute;width:190px;height:190px;border-radius:50%;right:-70px;top:-80px;background:#dcefff}
+.hero>*{position:relative}
+.eyebrow{margin:0 0 6px;color:#5b7ea6;font-size:10px;font-weight:900;letter-spacing:2px}
+.hero h1{margin:0;font-size:clamp(28px,6vw,46px);letter-spacing:-1.8px;color:#172b46}
+.hero p{margin:10px 0 0;color:#64748b;line-height:1.6;font-size:13px;max-width:620px}
+
+/* ASISTEN BELAJAR */
+.assistant-section{margin-top:20px;display:grid;grid-template-columns:100px 1fr;gap:14px;align-items:center}
+.assistant-img{height:120px;display:flex;align-items:flex-end;justify-content:center;animation:float 3.5s ease-in-out infinite}
+.assistant-img img{max-width:100%;max-height:100%;object-fit:contain;display:block;filter:drop-shadow(0 8px 12px rgba(29,53,87,.12))}
+.assistant-bubble{position:relative;background:#fff;border:1px solid #dce6ef;border-radius:20px;padding:14px 16px;box-shadow:0 6px 18px rgba(29,53,87,.05)}
+.assistant-bubble:before{content:"";position:absolute;left:-7px;top:50%;transform:translateY(-50%) rotate(45deg);width:12px;height:12px;background:#fff;border-left:1px solid #dce6ef;border-bottom:1px solid #dce6ef}
+.assistant-name{font-size:10px;font-weight:900;color:#3974aa;letter-spacing:.8px}
+#assistantText{margin:4px 0 0;font-size:13px;line-height:1.5;color:#26384d;transition:opacity .2s}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* MATERI GRID CARDS (2 Kolom Pasti) */
+.theory-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
+.theory-card{border:1px solid #dce5ee;background:#fff;border-radius:18px;padding:16px;text-align:left;transition:.2s ease;box-shadow:0 4px 15px rgba(29,53,87,.04);cursor:pointer;display:flex;flex-direction:column;justify-content:space-between}
+.theory-card:hover{transform:translateY(-3px);border-color:#82afd2;box-shadow:0 8px 25px rgba(29,53,87,.08)}
+.theory-card .t-icon{font-size:24px;margin-bottom:8px}
+.theory-card b{display:block;font-size:14px;color:#1d3557;margin-bottom:4px}
+.theory-card span{display:block;color:#64748b;font-size:11px;line-height:1.4}
+.theory-card .read-btn{margin-top:12px;display:inline-block;font-size:11px;font-weight:800;color:#1d5f91}
+
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.mode{border:1px solid #dfe7ef;background:#fff;border-radius:20px;padding:20px;text-align:left;transition:.22s ease;box-shadow:0 7px 20px rgba(29,53,87,.05)}
+.mode:hover{transform:translateY(-3px);border-color:#a9cbe8}
+.mode .icon{font-size:28px;margin-bottom:10px}
+.mode b{display:block;font-size:15px;color:#1d3557}
+.mode span{display:block;color:#718096;font-size:12px;line-height:1.55;margin-top:5px}
+
+.section{margin-top:18px;background:#fff;border:1px solid #e1e8f0;border-radius:24px;padding:20px;box-shadow:0 12px 35px rgba(29,53,87,.06)}
+.hidden{display:none!important}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}
+.section-head h2{margin:0;font-size:20px;color:#1d3557}
+.pill{padding:7px 10px;border-radius:999px;background:#eef6ff;color:#4a76a0;font-size:11px;font-weight:900}
+
+/* KUIS & BATTLE CARD */
+.question-card{border:1px solid #e5ebf2;border-radius:20px;padding:18px;background:#fbfdff}
+.question-top{display:flex;justify-content:space-between;gap:10px;color:#789;font-size:11px;font-weight:900}
+.question{margin:14px 0 16px;font-size:18px;line-height:1.45;color:#1d2e43}
+.choices{display:grid;gap:10px}
+.choice{width:100%;text-align:left;border:1px solid #dce5ee;background:#fff;border-radius:15px;padding:13px 14px;color:#334e68;font-weight:750;transition:.18s}
+.choice:hover:not(:disabled){border-color:#82afd2;transform:translateX(2px)}
+.choice.correct{background:#eaf8ef;border-color:#78c795;color:#176b39}
+.choice.wrong{background:#fff0f0;border-color:#e69a9a;color:#9d2f2f}
+.feedback{min-height:25px;margin-top:13px;font-size:12px;font-weight:800;color:#64748b}
+.next{display:none;margin-top:8px;border:0;background:#1d5f91;color:#fff;border-radius:13px;padding:11px 16px;font-weight:900}
+.finish{text-align:center;padding:28px 10px}
+.finish h3{font-size:24px;margin:0 0 8px}
+.finish p{color:#64748b}
+.primary{border:0;background:#1d5f91;color:#fff;border-radius:13px;padding:11px 17px;font-weight:900}
+.secondary{border:1px solid #dce4ee;background:#fff;color:#456078;border-radius:13px;padding:11px 15px;font-weight:850}
+.actions{display:flex;gap:9px;justify-content:center;margin-top:14px}
+.setup{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.inputbox{padding:14px;border:1px solid #e1e8f0;border-radius:16px;background:#fbfdff}
+.inputbox label{display:block;font-size:10px;font-weight:900;color:#54708b;margin-bottom:7px}
+.inputbox input{width:100%;border:1px solid #dce5ee;border-radius:11px;padding:10px 11px;outline:none}
+.inputbox input:focus{border-color:#78a9ce}
+.start{grid-column:1/-1}
+.arena{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.player{border:1px solid #e1e8f0;border-radius:18px;padding:15px;background:#fbfdff}
+.player.p1{border-top:4px solid #5597cf}
+.player.p2{border-top:4px solid #e5a54f}
+.player-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}
+.player-head b{font-size:13px;color:#30475f}
+.score{font-size:20px;font-weight:950;color:#1d3557}
+.bq{font-size:14px;font-weight:800;line-height:1.45;min-height:61px;margin-bottom:10px}
+.bchoice{width:100%;margin:4px 0;border:1px solid #dce5ee;background:#fff;border-radius:11px;padding:9px;text-align:left;font-size:12px;font-weight:750}
+.bchoice.correct{background:#eaf8ef;border-color:#78c795}
+.bchoice.wrong{background:#fff0f0;border-color:#e69a9a}
+.status{font-size:11px;font-weight:800;min-height:20px;margin-top:7px;color:#667}
+.note{margin-top:15px;padding:12px 14px;border-radius:14px;background:#f4f8fc;color:#64748b;font-size:11px;line-height:1.55}
+
+/* MODAL POPUP */
+.modal-overlay{position:fixed;inset:0;background:rgba(9,13,22,0.6);backdrop-blur:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:all .25s ease}
+.modal-overlay.active{opacity:1;pointer-events:auto}
+.modal-box{background:#fff;border-radius:24px;border:1px solid #e1e8f0;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;padding:24px;box-shadow:0 20px 50px rgba(29,53,87,.2);transform:translateY(15px);transition:all .25s ease}
+.modal-overlay.active .modal-box{transform:translateY(0)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #edf2f7;padding-bottom:12px}
+.modal-header h3{margin:0;font-size:18px;color:#1d3557}
+.close-modal{background:#f1f5f9;border:0;width:32px;height:32px;border-radius:50%;font-weight:bold;color:#475569;cursor:pointer}
+.modal-body{font-size:13px;color:#475569;line-height:1.6}
+.modal-body h4{color:#1d3557;font-size:14px;margin:14px 0 6px}
+.modal-body ul{padding-left:18px;margin:6px 0}
+.modal-body li{margin-bottom:4px}
+
+@media(max-width:650px){
+  body{padding:13px 10px 35px}
+  .hero{padding:20px;border-radius:23px}
+  .assistant-section{grid-template-columns:80px 1fr;gap:10px}
+  .assistant-img{height:95px}
+  .assistant-bubble{padding:12px}
+  .mode-grid,.setup,.arena{grid-template-columns:1fr}
+  .start{grid-column:auto}
+  .section{padding:15px;border-radius:20px}
+  .question{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="topbar">
+  <div class="brand">
+    <img src="logo.jpg" alt="Logo XI TKJ 2" onerror="this.src='https://via.placeholder.com/42?text=TKJ'">
+    <div><small>CYBERMIMPI</small><b>XI TKJ 2 • Jaringan</b></div>
+  </div>
+  <a class="back" href="belajarm.html">← Kembali</a>
+</header>
+
+<section class="hero">
+  <p class="eyebrow">NETWORKING LEARNING ROOM</p>
+  <h1>Belajar Jaringan Komputer, Paham Konsepnya.</h1>
+  <p>Pilih modul teori di bawah untuk membaca materi atau pilih mode kuis untuk menguji pemahamanmu!</p>
+
+  <!-- ASISTEN BELAJAR -->
+  <div class="assistant-section">
+    <div class="assistant-img">
+      <img id="assistantImg" src="assisten.png" alt="Asisten belajar" onerror="this.src='https://via.placeholder.com/100x120?text=Asisten'">
+    </div>
+    <div class="assistant-bubble">
+      <div class="assistant-name">Assisten Belajar</div>
+      <p id="assistantText">Hai! Klik kartu materi di bawah untuk membaca teori Jaringan (Jenis, Topologi, Perangkat, Kabel, & IP). 👋</p>
+    </div>
+  </div>
+
+  <!-- MODUL KARTU MATERI (2 Kolom Pasti) -->
+  <div class="theory-grid">
+    <div class="theory-card" onclick="openModal('jenisModal')">
+      <div>
+        <div class="t-icon">🌐</div>
+        <b>1. Jenis Jaringan Komputer</b>
+        <span>Cakupan wilayah jaringan dari PAN, LAN, MAN, hingga WAN.</span>
+      </div>
+      <span class="read-btn">Baca Materi →</span>
+    </div>
+    <div class="theory-card" onclick="openModal('topologiModal')">
+      <div>
+        <div class="t-icon">🖧</div>
+        <b>2. Topologi Jaringan</b>
+        <span>Pola hubungan antar komputer (Star, Bus, Ring, Mesh).</span>
+      </div>
+      <span class="read-btn">Baca Materi →</span>
+    </div>
+    <div class="theory-card" onclick="openModal('perangkatModal')">
+      <div>
+        <div class="t-icon">🛜</div>
+        <b>3. Perangkat Keras Jaringan</b>
+        <span>Fungsi Router, Switch, Hub, dan Access Point.</span>
+      </div>
+      <span class="read-btn">Baca Materi →</span>
+    </div>
+    <div class="theory-card" onclick="openModal('kabelModal')">
+      <div>
+        <div class="t-icon">🔌</div>
+        <b>4. Pengkabelan UTP & RJ45</b>
+        <span>Standar kabel Straight-through dan Cross-over.</span>
+      </div>
+      <span class="read-btn">Baca Materi →</span>
+    </div>
+    <div class="theory-card" onclick="openModal('ipModal')">
+      <div>
+        <div class="t-icon">🔢</div>
+        <b>5. IP Addressing Dasar</b>
+        <span>Pengalamatan IPv4, kelas IP, dan subnet mask.</span>
+      </div>
+      <span class="read-btn">Baca Materi →</span>
+    </div>
+    <div class="theory-card" onclick="openModal('mediaModal')">
+      <div>
+        <div class="t-icon">📡</div>
+        <b>6. Media Transmisi Data</b>
+        <span>Perbandingan kabel UTP, Fiber Optic, dan Nirkabel (Wireless).</span>
+      </div>
+      <span class="read-btn">Baca Materi →</span>
+    </div>
+  </div>
+
+  <div class="mode-grid" id="modePicker">
+    <button class="mode" id="soloBtn"><div class="icon">📚</div><b>Belajar Sendiri (Solo)</b><span>Kerjakan 10 soal kuis jaringan satu per satu.</span></button>
+    <button class="mode" id="battleBtn"><div class="icon">⚔️</div><b>Battle 2 Player</b><span>Dua pemain, satu layar, adu cepat jawab soal jaringan.</span></button>
+  </div>
+</section>
+
+<!-- MODE SOLO -->
+<section class="section hidden" id="soloSection">
+  <div class="section-head">
+    <h2>Mode Solo - Jaringan</h2>
+    <span class="pill" id="soloCounter">SOAL 1 / 10</span>
+  </div>
+  <div class="question-card">
+    <div class="question-top">
+      <span>NETWORKING CHALLENGE</span>
+      <span id="soloScore">Skor: 0</span>
+    </div>
+    <div class="question" id="soloQuestion"></div>
+    <div class="choices" id="soloChoices"></div>
+    <div class="feedback" id="soloFeedback">Pilih satu jawaban.</div>
+    <button class="next" id="soloNext">Soal Berikutnya →</button>
+  </div>
+</section>
+
+<!-- MODE BATTLE -->
+<section class="section hidden" id="battleSection">
+  <div class="section-head">
+    <h2>Battle 2 Player - Jaringan</h2>
+    <span class="pill">DUA PEMAIN</span>
+  </div>
+  <div class="setup" id="battleSetup">
+    <div class="inputbox">
+      <label>🔵 PLAYER 1</label>
+      <input id="name1" maxlength="18" placeholder="Nama pemain 1">
+    </div>
+    <div class="inputbox">
+      <label>🟠 PLAYER 2</label>
+      <input id="name2" maxlength="18" placeholder="Nama pemain 2">
+    </div>
+    <button class="primary start" id="startBattle">Mulai Battle →</button>
+  </div>
+
+  <div class="arena hidden" id="arena">
+    <div class="player p1">
+      <div class="player-head">
+        <b id="p1Name">PLAYER 1</b>
+        <span class="score" id="p1Score">0</span>
+      </div>
+      <div class="bq" id="p1Question"></div>
+      <div id="p1Choices"></div>
+      <div class="status" id="p1Status"></div>
+    </div>
+    <div class="player p2">
+      <div class="player-head">
+        <b id="p2Name">PLAYER 2</b>
+        <span class="score" id="p2Score">0</span>
+      </div>
+      <div class="bq" id="p2Question"></div>
+      <div id="p2Choices"></div>
+      <div class="status" id="p2Status"></div>
+    </div>
+  </div>
+
+  <div class="finish hidden" id="battleFinish">
+    <h3>🏆 Battle selesai!</h3>
+    <p id="winner"></p>
+    <div class="actions">
+      <button class="secondary" onclick="location.reload()">Main Lagi</button>
+    </div>
+  </div>
+</section>
+
+<div class="note">💡 Progres belajar jaringan tersimpan secara lokal.</div>
+</div>
+
+<!-- MODAL POPUP: 1. JENIS JARINGAN -->
+<div class="modal-overlay" id="jenisModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🌐 Materi: Jenis Jaringan Komputer</h3>
+      <button class="close-modal" onclick="closeModal('jenisModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian:</strong> Jaringan komputer diklasifikasikan berdasarkan luas wilayah atau cakupan geografisnya.</p>
+      <h4>Klasifikasi Utama:</h4>
+      <ul>
+        <li><strong>PAN (Personal Area Network):</strong> Jaringan skala sangat kecil untuk perangkat pribadi (contoh: HP terhubung ke speaker Bluetooth / Smartwatch).</li>
+        <li><strong>LAN (Local Area Network):</strong> Jaringan dalam satu ruangan, gedung, atau sekolah (contoh: lab komputer sekolah).</li>
+        <li><strong>MAN (Metropolitan Area Network):</strong> Jaringan yang mencakup antar gedung dalam satu kota (contoh: jaringan antar kantor cabang bank di satu kota).</li>
+        <li><strong>WAN (Wide Area Network):</strong> Jaringan skala luas antar negara atau benua (contoh: Internet).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP: 2. TOPOLOGI -->
+<div class="modal-overlay" id="topologiModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🖧 Materi: Topologi Jaringan</h3>
+      <button class="close-modal" onclick="closeModal('topologiModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian:</strong> Topologi adalah tata letak fisik atau logis dari sambungan antar komputer dalam sebuah jaringan.</p>
+      <h4>Jenis-Jenis Topologi:</h4>
+      <ul>
+        <li><strong>Topologi Star (Bintang):</strong> Menggunakan perangkat pusat (Switch/Hub). Jika satu kabel putus, komputer lain tetap aman. (Paling populer).</li>
+        <li><strong>Topologi Bus:</strong> Menggunakan satu kabel utama (backbone) sebagai jalur pusat. Jika kabel utama putus, semua lumpuh.</li>
+        <li><strong>Topologi Ring (Cincin):</strong> Membentuk lingkaran tertutup. Data mengalir berputar satu arah.</li>
+        <li><strong>Topologi Mesh (Jala):</strong> Setiap komputer terhubung langsung ke semua komputer lain. Sangat handal tapi boros kabel.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP: 3. PERANGKAT KERAS -->
+<div class="modal-overlay" id="perangkatModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🛜 Materi: Perangkat Keras Jaringan</h3>
+      <button class="close-modal" onclick="closeModal('perangkatModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian:</strong> Komponen fisik yang digunakan untuk membangun infrastruktur jaringan komputer.</p>
+      <h4>Perangkat Utama:</h4>
+      <ul>
+        <li><strong>Router:</strong> Menghubungkan dua atau lebih jaringan berbeda (misal LAN kantor ke jaringan Internet). Mengatur jalur paket data (routing).</li>
+        <li><strong>Switch:</strong> Menghubungkan beberapa komputer dalam satu LAN. Cerdas karena meneruskan paket data spesifik ke perangkat tujuan berdasarkan MAC Address.</li>
+        <li><strong>Hub:</strong> Mirip switch tapi kurang cerdas; menyebarkan data ke semua port tanpa filter (lebih boros bandwidth).</li>
+        <li><strong>Access Point (AP):</strong> Memancarkan sinyal Wi-Fi agar perangkat nirkabel dapat terhubung ke jaringan kabel.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP: 4. KABEL UTP -->
+<div class="modal-overlay" id="kabelModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🔌 Materi: Pengkabelan UTP & RJ45</h3>
+      <button class="close-modal" onclick="closeModal('kabelModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian:</strong> Kabel UTP (Unshielded Twisted Pair) menggunakan konektor RJ45 untuk menghubungkan perangkat jaringan.</p>
+      <h4>Jenis Susunan Kabel:</h4>
+      <ul>
+        <li><strong>Straight-Through:</strong> Susunan warna kedua ujung kabel <strong>sama</strong>. Digunakan untuk menghubungkan perangkat berbeda (contoh: PC ke Switch, Switch ke Router).</li>
+        <li><strong>Cross-Over:</strong> Susunan warna kedua ujung kabel <strong>berbeda</strong> (salah satu ujung standar T568A, ujung lainnya T568B). Digunakan untuk menghubungkan perangkat yang setara (contoh: PC ke PC, Switch ke Switch).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP: 5. IP ADDRESSING -->
+<div class="modal-overlay" id="ipModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🔢 Materi: IP Addressing Dasar</h3>
+      <button class="close-modal" onclick="closeModal('ipModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian:</strong> IP Address (Internet Protocol Address) adalah deretan angka biner 32-bit (IPv4) yang menjadi identitas unik setiap komputer di jaringan.</p>
+      <h4>Kelas IP Address IPv4:</h4>
+      <ul>
+        <li><strong>Kelas A:</strong> Untuk jaringan skala sangat besar. Range IP: 1.x.x.x sampai 126.x.x.x (Subnet default: 255.0.0.0).</li>
+        <li><strong>Kelas B:</strong> Untuk jaringan skala menengah-besar. Range IP: 128.x.x.x sampai 191.x.x.x (Subnet default: 255.255.0.0).</li>
+        <li><strong>Kelas C:</strong> Untuk jaringan skala kecil / rumahan. Range IP: 192.x.x.x sampai 223.x.x.x (Subnet default: 255.255.255.0).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP: 6. MEDIA TRANSMISI -->
+<div class="modal-overlay" id="mediaModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>📡 Materi: Media Transmisi Data</h3>
+      <button class="close-modal" onclick="closeModal('mediaModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian:</strong> Media yang digunakan untuk mengirimkan sinyal data dari pengirim ke penerima.</p>
+      <h4>Jenis Media:</h4>
+      <ul>
+        <li><strong>Guided Media (Kabel):</strong> Menggunakan media fisik seperti Kabel UTP/STP (tembaga) dan Fiber Optic (kaca/cahaya dengan kecepatan sangat tinggi jarak jauh).</li>
+        <li><strong>Unguided Media (Nirkabel):</strong> Menggunakan gelombang elektromagnetik / udara seperti Wi-Fi, Bluetooth, dan koneksi seluler tanpa kabel fisik.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+// Fungsi Modal Popup
+function openModal(id) {
+  document.getElementById(id).classList.add("active");
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove("active");
+}
+
+window.onclick = function(event) {
+  if (event.target.classList.contains('modal-overlay')) {
+    event.target.classList.remove('active');
+  }
+}
+
+// Bank Soal Kuis Jaringan
+const rawQuestions = [
+  { q: "Jaringan komputer yang mencakup wilayah satu ruangan atau gedung sekolah disebut...", choices: ["WAN", "MAN", "LAN", "PAN"], answer: 2 },
+  { q: "Topologi jaringan yang menggunakan perangkat pusat seperti Switch atau Hub di tengah adalah...", choices: ["Topologi Bus", "Topologi Star", "Topologi Ring", "Topologi Mesh"], answer: 1 },
+  { q: "Perangkat keras jaringan yang berfungsi menghubungkan dua jaringan berbeda (misal LAN ke Internet) adalah...", choices: ["Switch", "Hub", "Router", "Access Point"], answer: 2 },
+  { q: "Kabel UTP dengan susunan warna ujung yang sama persis (Straight-through) digunakan untuk...", choices: ["Menghubungkan PC ke PC", "Menghubungkan Switch ke PC", "Menghubungkan Switch ke Switch", "Menghubungkan Hub ke Hub"], answer: 1 },
+  { q: "Berapa jumlah bit pada alamat IPv4 standar?", choices: ["16 bit", "32 bit", "64 bit", "128 bit"], answer: 1 },
+  { q: "Konektor fisik yang biasa dipasang pada ujung kabel UTP untuk jaringan komputer adalah...", choices: ["RJ11", "RJ45", "BNC", "Fiber SC"], answer: 1 },
+  { q: "IP Address kelas C secara default memiliki subnet mask...", choices: ["255.0.0.0", "255.255.0.0", "255.255.255.0", "255.255.255.255"], answer: 2 },
+  { q: "Topologi yang menghubungkan setiap komputer ke semua komputer lainnya sehingga sangat tahan putus kabel adalah...", choices: ["Star", "Bus", "Ring", "Mesh"], answer: 3 },
+  { q: "Perangkat yang berfungsi memancarkan sinyal Wi-Fi agar perangkat nirkabel bisa terhubung ke jaringan kabel adalah...", choices: ["Router", "Access Point", "Modem Dial-up", "Bridge"], answer: 1 },
+  { q: "Media transmisi jaringan yang mengirimkan data menggunakan pulsa cahaya melalui serat kaca adalah...", choices: ["Kabel UTP", "Kabel Coaxial", "Fiber Optic", "Kabel Telepon"], answer: 2 }
+];
+
+const assistantText = document.getElementById("assistantText");
+const modePicker = document.getElementById("modePicker");
+const soloSection = document.getElementById("soloSection");
+const battleSection = document.getElementById("battleSection");
+
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function prepareShuffledQuestions() {
+  const shuffledList = shuffleArray(rawQuestions);
+  return shuffledList.map(item => {
+    const originalAnswerText = item.choices[item.answer];
+    const shuffledChoices = shuffleArray(item.choices);
+    return { q: item.q, choices: shuffledChoices, answer: shuffledChoices.indexOf(originalAnswerText) };
+  });
+}
+
+function say(text){
+  assistantText.style.opacity = "0";
+  setTimeout(() => {
+    assistantText.textContent = text;
+    assistantText.style.opacity = "1";
+  }, 180);
+}
+
+let activeQuestions = prepareShuffledQuestions();
+let soloIndex = parseInt(localStorage.getItem("net_solo_index")) || 0;
+let soloScore = parseInt(localStorage.getItem("net_solo_score")) || 0;
+
+document.getElementById("soloBtn").onclick = () => {
+  modePicker.classList.add("hidden");
+  soloSection.classList.remove("hidden");
+  
+  if(soloIndex >= activeQuestions.length) {
+    soloIndex = 0;
+  }
+  renderSolo();
+  say("Mode Solo Jaringan aktif! Jawab pertanyaannya pelan-pelan ya. 🧠");
+};
+
+function renderSolo(){
+  const q = activeQuestions[soloIndex];
+  if(!q) return;
+  document.getElementById("soloCounter").textContent = `SOAL ${soloIndex + 1} / ${activeQuestions.length}`;
+  document.getElementById("soloScore").textContent = `Skor: ${soloScore}`;
+  document.getElementById("soloQuestion").textContent = q.q;
+  document.getElementById("soloFeedback").textContent = "Pilih satu jawaban.";
+  document.getElementById("soloNext").style.display = "none";
+  
+  const box = document.getElementById("soloChoices");
+  box.innerHTML = "";
+  q.choices.forEach((c, i) => {
+    const b = document.createElement("button");
+    b.className = "choice";
+    b.textContent = c;
+    b.onclick = () => answerSolo(i, b);
+    box.appendChild(b);
+  });
+}
+
+function answerSolo(i, btn){
+  const q = activeQuestions[soloIndex];
+  const all = document.querySelectorAll("#soloChoices .choice");
+  all.forEach(b => b.disabled = true);
+  
+  if(i === q.answer){
+    btn.classList.add("correct");
+    soloScore += 100;
+    document.getElementById("soloFeedback").textContent = "✅ Benar! +100 XP";
+  } else {
+    btn.classList.add("wrong");
+    all[q.answer].classList.add("correct");
+    document.getElementById("soloFeedback").textContent = "❌ Kurang tepat.";
+  }
+  
+  document.getElementById("soloScore").textContent = `Skor: ${soloScore}`;
+  document.getElementById("soloNext").style.display = "inline-block";
+
+  localStorage.setItem("net_solo_index", soloIndex + 1);
+  localStorage.setItem("net_solo_score", soloScore);
+}
+
+document.getElementById("soloNext").onclick = () => {
+  soloIndex++;
+  if(soloIndex < activeQuestions.length){
+    renderSolo();
+  } else {
+    document.getElementById("soloQuestion").textContent = "🎉 Selamat! Kamu sudah menyelesaikan semua soal Jaringan!";
+    document.getElementById("soloChoices").innerHTML = "";
+    document.getElementById("soloFeedback").textContent = `Skor Akhir Kamu: ${soloScore} / ${activeQuestions.length * 100} XP`;
+    document.getElementById("soloNext").style.display = "none";
+    document.getElementById("soloCounter").textContent = "SELESAI";
+    say(`Selesai! Skor akhir kamu ${soloScore}. Kuis Jaringan tuntas! 🎉`);
+  }
+};
+
+let battleIndex = 0, bScores = [0, 0], names = ["PLAYER 1", "PLAYER 2"], answered = [false, false];
+
+document.getElementById("battleBtn").onclick = () => {
+  modePicker.classList.add("hidden");
+  battleSection.classList.remove("hidden");
+  say("Mode Battle 2 Player Jaringan aktif! Masukkan nama kalian lalu klik Mulai. ⚔️");
+};
+
+document.getElementById("startBattle").onclick = () => {
+  names[0] = document.getElementById("name1").value.trim() || "PLAYER 1";
+  names[1] = document.getElementById("name2").value.trim() || "PLAYER 2";
+  document.getElementById("p1Name").textContent = names[0];
+  document.getElementById("p2Name").textContent = names[1];
+  document.getElementById("battleSetup").classList.add("hidden");
+  document.getElementById("arena").classList.remove("hidden");
+  
+  activeQuestions = prepareShuffledQuestions();
+  battleIndex = 0;
+  bScores = [0, 0];
+  renderBattle();
+};
+
+function renderBattle(){
+  answered = [false, false];
+  const q = activeQuestions[battleIndex];
+  document.getElementById("p1Question").textContent = q.q;
+  document.getElementById("p2Question").textContent = q.q;
+  document.getElementById("p1Status").textContent = "Pilih jawaban.";
+  document.getElementById("p2Status").textContent = "Pilih jawaban.";
+  
+  [1, 2].forEach(p => {
+    const box = document.getElementById(`p${p}Choices`);
+    box.innerHTML = "";
+    q.choices.forEach((c, i) => {
+      const b = document.createElement("button");
+      b.className = "bchoice";
+      b.textContent = c;
+      b.onclick = () => battleAnswer(p - 1, i, b);
+      box.appendChild(b);
+    });
+  });
+}
+
+function battleAnswer(player, i, btn){
+  if(answered[player]) return;
+  answered[player] = true;
+  
+  const q = activeQuestions[battleIndex];
+  const box = document.getElementById(`p${player + 1}Choices`);
+  const all = box.querySelectorAll("button");
+  all.forEach(b => b.disabled = true);
+  
+  if(i === q.answer){
+    btn.classList.add("correct");
+    bScores[player] += 100;
+    document.getElementById(`p${player + 1}Status`).textContent = "✅ Benar! +100";
+  } else {
+    btn.classList.add("wrong");
+    all[q.answer].classList.add("correct");
+    document.getElementById(`p${player + 1}Status`).textContent = "❌ Kurang tepat.";
+  }
+  
+  document.getElementById(`p${player + 1}Score`).textContent = bScores[player];
+  
+  if(answered[0] && answered[1]){
+    battleIndex++;
+    if(battleIndex < activeQuestions.length){
+      setTimeout(renderBattle, 700);
+    } else {
+      setTimeout(finishBattle, 700);
+    }
+  }
+}
+
+function finishBattle(){
+  document.getElementById("arena").classList.add("hidden");
+  document.getElementById("battleFinish").classList.remove("hidden");
+  let result = (bScores[0] === bScores[1]) ? `Hasil Seri! Skor ${bScores[0]} poin.` : (bScores[0] > bScores[1] ? `${names[0]} Menang (${bScores[0]} pts)! 🏆` : `${names[1]} Menang (${bScores[1]} pts)! 🏆`);
+  document.getElementById("winner").textContent = result;
+}
+</script>
+</body>
+</html>

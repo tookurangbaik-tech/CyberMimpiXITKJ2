@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta Tags SEO untuk Google -->
+    <meta name="description" content="CyberMimpi adalah portal informasi, kuis interaktif, dan ruang digital kelas XI TKJ 2 SMKN 8 Garut, dikembangkan oleh Fito Purnama.">
+    <meta name="keywords" content="CyberMimpi, XI TKJ 2, SMKN 8 Garut, Fito Purnama">
+    <meta name="author" content="Fito Purnama">
+
+    <!-- Open Graph / Social Media Preview -->
+    <meta property="og:title" content="CyberMimpi • XI TKJ 2">
+    <meta property="og:description" content="Portal edukasi dan ruang digital kelas XI TKJ 2 SMKN 8 Garut.">
+    <meta property="og:type" content="website">
+<title>Belajar • CyberMimpi</title>
+<style>
+:root {
+    --loader-theme: #047857;
+  }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ================================
+   LOADING SCREEN 
+================================ */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 50% 30%, #facc15 0%, #eab308 60%, #ca8a04 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    overflow: hidden;
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.5s linear;
+}
+
+#loading-screen.hide {
+    opacity: 0;
+    transform: scale(1.05);
+    visibility: hidden;
+}
+
+.flash-overlay {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    bottom: -50%;
+    right: -50%;
+    background: radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.4) 0%, transparent 65%);
+    opacity: 0.2;
+    animation: flashSweep 2.5s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes flashSweep {
+    0% { transform: translate(20%, 20%) scale(0.8); opacity: 0.15; }
+    100% { transform: translate(-10%, -10%) scale(1.2); opacity: 0.3; }
+}
+
+.loader-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    animation: contentEnter 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes contentEnter {
+    from { opacity: 0; transform: scale(0.8) translateY(15px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.logo-box {
+    width: 75px;
+    height: 75px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    border: 3px solid rgba(255, 255, 255, 0.9);
+}
+
+.logo-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.loader-content h2 {
+    margin: 0 0 15px 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.indicator-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.cyber-spinner {
+    width: 26px;
+    height: 26px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff !important;
+    border-right-color: #ffffff !important;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+.progress-track {
+    width: 140px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #ffffff, transparent);
+    position: absolute;
+    left: -100%;
+    animation: progressMove 1.4s ease-in-out infinite;
+}
+
+.loading-text {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin: 0;
+    letter-spacing: 1px;
+    font-weight: 500;
+    animation: pulseText 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes progressMove { 0% { left: -100%; } 50% { left: 0%; } 100% { left: 100%; } }
+@keyframes pulseText { from { opacity: 0.6; } to { opacity: 1; } }
+
+/* ================================
+   NAVBAR
+================================ */
+.navbar {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 30px);
+    max-width: 1100px;
+    height: 64px;
+    padding: 0 16px;
+    border-radius: 32px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid #d1d9e6;
+    box-shadow: 0 10px 30px rgba(29, 53, 87, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+}
+
+.nav-brand-logos {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mini-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1.5px solid #d1d9e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(29, 53, 87, 0.08);
+}
+
+.mini-logo img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+.brand-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: #1d3557;
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #457b9d;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 16px;
+    transition: 0.2s ease;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    background: #f0f4f8;
+    color: #1d3557;
+}
+
+.nav-btn-action {
+    background: #f77f00 !important;
+    color: #ffffff !important;
+    border-radius: 20px !important;
+    padding: 8px 16px !important;
+}
+
+/* ================================
+   HERO SECTION & PARALLAX VECTOR
+================================ */
+.hero {
+    position: relative;
+    height: 120vh;
+    text-align: center;
+    background: linear-gradient(180deg, #fef08a 0%, #fffbeb 60%, #ffffff 100%); 
+    overflow: hidden;
+}
+
+.hero-stage {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    min-height: 600px;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.hero-content {
+    position: absolute;
+    top: 130px;
+    left: 50%;
+    width: 92%;
+    max-width: 900px;
+    padding: 0 20px;
+    text-align: center;
+    transform: translate3d(-50%, 0, 0);
+    z-index: 100;
+    will-change: transform, opacity;
+}
+
+.hero-title {
+    font-size: clamp(28px, 5vw, 48px);
+    line-height: 1.25;
+    letter-spacing: -1.5px;
+    color: #173b57;
+    font-weight: 900;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, .6);
+}
+
+.flip-container {
+    display: inline-block;
+    perspective: 1000px;
+}
+
+.flip-box {
+    display: inline-block;
+    background: orange;
+    color: #ffffff;
+    padding: 6px 18px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.flip-box.is-flipping {
+    transform: rotateX(90deg);
+    opacity: 0;
+}
+
+/* VECTOR SCENE & LAYERS */
+.vector-scene {
+    position: absolute;
+    inset: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.vector-layer {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+    pointer-events: none;
+}
+
+.layer-cloud { top: 22%; height: 180px; z-index: 20; }
+.layer-mountain { bottom: 7%; height: 580px; z-index: 30; }
+.layer-birds { top: 32%; left: 0; width: 100%; height: 100px; z-index: 60; }
+.layer-school { bottom: 70px; height: 352px; z-index: 40; }
+.layer-front { bottom: 0; height: 320px; z-index: 60; }
+
+.sun-emoji {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 8;
+    will-change: transform;
+}
+
+.sun-core {
+    width: 65px;
+    height: 65px;
+    background: radial-gradient(circle, #ffea00 0%, #ff9100 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 25px #ff9100, 0 0 50px rgba(255, 145, 0, 0.5);
+    z-index: 2;
+}
+
+.sun-rays {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    animation: rotateRays 20s linear infinite;
+}
+
+.sun-rays span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 100%;
+    margin-top: -50%;
+    margin-left: -4px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.sun-rays span::before,
+.sun-rays span::after {
+    content: '';
+    width: 8px;
+    height: 16px;
+    background: #ff9100;
+    border-radius: 4px;
+}
+
+.sun-rays span:nth-child(1) { transform: rotate(0deg); }
+.sun-rays span:nth-child(2) { transform: rotate(45deg); }
+.sun-rays span:nth-child(3) { transform: rotate(90deg); }
+.sun-rays span:nth-child(4) { transform: rotate(135deg); }
+
+@keyframes rotateRays {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.cloud {
+    position: absolute;
+    width: 175px;
+    height: 68px;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f4f5 100%);
+    border-radius: 100px;
+    box-shadow: 0 7px 18px rgba(58, 78, 88, .08);
+}
+
+.cloud::before,
+.cloud::after {
+    content: "";
+    position: absolute;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f4f5 100%);
+    border-radius: 50%;
+}
+
+.cloud::before { width: 86px; height: 86px; left: 15px; top: -35px; }
+.cloud::after { width: 68px; height: 68px; right: 23px; top: -31px; }
+.cloud-1 { left: 18%; top: 30px; }
+.cloud-2 { right: 8%; top: 10px; transform: scale(.88); }
+
+.mountain {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 220px solid transparent;
+    border-right: 220px solid transparent;
+}
+
+.mountain-1 { left: -80px; border-bottom: 260px solid #52b788; }
+.mountain-2 { left: 20%; transform: scale(.85); border-bottom: 240px solid #74c69d; }
+.mountain-3 { right: -80px; transform: scale(.95); border-bottom: 250px solid #40916c; }
+
+.school {
+    position: absolute;
+    right: 8%;
+    bottom: 0;
+    width: 220px;
+    height: 155px;
+    background: #e8edf4;
+    border: 3px solid #1d3557;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 10px 24px rgba(29, 53, 87, .15);
+}
+
+.school-roof {
+    position: absolute;
+    top: -42px; left: -25px; width: 270px; height: 50px; 
+    background: #457b9d;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    filter: drop-shadow(0 4px 0 rgba(29, 53, 87, .18));
+}
+
+.school-name {
+    position: absolute;
+    top: 18px; left: 25px; width: 170px; padding: 5px;
+    background: #ffffff; border: 2px solid #1d3557; border-radius: 6px;
+    text-align: center; color: #1d3557; font-size: 10px; font-weight: 900;
+}
+
+.school-windows {
+    position: absolute; top: 65px; left: 18px; right: 18px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+.school-windows span { height: 40px; background: linear-gradient(135deg, #b1c8e6, #8da4c4); border: 2px solid #1d3557; border-radius: 4px; }
+
+.bird { position: absolute; width: 32px; height: 16px; display: block; opacity: .85; }
+.bird-1 { left: 22%; top: 10px; }
+.bird-2 { left: 38%; top: 40px; transform: scale(.75); }
+.bird-3 { left: 52%; top: 15px; transform: scale(.85); }
+.bird-4 { right: 30%; top: 45px; transform: scale(.7); }
+.bird-5 { right: 18%; top: 10px; transform: scale(.8); }
+
+.front-ground {
+    position: absolute; left: 0; bottom: 0; width: 100%; height: 80px;
+    background: linear-gradient(180deg, #2d6a4f 0%, #1b4332 100%);
+    border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+}
+
+.pine-tree { position: absolute; bottom: 40px; display: flex; flex-direction: column; align-items: center; }
+.pine-tree .tier {
+    width: 0; height: 0; border-left: 55px solid transparent; border-right: 55px solid transparent;
+    border-bottom: 60px solid #2d6a4f; margin-bottom: -32px; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.2));
+}
+.pine-tree .tier-top { border-left-width: 35px; border-right-width: 35px; border-bottom-width: 45px; border-bottom-color: #52b788; z-index: 3; }
+.pine-tree .tier-mid { border-left-width: 45px; border-right-width: 45px; border-bottom-width: 52px; border-bottom-color: #40916c; z-index: 2; }
+.pine-tree .tier-bot { z-index: 1; }
+.pine-tree .trunk { width: 18px; height: 35px; background: #7f4f24; border-radius: 3px; margin-top: 2px; }
+
+.tree-1 { left: 6%; transform: scale(1.4); }
+.tree-2 { left: 24%; transform: scale(1.1); }
+.tree-3 { right: 12%; transform: scale(1.3); }
+
+.front-road {
+    position: absolute; left: 0; bottom: 0; width: 100%; height: 30px;
+    background: #525b56; border-top: 3px solid #8d99ae;
+}
+
+/* EXPLORE PHOTO SECTION - 1 Landscape di Atas, 3 di Bawah */
+.explore-photo-section { padding: 80px 20px; background: #ffffff; }
+.explore-photo-container { width: min(1050px, 100%); margin: 0 auto; padding: 0 16px; }
+.explore-photo-heading { text-align: center; margin-bottom: 35px; }
+.explore-photo-heading span { display: inline-block; margin-bottom: 8px; font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #10b981; }
+.explore-photo-heading h2 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 40px); font-weight: 900; color: #1d3557; }
+.explore-photo-heading p { margin: 0 auto; max-width: 550px; font-size: 14px; line-height: 1.6; color: #457b9d; }
+
+.explore-photo-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    grid-auto-rows: 190px; 
+    gap: 16px; 
+}
+.photo-card {
+    position: relative; display: block; overflow: hidden; border-radius: 20px; text-decoration: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); transition: transform 0.4s cubic-bezier(.22, 1, .36, 1), box-shadow 0.4s ease;
+}
+.photo-featured { 
+    grid-column: span 3; /* Membuat card pertama melebar penuh (landscape) di atas */
+}
+.photo-card img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform 0.7s cubic-bezier(.22, 1, .36, 1); }
+.photo-overlay {
+    position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 22px; background: linear-gradient(to top, rgba(10, 25, 35, .82), rgba(10, 25, 35, .18) 65%, transparent); color: #ffffff;
+}
+.photo-overlay span:first-child { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 700; opacity: .85; }
+.photo-overlay h3 { margin: 0; font-size: 18px; font-weight: 800; }
+.photo-overlay p { margin: 7px 0 0; max-width: 420px; font-size: 12px; line-height: 1.5; opacity: .85; }
+.photo-card:hover { transform: translateY(-7px); box-shadow: 0 18px 35px rgba(0,0,0,.13); }
+.photo-card:hover img { transform: scale(1.06); }
+
+/* ========================================
+   JALUR PEMBELAJARAN (WHY-GRID STYLE)
+======================================== */
+.tujuan {
+  text-align: center;
+  padding: 60px 20px 80px 20px;
+  background: #ffffff;
+}
+.section-title {
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: -1px;
+    color: #1d3557;
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.section-desc {
+    color: #457b9d;
+    font-size: 14px;
+    max-width: 550px;
+    margin: 0 auto 50px;
+    line-height: 1.6;
+}
+
+.why-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 34px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.why-card {
+    border-radius: 20px;
+    padding: 28px 22px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.why-card.card-yellow { background-color: #fff8e7; }
+.why-card.card-blue   { background-color: #eef4ff; }
+.why-card.card-green  { background-color: #ebfaf0; }
+.why-card.card-purple { background-color: #f6edff; }
+
+.why-card:nth-child(odd) {
+    transform: rotate(-2.5deg);
+}
+
+.why-card:nth-child(even) {
+    transform: rotate(2.5deg);
+}
+
+.why-card:hover,
+.why-card:active {
+    transform: rotate(0deg) translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+}
+
+.why-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.card-yellow .why-card-icon { background-color: #f7ba2a; }
+.card-blue .why-card-icon   { background-color: #4a72ff; }
+.card-green .why-card-icon  { background-color: #2ec4b6; }
+.card-purple .why-card-icon { background-color: #9d4edd; }
+
+.why-card-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: #ffffff;
+}
+
+.why-card h3 {
+    font-size: 17px;
+    margin-bottom: 10px;
+    font-weight: 800;
+}
+
+.card-yellow h3 { color: #8a5a00; }
+.card-blue h3   { color: #1e3a8a; }
+.card-green h3  { color: #0d5c53; }
+.card-purple h3 { color: #5a189a; }
+
+.why-card p {
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.card-yellow p { color: #7a5c1e; }
+.card-blue p   { color: #3b5284; }
+.card-green p  { color: #226d62; }
+.card-purple p { color: #6e3a9c; }
+
+/* ========================================
+   WIDGET ASISTEN ELAINA (POJOK KANAN BAWAH)
+======================================== */
+.menfess-widget-wrapper {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* ANIMASI BUBBLE CHAT TAMPIL & HILANG BERGANTIAN */
+.menfess-chat-bubble {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #1d3557;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 18px;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin-bottom: 8px;
+    border: 2px solid orange;
+    cursor: pointer;
+    position: relative;
+    animation: popInOut 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes popInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.9);
+        pointer-events: none;
+    }
+    10%, 45% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+    55%, 100% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.9);
+        pointer-events: none;
+    }
+}
+
+.menfess-btn-avatar {
+    width: 72px;
+    height: 72px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease;
+    overflow: hidden;
+    opacity: 0.9;
+}
+
+.menfess-btn-avatar:hover {
+    transform: scale(1.12) rotate(-5deg);
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.menfess-btn-avatar img {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+}
+
+/* MODAL INFORMASI ASISTEN (POP-UP INFO) */
+.info-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.info-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.info-modal-card {
+    background: rgba(255, 255, 255, 0.96);
+    width: 100%;
+    max-width: 380px;
+    border-radius: 26px;
+    padding: 25px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    border: 2px solid orange;
+    transform: scale(0.85) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    text-align: center;
+}
+
+.info-modal-overlay.active .info-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.info-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    border: none;
+    font-size: 16px;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s ease;
+}
+
+.info-close-btn:hover { background: #e2e8f0; color: #0f172a; }
+
+.info-avatar-pop {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin: 0 auto 10px auto;
+}
+
+.info-modal-card h3 {
+    font-size: 18px;
+    font-weight: 900;
+    color: #1d3557;
+    margin-bottom: 8px;
+}
+
+.info-modal-card p {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    text-align: left;
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.info-ok-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    background: orange;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(2, 132, 199, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.info-ok-btn:hover { transform: translateY(-2px); }
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    gap: 25px;
+  }
+}
+@media (max-width: 768px) {
+    .navbar { top: 10px; width: calc(100% - 20px); height: 56px; padding: 0 10px; }
+    .hero { height: 115vh; }
+    .hero-content { top: 150px; width: 94%; padding: 0 10px; }
+    .hero-title { font-size: clamp(28px, 8vw, 40px); }
+    .menfess-btn-avatar { width: 54px; height: 54px; }
+    .menfess-btn-avatar img { width: 70px; height: 70px; }
+    .menfess-widget-wrapper { bottom: 16px; right: 16px; }
+}
+
+@media (min-width: 769px) {
+    .hero { height: 120vh; }
+    .hero-stage { height: 100vh; min-height: 650px; }
+    .hero-content { top: 190px; width: min(850px, 82vw); }
+}
+
+/* Footer Style */
+.site-footer {
+  background-color: #0f172a;
+  color: #94a3b8;
+  padding: 50px 20px 25px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+}
+
+.footer-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 30px;
+  padding-bottom: 35px;
+  border-bottom: 1px solid #1e293b;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 220px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.footer-logo h3 {
+  color: #ffffff;
+  font-size: 20px;
+  margin: 0;
+}
+
+.footer-desc {
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background-color: #1e293b;
+  color: #ffffff;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+  background-color: #10b981;
+  transform: translateY(-3px);
+}
+
+.footer-column h4 {
+  color: #ffffff;
+  font-size: 16px;
+  margin-bottom: 18px;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-column ul li a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-column ul li a:hover {
+  color: #ffffff;
+}
+
+.footer-bottom {
+  max-width: 1100px;
+  margin: 20px auto 0;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  padding: 0 16px;
+}
+
+.footer-bottom p {
+  margin: 4px 0;
+}
+
+.footer-bottom .credits {
+  margin-top: 8px;
+  color: #94a3b8;
+}
+
+.footer-bottom strong {
+  color: #10b981;
+}
+
+.footer-bottom span {
+  color: #cbd5e1;
+}
+
+@media (max-width: 768px) {
+    .navbar { top: 10px; width: calc(100% - 20px); height: 56px; padding: 0 10px; }
+    .hero { height: 115vh; }
+    .hero-content { top: 150px; width: 94%; padding: 0 10px; }
+    .hero-title { font-size: clamp(28px, 8vw, 40px); }
+    .footer-container { flex-direction: column; gap: 25px; }
+    .why-grid {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+    }
+    .why-card:nth-child(odd), .why-card:nth-child(even) {
+        transform: rotate(0deg) !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="loading-screen">
+  <div class="flash-overlay"></div>
+  <div class="loader-content">
+    <div class="logo-box">
+      <img src="logo.jpg" alt="Logo Kelas" class="logo-img">
+    </div>
+    <h2>CYBERMIMPI</h2>
+    <div class="indicator-wrapper">
+      <div class="cyber-spinner"></div>
+      <div class="progress-track">
+        <div class="progress-bar"></div>
+      </div>
+    </div>
+    <p class="loading-text">Memuat halaman...</p>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-brand-logos">
+        <div class="mini-logo">
+            <img src="logo.jpg" alt="Logo Kelas">
+        </div>
+    </div>
+    <div class="nav-links">
+        <a href="index.html">Beranda</a>
+        <a href="Wawa.html">Card</a>
+        <a href="idek.html">Jadwal</a>
+        <a href="belajar.html" class="nav-btn-action">Belajar</a>
+    </div>
+</nav>
+
+<!-- HERO SECTION -->
+<main>
+<section class="hero" id="home">
+    <div class="hero-stage">
+        <div class="hero-content" id="heroContent">
+            <h1 class="hero-title">
+                Mau belajar yaa,
+                <span class="flip-container">
+                    <span class="flip-box" id="flipText">Wahh Kamu hebat</span>
+                </span>
+            </h1>
+        </div>
+
+        <div class="vector-scene">
+            <div class="sun-emoji" id="sun">
+                <div class="sun-core"></div>
+                <div class="sun-rays">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+            </div>
+
+            <div class="vector-layer layer-cloud" id="layerCloud">
+                <div class="cloud cloud-1"></div>
+                <div class="cloud cloud-2"></div>
+            </div>
+
+            <div class="vector-layer layer-mountain" id="layerMountain">
+                <div class="mountain mountain-1"></div>
+                <div class="mountain mountain-2"></div>
+                <div class="mountain mountain-3"></div>
+            </div>
+            
+            <div class="vector-layer layer-birds" id="layerBirds">
+                <svg class="bird bird-1" viewBox="0 0 120 60"><path d="M10 35 Q30 10 55 32 Q80 10 110 35" fill="none" stroke="#1d3557" stroke-width="6" stroke-linecap="round"/></svg>
+                <svg class="bird bird-2" viewBox="0 0 120 60"><path d="M10 35 Q30 10 55 32 Q80 10 110 35" fill="none" stroke="#1d3557" stroke-width="6" stroke-linecap="round"/></svg>
+                <svg class="bird bird-3" viewBox="0 0 120 60"><path d="M10 35 Q30 10 55 32 Q80 10 110 35" fill="none" stroke="#1d3557" stroke-width="6" stroke-linecap="round"/></svg>
+                <svg class="bird bird-4" viewBox="0 0 120 60"><path d="M10 35 Q30 10 55 32 Q80 10 110 35" fill="none" stroke="#1d3557" stroke-width="6" stroke-linecap="round"/></svg>
+                <svg class="bird bird-5" viewBox="0 0 120 60"><path d="M10 35 Q30 10 55 32 Q80 10 110 35" fill="none" stroke="#1d3557" stroke-width="6" stroke-linecap="round"/></svg>
+            </div>
+
+            <div class="vector-layer layer-school" id="layerSchool">
+                <div class="school">
+                    <div class="school-roof"></div>
+                    <div class="school-name">SMKN 8 GARUT</div>
+                    <div class="school-windows">
+                        <span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vector-layer layer-front" id="layerFront">
+                <div class="front-ground"></div>
+                
+                <div class="pine-tree tree-1">
+                    <div class="tier tier-top"></div>
+                    <div class="tier tier-mid"></div>
+                    <div class="tier tier-bot"></div>
+                    <div class="trunk"></div>
+                </div>
+
+                <div class="pine-tree tree-2">
+                    <div class="tier tier-top"></div>
+                    <div class="tier tier-mid"></div>
+                    <div class="tier tier-bot"></div>
+                    <div class="trunk"></div>
+                </div>
+
+                <div class="pine-tree tree-3">
+                    <div class="tier tier-top"></div>
+                    <div class="tier tier-mid"></div>
+                    <div class="tier tier-bot"></div>
+                    <div class="trunk"></div>
+                </div>
+
+                <div class="front-road"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EXPLORE SECTION (1 Landscape di Atas, 3 di Bawah) -->
+<section class="explore-photo-section">
+    <div class="explore-photo-container">
+        <div class="explore-photo-heading">
+            <span style="color: orange;">EXPLORE</span>
+            <h2>Jelajahi <span style="color: orange; font-size: clamp(28px, 4vw, 40px); font-weight: 900;">Pembelajaran</span></h2>
+            <p>Temukan berbagai ruang belajar digital untuk semuanya</p>
+        </div>
+
+        <div class="explore-photo-grid">
+            <!-- Card 1: Landscape Penuh di Atas (Span 3 Kolom) -->
+            <a href="belajarm.html" class="photo-card photo-featured">
+                <img src="pelajaran.jpg" alt="Pembelajaran">
+                <div class="photo-overlay">
+                    <div>
+                        <span>Pembelajaran</span>
+                        <h3>Belajar Jadi Lebih Seru</h3>
+                        <p>Materi dan pembelajaran untuk semua</p>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Card 2: Baris Bawah (Kiri) -->
+            <a href="Quizz.html" class="photo-card">
+                <img src="quiz.jpg" alt="Quiz">
+                <div class="photo-overlay">
+                    <div><span>Uji kemampuan</span><h3>Quiz</h3></div>
+                </div>
+            </a>
+
+            <!-- Card 3: Baris Bawah (Tengah) -->
+            <a href="mini.html" class="photo-card">
+                <img src="games.jpg" alt="Games">
+                <div class="photo-overlay">
+                    <div><span>Games</span><h3>Main Bareng</h3></div>
+                </div>
+            </a>
+
+            <!-- Card 4: Baris Bawah (Kanan) -->
+            <a href="cybermimpipccreator.html" class="photo-card">
+                <img src="cybermimpipccreator.jpg" alt="ID Card">
+                <div class="photo-overlay">
+                    <div><span>Yuu kita belajar rakit pc</span><h3>Merakit</h3></div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION: JALUR PEMBELAJARAN (WHY-GRID STYLE) -->
+<section class="tujuan" id="tentang">
+    <h2 class="section-title">Jalur <span style="color: orange;">Pembelajaran</span></h2>
+    <p class="section-desc">Jalur pembelajaran di website ini disusun untuk mengasah kemampuan teknologi dan dapat digunakan oleh siapa saja.</p>
+
+    <div class="why-grid">
+        <!-- Card 1: Materi & Modul Belajar -->
+        <div class="why-card card-yellow">
+            <div class="why-card-icon">
+                <svg viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z"/></svg>
+            </div>
+            <h3>Materi & Modul Belajar</h3>
+            <p>Pusat akses materi dan modul pembelajaran digital yang disusun agar mudah dipahami oleh siapa saja yang ingin belajar.</p>
+        </div>
+
+        <!-- Card 2: Latihan & Kuis Interaktif -->
+        <div class="why-card card-blue">
+            <div class="why-card-icon">
+                <svg viewBox="0 0 24 24"><path d="M9 4.5A3 3 0 0 0 4.5 7a3 3 0 0 0 .8 5.8A3 3 0 0 0 8 18a3 3 0 0 0 5 1.5V4.5A3 3 0 0 0 9 4.5Z"/></svg>
+            </div>
+            <h3>Latihan & Kuis Interaktif</h3>
+            <p>Uji tingkat pemahaman kamu terhadap materi yang dipelajari melalui latihan soal dan kuis interaktif yang seru.</p>
+        </div>
+
+        <!-- Card 3: Games & Simulasi -->
+        <div class="why-card card-green">
+            <div class="why-card-icon">
+                <svg viewBox="0 0 24 24"><path d="M7 8h10a5 5 0 0 1 4.8 6.4l-1.1 4a2 2 0 0 1-3.7.5l-1.3-2.2H8.3L7 18.9a2 2 0 0 1-3.7-.5l-1.1-4A5 5 0 0 1 7 8Z"/></svg>
+            </div>
+            <h3>Games & Simulasi</h3>
+            <p>Selingan permainan edukatif dan simulasi ringan untuk melatih logika sekaligus menghilangkan kejenuhan.</p>
+        </div>
+
+        <!-- Card 4: Galeri & Portofolio -->
+        <div class="why-card card-purple">
+            <div class="why-card-icon">
+                <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2z"/></svg>
+            </div>
+            <h3>Galeri & Portofolio</h3>
+            <p>Kumpulan hasil karya, proyek digital, dan dokumentasi inspiratif yang bisa dieksplorasi kapan saja.</p>
+        </div>
+    </div>
+</section>
+</main>
+    
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-column brand-col">
+      <div class="footer-logo">
+        <span class="logo-icon"></span>
+        <h3>CyberMimpi</h3>
+      </div>
+      <p class="footer-desc">
+        Platform edukasi dan portal informasi kelas XI TKJ 2 SMKN 8 Garut.
+      </p>
+      
+      <div class="social-icons">
+        <a href="https://instagram.com/username_kamu" target="_blank" aria-label="Instagram">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+        </a>
+
+        <a href="https://wa.me/6285188418938" target="_blank" aria-label="WhatsApp">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+          </svg>
+        </a>
+
+        <a href="https://t.me/username_kamu" target="_blank" aria-label="Telegram">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.196 1.006.128.832.942z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    
+    <!-- WIDGET ASISTEN ELAINA (POJOK KANAN BAWAH) -->
+<div class="menfess-widget-wrapper">
+    <div class="menfess-chat-bubble" onclick="openInfoModal()">
+        Pssst...
+    </div>
+    <div class="menfess-btn-avatar" onclick="openInfoModal()">
+        <img src="assisten.png" alt="Asisten Elaina">
+    </div>
+</div>
+
+<!-- MODAL POPUP INFORMASI & CANDAAN -->
+<div class="info-modal-overlay" id="infoModal">
+    <div class="info-modal-card">
+        <button class="info-close-btn" onclick="closeInfoModal()">&times;</button>
+        <img src="assisten.png" class="info-avatar-pop" alt="Elaina">
+        <h3>Halo, Pendatang</h3>
+        <p>
+            Kamu mau belajarr yaa? ouhh iyaa pencett ajaa di bagiann fotoo yangg lanscape yaaa? biarr modulee nya muncull semuaa yaaa??<br><br>
+            💡 <em>Tips Pro:</em> Nikmatii yaa pembelajaran nyaa, jangann lupaa dii bacaa dulu sampai bawahh materii nyaa sebelumm eksekusii, okeee?
+        </p>
+        <button class="info-ok-btn" onclick="closeInfoModal()">Okee Siapp</button>
+    </div>
+</div>
+
+    <div class="footer-column links-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Beranda</a></li>
+        <li><a href="Wawa">Anggota</a></li>
+        <li><a href="idek.html">Jadwal</a></li>
+        <li><a href="belajar.html">Belajar</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column contact-col">
+      <h4>Kontak</h4>
+      <ul>
+        <li>📍 Garut, Jawa Barat</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2026 CyberMimpi. All rights reserved.</p>
+    <p class="credits">
+      Developed by <strong>Fito Purnama</strong> 
+    </p>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('load', () => {
+  const loader = document.getElementById('loading-screen');
+  setTimeout(() => { if(loader) loader.classList.add('hide'); }, 1000);
+});
+
+const hero = document.querySelector(".hero");
+const heroContent = document.getElementById("heroContent");
+const layerCloud = document.getElementById("layerCloud");
+const layerMountain = document.getElementById("layerMountain");
+const layerBirds = document.getElementById("layerBirds");
+const layerSchool = document.getElementById("layerSchool");
+const layerFront = document.getElementById("layerFront");
+const sun = document.getElementById("sun");
+
+let heroTicking = false;
+
+function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+
+function updateHeroStack() {
+    if (!hero) return;
+    const rect = hero.getBoundingClientRect();
+    const travel = Math.max(1, hero.offsetHeight - window.innerHeight);
+    let progress = clamp(-rect.top / travel, 0, 1);
+
+    heroContent.style.transform = `translate3d(-50%, ${progress * 42}px, 0)`;
+    heroContent.style.opacity = 1 - progress * .25;
+    layerCloud.style.transform = `translate3d(0, ${progress * 70}px, 0)`;
+    layerMountain.style.transform = `translate3d(0, ${progress * -40}px, 0)`;
+    
+    if (layerBirds) {
+        layerBirds.style.transform = `translate3d(${progress * 18}px, ${progress * -35}px, 0)`;
+    }
+    layerSchool.style.transform = `translate3d(0, ${progress * -30}px, 0)`;
+    layerFront.style.transform = `translate3d(0, ${progress * -70}px, 0)`;
+
+    if (sun) {
+        sun.style.transform = `translate3d(${progress * -20}px, ${progress * 60}px, 0) scale(${1 - progress * .1})`;
+    }
+
+    heroTicking = false;
+}
+
+window.addEventListener("scroll", () => {
+    if (!heroTicking) {
+        requestAnimationFrame(updateHeroStack);
+        heroTicking = true;
+    }
+}, { passive: true });
+
+updateHeroStack();
+
+const flipTextElement = document.getElementById("flipText");
+const words = ["Mau Nugas?", "Cie Mau Belajarr", "Semangatt Yaa Belajarnyaaa"];
+let currentIndex = 0;
+setInterval(() => {
+    flipTextElement.classList.add("is-flipping");
+    setTimeout(() => {
+        currentIndex = (currentIndex + 1) % words.length;
+        flipTextElement.textContent = words[currentIndex];
+    }, 250);
+    setTimeout(() => { flipTextElement.classList.remove("is-flipping"); }, 500);
+}, 3000);
+
+/* ========================================
+   FUNGSI MODAL INFORMASI ASISTEN
+======================================== */
+function openInfoModal() {
+    document.getElementById('infoModal').classList.add('active');
+}
+
+function closeInfoModal() {
+    document.getElementById('infoModal').classList.remove('active');
+}
+</script>
+</body>
+</html>

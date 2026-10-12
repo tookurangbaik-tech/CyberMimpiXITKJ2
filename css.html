@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Styling Studio • CyberMimpi</title>
+<meta name="description" content="Studio Belajar 30 Misi CSS Interaktif bersama Asisten Elaina.">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#f5f8fc;color:#172033}
+body{padding:20px 14px 80px}
+button{cursor:pointer;font:inherit}
+.page{width:min(1200px,100%);margin:auto}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:42px;height:42px;object-fit:contain;border-radius:12px;background:#fff;border:1px solid #e5eaf1;padding:5px}
+.brand small{display:block;color:#789;font-size:10px;font-weight:800;letter-spacing:1.4px}
+.brand b{font-size:17px;color:#1d3557}
+.back{border:1px solid #dce4ee;background:#fff;color:#36506e;padding:10px 14px;border-radius:14px;text-decoration:none;font-size:12px;font-weight:800}
+
+/* FLOATING ASSISTANT */
+.floating-assistant{position:sticky;top:15px;z-index:95;background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:20px;padding:14px 18px;color:#fff;display:grid;grid-template-columns:60px 1fr;gap:14px;align-items:center;box-shadow:0 12px 35px rgba(15,23,42,.28);margin-bottom:16px;border:1px solid #334155;backdrop-filter:blur(10px)}
+.assistant-avatar{height:65px;display:flex;align-items:flex-end;justify-content:center;animation:float 3.5s ease-in-out infinite}
+.assistant-avatar img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.assistant-dialog b{color:#60a5fa;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+#storyText{margin:4px 0 0;font-size:13px;line-height:1.5;color:#e2e8f0;transition:opacity .25s}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* KOTAK NAVIGASI MISI CSS (30 KOTAK) */
+.mission-grid-container{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:14px;margin-bottom:16px;box-shadow:0 4px 15px rgba(29,53,87,.03)}
+.mission-grid-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:12px;font-weight:800;color:#475569}
+.mission-grid{display:grid;grid-template-columns:repeat(15, 1fr);gap:5px}
+@media(max-width:768px){.mission-grid{grid-template-columns:repeat(6, 1fr)}}
+.m-box{aspect-ratio:1;border:1px solid #cbd5e1;background:#f8fafc;border-radius:6px;font-size:10.5px;font-weight:800;color:#64748b;display:flex;align-items:center;justify-content:center;transition:.15s}
+.m-box:hover{border-color:#3b82f6;color:#3b82f6}
+.m-box.active{background:#3b82f6;color:#fff;border-color:#3b82f6;box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.m-box.completed{background:#10b981;color:#fff;border-color:#10b981}
+
+/* STATISTIK */
+.stats-bar{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+.stat-box{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:10px;text-align:center;box-shadow:0 4px 12px rgba(29,53,87,.03)}
+.stat-box span{display:block;font-size:10px;font-weight:800;color:#64748b;letter-spacing:1px}
+.stat-box b{font-size:16px;color:#1d3557}
+
+/* WORKSPACE */
+.workspace{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:850px){.workspace{grid-template-columns:1fr}}
+
+.panel{background:#fff;border:1px solid #e1e8f0;border-radius:22px;padding:20px;box-shadow:0 10px 30px rgba(29,53,87,.05);display:flex;flex-direction:column;height:520px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.panel-head h3{margin:0;font-size:16px;color:#1d3557}
+.pill{background:#eef6ff;color:#1d5f91;font-size:10px;font-weight:900;padding:5px 10px;border-radius:99px}
+
+.instructions{min-height:80px;max-height:100px;overflow-y:auto;font-size:12.5px;line-height:1.5;color:#475569;background:#f8fafc;padding:12px;border-radius:14px;border:1px solid #e2e8f0;margin-bottom:10px}
+.instructions h4{color:#1e293b;margin:0 0 4px;font-size:13px}
+.instructions code{background:#e2e8f0;color:#2563eb;padding:2px 5px;border-radius:4px;font-family:monospace;font-size:11.5px}
+
+/* EDITOR & PREVIEW */
+.editor-box{flex:1;display:flex;flex-direction:column;gap:6px}
+textarea{width:100%;flex:1;background:#0b1329;color:#38bdf8;font-family:monospace;font-size:13px;padding:14px;border-radius:14px;border:1px solid #1e293b;resize:none;outline:none;line-height:1.5}
+.preview-box{flex:1;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;overflow-y:auto}
+
+.panel-actions{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.btn-primary{background:#1d5f91;color:#fff;border:0;border-radius:12px;padding:10px 18px;font-weight:800;font-size:12px;transition:.2s}
+.btn-primary:hover{background:#154a73}
+
+.btn-download{background:#10b981;color:#fff;border:0;border-radius:12px;padding:10px 16px;font-weight:800;font-size:12px;transition:.2s;display:flex;align-items:center;gap:6px}
+.btn-download:hover{background:#059669}
+
+/* HINT BUTTON */
+.hint-float{position:fixed;right:20px;bottom:25px;background:#f59e0b;color:#fff;border:0;width:50px;height:50px;border-radius:50%;box-shadow:0 8px 25px rgba(245,158,11,.4);display:flex;align-items:center;justify-content:center;font-size:22px;z-index:99;transition:.2s}
+.hint-float:hover{transform:scale(1.08);background:#d97706}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="topbar">
+  <div class="brand">
+    <img src="logo.jpg" alt="Logo XI TKJ 2" onerror="this.src='https://via.placeholder.com/42?text=TKJ'">
+    <div><small>CYBERMIMPI</small><b>XI TKJ 2 • CSS Studio</b></div>
+  </div>
+  <a class="back" href="belajarm.html">← Kembali</a>
+</header>
+
+<!-- FLOATING ASSISTANT -->
+<section class="floating-assistant">
+  <div class="assistant-avatar">
+    <img src="assisten.png" alt="Elaina" onerror="this.src='https://via.placeholder.com/60x65?text=Asisten'">
+  </div>
+  <div class="assistant-dialog">
+    <b id="storyTitle">Misi 1: Tag Style CSS</b>
+    <p id="storyText">Halo! Selamat datang di CSS Studio. Mari kita percantik tampilan web dalam 30 misi styling! ✨</p>
+  </div>
+</section>
+
+<!-- KOTAK NAVIGASI MISI CSS (30 KOTAK) -->
+<div class="mission-grid-container">
+  <div class="mission-grid-header">
+    <span>NAVIGASI 30 MISI CSS STYLING</span>
+    <span id="gridProgressText">Progres: 0 / 30 Selesai</span>
+  </div>
+  <div class="mission-grid" id="missionGridBoxes"></div>
+</div>
+
+<!-- STATISTIK -->
+<div class="stats-bar">
+  <div class="stat-box">
+    <span>JAWABAN BENAR</span>
+    <b id="statCorrect" style="color:#10b981">0</b>
+  </div>
+  <div class="stat-box">
+    <span>JAWABAN SALAH</span>
+    <b id="statWrong" style="color:#ef4444">0</b>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+  <!-- PANEL KIRI: MATERI & EDITOR -->
+  <div class="panel">
+    <div class="panel-head">
+      <h3 id="lessonTitle">1. Tag Style</h3>
+      <span class="pill" id="lessonCounter">MISI 1</span>
+    </div>
+    <div class="instructions" id="lessonInstructions">
+      <p>Instruksi misi...</p>
+    </div>
+    
+    <div class="editor-box">
+      <div style="font-size:10px;font-weight:800;color:#64748b;letter-spacing:1px">EDITOR KODE CSS:</div>
+      <textarea id="codeEditor" placeholder="Ketik kode CSS kamu di sini..."></textarea>
+    </div>
+
+    <div class="panel-actions">
+      <span id="feedbackStatus" style="font-size:11px;font-weight:800;color:#64748b">Mulai mengetik...</span>
+      <button class="btn-primary" id="nextBtn" onclick="nextMission()">Lanjut Misi →</button>
+    </div>
+  </div>
+
+  <!-- PANEL KANAN: LIVE PREVIEW & DOWNLOAD -->
+  <div class="panel">
+    <div class="panel-head">
+      <h3>Live Preview Styling</h3>
+      <button class="btn-download" onclick="downloadCode()" title="Download file CSS">💾 Download File CSS</button>
+    </div>
+    <div class="preview-box" id="previewArea">
+      <span style="color:#94a3b8;font-style:italic;">Hasil render CSS akan muncul di sini...</span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<button class="hint-float" onclick="triggerHint()" title="Minta Bantuan Asisten">💡</button>
+
+<script>
+// 30 MISI CSS STYLING BERTAHAP
+const missions = [
+  { title: "1. Tag Style", sub: "Misi 1: Menyisipkan CSS", desc: "Ketik tag <code>&lt;style&gt;&lt;/style&gt;</code> di dalam head dokumen HTML.", check: c => c.toLowerCase().includes("<style>") && c.toLowerCase().includes("</style>") },
+  { title: "2. Selektor Body", sub: "Misi 2: Selektor Tag Body", desc: "Buat selektor body: <code>body { }</code>", check: c => c.toLowerCase().includes("body") && c.toLowerCase().includes("{") },
+  { title: "3. Background Color", sub: "Misi 3: Warna Latar Belakang", desc: "Beri warna background pada body: <code>background: #f5f8fc;</code>", check: c => c.toLowerCase().includes("background") },
+  { title: "4. Warna Teks Dasar", sub: "Misi 4: Warna Teks Utama", desc: "Atur warna teks global: <code>color: #172033;</code>", check: c => c.toLowerCase().includes("color") },
+  { title: "5. Jenis Huruf", sub: "Misi 5: Font Family", desc: "Atur jenis huruf: <code>font-family: sans-serif;</code>", check: c => c.toLowerCase().includes("font-family") },
+  { title: "6. Selektor Heading", sub: "Misi 6: Styling H1", desc: "Buat selektor untuk h1: <code>h1 { color: #1d3557; }</code>", check: c => c.toLowerCase().includes("h1") },
+  { title: "7. Ukuran Font", sub: "Misi 7: Font Size H1", desc: "Atur ukuran teks h1: <code>font-size: 28px;</code>", check: c => c.toLowerCase().includes("font-size") },
+  { title: "8. Perataan Teks", sub: "Misi 8: Text Align Center", desc: "Posisikan teks ke tengah: <code>text-align: center;</code>", check: c => c.toLowerCase().includes("text-align") },
+  { title: "9. Selektor Class", sub: "Misi 9: Membuat Class CSS", desc: "Buat selektor class titik: <code>.kartu { background: white; }</code>", check: c => c.toLowerCase().includes(".kartu") },
+  { title: "10. Padding Kotak", sub: "Misi 10: Padding Dalam", desc: "Beri jarak dalam kotak kartu: <code>padding: 20px;</code>", check: c => c.toLowerCase().includes("padding") },
+  { title: "11. Border Radius", sub: "Misi 11: Membulatkan Sudut", desc: "Buat sudut melengkung: <code>border-radius: 12px;</code>", check: c => c.toLowerCase().includes("border-radius") },
+  { title: "12. Box Shadow", sub: "Misi 12: Efek Bayangan Lembut", desc: "Beri bayangan pada kotak: <code>box-shadow: 0 4px 15px rgba(0,0,0,0.05);</code>", check: c => c.toLowerCase().includes("box-shadow") },
+  { title: "13. Margin Luar", sub: "Misi 13: Jarak Luar Margin", desc: "Beri jarak luar: <code>margin: 15px auto;</code>", check: c => c.toLowerCase().includes("margin") },
+  { title: "14. Lebar Maksimal", sub: "Misi 14: Max Width", desc: "Batasi lebar kontainer: <code>max-width: 400px;</code>", check: c => c.toLowerCase().includes("max-width") },
+  { title: "15. Border Garis", sub: "Misi 15: Border Kotak", desc: "Tambahkan garis tepi: <code>border: 1px solid #e2e8f0;</code>", check: c => c.toLowerCase().includes("border:") || c.toLowerCase().includes("border :") },
+  { title: "16. Styling Gambar", sub: "Misi 16: Foto Profil Lingkaran", desc: "Selektor img untuk bulatkan foto: <code>img { border-radius: 50%; }</code>", check: c => c.toLowerCase().includes("img") },
+  { title: "17. Ukuran Gambar", sub: "Misi 17: Width & Height Img", desc: "Atur lebar dan tinggi gambar: <code>width: 90px; height: 90px;</code>", check: c => c.toLowerCase().includes("width") && c.toLowerCase().includes("height") },
+  { title: "18. Selektor Link", sub: "Misi 18: Menghilangkan Garis Bawah Link", desc: "Selektor a untuk hilangkan underline: <code>a { text-decoration: none; }</code>", check: c => c.toLowerCase().includes("text-decoration") },
+  { title: "19. Styling Tombol", sub: "Misi 19: Desain Tombol Kelas", desc: "Buat class tombol: <code>.btn { background: #3b82f6; color: white; }</code>", check: c => c.toLowerCase().includes(".btn") },
+  { title: "20. Tombol Padding", sub: "Misi 20: Padding Tombol", desc: "Beri ukuran padding tombol: <code>padding: 10px 20px;</code>", check: c => c.toLowerCase().includes("padding") },
+  { title: "21. Efek Hover Tombol", sub: "Misi 21: Animasi Hover", desc: "Tambahkan efek saat disentuh kursor: <code>.btn:hover { background: #1d4ed8; }</code>", check: c => c.toLowerCase().includes(":hover") },
+  { title: "22. Display Flex", sub: "Misi 22: Pengenalan Flexbox", desc: "Gunakan layout fleksibel: <code>display: flex;</code>", check: c => c.toLowerCase().includes("display: flex") || c.toLowerCase().includes("display:flex") },
+  { title: "23. Justify Content", sub: "Misi 23: Perataan Flex", desc: "Atur posisi sumbu utama: <code>justify-content: space-between;</code>", check: c => c.toLowerCase().includes("justify-content") },
+  { title: "24. Align Items", sub: "Misi 24: Kesejajaran Vertikal", desc: "Atur posisi vertikal: <code>align-items: center;</code>", check: c => c.toLowerCase().includes("align-items") },
+  { title: "25. Gap Spasi Flex", sub: "Misi 25: Jarak Antar Item Flex", desc: "Beri jarak antar elemen flex: <code>gap: 12px;</code>", check: c => c.toLowerCase().includes("gap:") || c.toLowerCase().includes("gap :") },
+  { title: "26. Transisi Halus", sub: "Misi 26: Efek Transition", desc: "Buat animasi perpindahan halus: <code>transition: 0.2s;</code>", check: c => c.toLowerCase().includes("transition") },
+  { title: "27. Cursor Pointer", sub: "Misi 27: Ubah Kursor Tombol", desc: "Ubah bentuk kursor saat di atas tombol: <code>cursor: pointer;</code>", check: c => c.toLowerCase().includes("cursor") },
+  { title: "28. Opacity & Efek", sub: "Misi 28: Transparansi Teks", desc: "Atur tingkat kejelasan: <code>opacity: 0.9;</code>", check: c => c.toLowerCase().includes("opacity") },
+  { title: "29. Media Queries Dasar", sub: "Misi 29: Responsif Layar Kecil", desc: "Gunakan aturan media query: <code>@media (max-width: 600px) { }</code>", check: c => c.toLowerCase().includes("@media") },
+  { title: "30. Mahakarya CSS Selesai", sub: "Misi 30: Selesaikan 30 Misi CSS", desc: "Pastikan seluruh 30 aturan styling CSS portofoliomu lengkap dan indah!", check: c => c.toLowerCase().includes("<style>") && c.toLowerCase().includes("body") && c.toLowerCase().includes(".btn") }
+];
+
+let currentMission = parseInt(localStorage.getItem("css_studio_mission")) || 0;
+let correctCount = parseInt(localStorage.getItem("css_studio_correct")) || 0;
+let wrongCount = parseInt(localStorage.getItem("css_studio_wrong")) || 0;
+let completedMissions = JSON.parse(localStorage.getItem("css_studio_completed")) || new Array(30).fill(false);
+
+// Ambil nama dari localStorage, default ke "Fito" jika belum ada
+const userName = localStorage.getItem('cyberMimpi_userName') || "Fito";
+
+let savedCode = localStorage.getItem("css_studio_code") || `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <title>Portofolio CSS</title>\n  <style>\n    /* Ketik kode CSS kamu di bawah sini */\n    \n  </style>\n</head>\n<body>\n  <div class="kartu">\n    <h1>Halo ${userName}!</h1>\n    <p>Ini adalah halaman portofolio styling CSS.</p>\n    <a href="#" class="btn">Kontak Saya</a>\n  </div>\n</body>\n</html>`;
+
+const storyTitle = document.getElementById("storyTitle");
+const storyText = document.getElementById("storyText");
+const lessonTitle = document.getElementById("lessonTitle");
+const lessonCounter = document.getElementById("lessonCounter");
+const lessonInstructions = document.getElementById("lessonInstructions");
+const codeEditor = document.getElementById("codeEditor");
+const previewArea = document.getElementById("previewArea");
+const feedbackStatus = document.getElementById("feedbackStatus");
+const missionGridBoxes = document.getElementById("missionGridBoxes");
+const gridProgressText = document.getElementById("gridProgressText");
+
+const statCorrect = document.getElementById("statCorrect");
+const statWrong = document.getElementById("statWrong");
+
+const introDialogs = [
+  "Misi 1: Awali dengan membuat tag <style> di dalam <head>.",
+  "Misi 2: Buat selektor body di dalam CSS.",
+  "Misi 3: Beri warna background yang estetik.",
+  "Misi 4: Atur warna teks utama agar mudah dibaca.",
+  "Misi 5: Pilih jenis font (font-family) yang bersih.",
+  "Misi 6: Buat selektor untuk judul h1.",
+  "Misi 7: Atur ukuran teks h1 biar gagah.",
+  "Misi 8: Posisikan teks ke tengah pakai text-align.",
+  "Misi 9: Bikin class kartu (.kartu) untuk wadah konten.",
+  "Misi 10: Beri jarak dalam (padding) pada kartu.",
+  "Misi 11: Lengkungkan sudut kartu pakai border-radius.",
+  "Misi 12: Beri efek bayangan melayang (box-shadow).",
+  "Misi 13: Atur margin luar kartu.",
+  "Misi 14: Batasi lebar maksimal kartu.",
+  "Misi 15: Beri garis tepi (border) tipis yang elegan.",
+  "Misi 16: Styling tag img agar profil melingkar.",
+  "Misi 17: Atur lebar & tinggi gambar profil.",
+  "Misi 18: Hilangkan garis bawah link default pakai text-decoration.",
+  "Misi 19: Rancang class tombol (.btn) yang menarik.",
+  "Misi 20: Beri ukuran padding pada tombol.",
+  "Misi 21: Tambahkan efek interaktif saat kursor menyentuh tombol (:hover).",
+  "Misi 22: Kenalan sama Flexbox (display: flex).",
+  "Misi 23: Atur posisi elemen fleksibel pakai justify-content.",
+  "Misi 24: Atur kesejajaran vertikal pakai align-items.",
+  "Misi 25: Beri jarak antar elemen flex pakai gap.",
+  "Misi 26: Tambahkan transisi halus (transition).",
+  "Misi 27: Ubah bentuk kursor jadi telunjuk (cursor: pointer).",
+  "Misi 28: Mainkan tingkat transparansi (opacity).",
+  "Misi 29: Buat web responsif dengan @media query.",
+  "Misi 30: Luar biasa! 30 Misi CSS Styling tuntas dengan sempurna!"
+];
+
+function renderMissionGrid() {
+  missionGridBoxes.innerHTML = "";
+  let finishedCount = completedMissions.filter(Boolean).length;
+  
+  missions.forEach((m, idx) => {
+    const box = document.createElement("div");
+    box.className = "m-box";
+    box.textContent = idx + 1;
+    box.title = m.title;
+    
+    if(idx === currentMission) box.classList.add("active");
+    if(completedMissions[idx]) box.classList.add("completed");
+    
+    box.onclick = () => {
+      currentMission = idx;
+      clueClickCount = 0; // Reset clue saat pindah misi
+      loadMission();
+    };
+    missionGridBoxes.appendChild(box);
+  });
+  
+  gridProgressText.textContent = `Progres: ${finishedCount} / 30 Selesai`;
+}
+
+function loadMission() {
+  const m = missions[currentMission];
+  lessonTitle.textContent = m.title;
+  lessonCounter.textContent = `MISI ${currentMission + 1}`;
+  lessonInstructions.innerHTML = `<h4>Instruksi Misi:</h4><p>${m.desc}</p>`;
+  storyTitle.textContent = m.sub;
+  storyText.textContent = introDialogs[currentMission];
+  
+  if(!codeEditor.value || codeEditor.value.trim() === "") {
+    codeEditor.value = savedCode;
+  }
+  
+  updatePreview(codeEditor.value);
+  renderMissionGrid();
+  
+  statCorrect.textContent = correctCount;
+  statWrong.textContent = wrongCount;
+  feedbackStatus.textContent = "Mulai mengetik kode CSS...";
+  feedbackStatus.style.color = "#64748b";
+}
+
+codeEditor.oninput = (e) => {
+  const code = e.target.value;
+  savedCode = code;
+  localStorage.setItem("css_studio_code", savedCode);
+  updatePreview(code);
+  
+  const m = missions[currentMission];
+  if(m.check(code)){
+    feedbackStatus.textContent = "✅ Kodenya sesuai instruksi!";
+    feedbackStatus.style.color = "#10b981";
+  } else {
+    feedbackStatus.textContent = "⏳ Mengetik kode CSS...";
+    feedbackStatus.style.color = "#64748b";
+  }
+};
+
+function updatePreview(code) {
+  previewArea.innerHTML = "";
+  const iframe = document.createElement("iframe");
+  iframe.style.width = "100%";
+  iframe.style.height = "100%";
+  iframe.style.border = "none";
+  previewArea.appendChild(iframe);
+  iframe.contentWindow.document.open();
+  iframe.contentWindow.document.write(code);
+  iframe.contentWindow.document.close();
+}
+
+function nextMission() {
+  const code = codeEditor.value;
+  const m = missions[currentMission];
+
+  if(!m.check(code)){
+    wrongCount++;
+    statWrong.textContent = wrongCount;
+    localStorage.setItem("css_studio_wrong", wrongCount);
+    storyText.textContent = "Eh, aturan CSS untuk misi ini belum terlihat di kodemu! Cek lagi ya. ⚠️";
+    feedbackStatus.textContent = "❌ Belum sesuai instruksi.";
+    feedbackStatus.style.color = "#ef4444";
+    return;
+  }
+
+  if(!completedMissions[currentMission]) {
+    completedMissions[currentMission] = true;
+    localStorage.setItem("css_studio_completed", JSON.stringify(completedMissions));
+    correctCount++;
+    statCorrect.textContent = correctCount;
+    localStorage.setItem("css_studio_correct", correctCount);
+  }
+
+  currentMission++;
+  localStorage.setItem("css_studio_mission", currentMission);
+  clueClickCount = 0; // Reset clue untuk misi baru
+
+  if(currentMission < missions.length){
+    loadMission();
+    feedbackStatus.textContent = "✅ Lanjut ke misi berikutnya!";
+    feedbackStatus.style.color = "#10b981";
+  } else {
+    renderMissionGrid();
+    storyTitle.textContent = "🏆 30 MISI CSS SELESAI!";
+    storyText.textContent = `Luar biasa, ${userName}! Kamu menamatkan seluruh 30 misi CSS Styling!`;
+    lessonInstructions.innerHTML = "<h4>Master CSS Styling!</h4><p>Seluruh 30 misi styling telah kamu selesaikan.</p>";
+    nextBtn.style.display = "none";
+    feedbackStatus.textContent = "🎉 Selamat, Tuntas 100%!";
+  }
+}
+
+function downloadCode() {
+  const blob = new Blob([codeEditor.value], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `portofolio-css-${userName}.html`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// SISTEM CLUE BERTAHAP ELAINA KHUSUS CSS (GALAU -> TEKNIS -> BOCORAN)
+let clueClickCount = 0;
+const elainaCssClueSteps = [
+  {
+    text: " \"Hidup ini mirip CSS Flexbox. Kadang kita pengen posisinya di tengah hati seseorang, tapi takdir malah bikin dia nge-`float: right` menjauh tanpa alasan... Cek lagi selektornya ya! ✨\""
+  },
+  {
+    text: " \"Ngetik animasi keyframes di CSS gampang... yang susah itu bikin perasaan dia bergerak dari `opacity: 0` ke `opacity: 1`, tapi malah di-`display: none` selamanya. Periksa propertinya ya!\""
+  },
+  {
+    text: "<b>Clue Spesifik:</b> Pastikan penulisan properti dan tanda kurung kurawal \`{ }\` pada selektor CSS sudah sesuai dengan instruksi misi."
+  },
+  {
+    text: "<b>Clue Spesifik:</b> Jangan lupa akhiri setiap baris properti CSS dengan tanda titik koma (\`;\`)."
+  },
+  {
+    text: "💢<b></b> \"Hadeuh, udah 5 kali mencet clue mulu! Nih, ikuti persis contoh aturan CSS di instruksi kotak atas. Makanya, lebih teliti dong! \""
+  }
+];
+
+function triggerHint(){
+  let currentClue = elainaCssClueSteps[Math.min(clueClickCount, elainaCssClueSteps.length - 1)];
+  storyText.innerHTML = currentClue.text;
+  
+  clueClickCount++;
+  if(clueClickCount >= elainaCssClueSteps.length) {
+    clueClickCount = elainaCssClueSteps.length - 1;
+  }
+}
+
+loadMission();
+</script>
+</body>
+</html>

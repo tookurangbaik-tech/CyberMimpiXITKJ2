@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta Tags SEO untuk Google -->
+    <meta name="description" content="CyberMimpi adalah portal informasi, kuis interaktif, dan ruang digital kelas XI TKJ 2 SMKN 8 Garut, dikembangkan oleh Fito Purnama.">
+    <meta name="keywords" content="CyberMimpi, XI TKJ 2, SMKN 8 Garut, Fito Purnama">
+    <meta name="author" content="Fito Purnama">
+
+    <!-- Open Graph / Social Media Preview -->
+    <meta property="og:title" content="CyberMimpi • XI TKJ 2">
+    <meta property="og:description" content="Portal edukasi dan ruang digital kelas XI TKJ 2 SMKN 8 Garut.">
+    <meta property="og:type" content="website">
+<title>Jadwal Kelas • CyberMimpi</title>
+<style>
+:root {
+    --loader-theme: #047857; /* <-- Ubah kode warna ini di tiap file */
+  }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Style Reset & Body */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+  /* Overlay Background Hijau Segar */
+  #loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 50% 30%, #34d399 0%, #10b981 60%, #047857 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    overflow: hidden;
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.5s linear;
+}
+
+#loading-screen.hide {
+    opacity: 0;
+    transform: scale(1.05);
+    visibility: hidden;
+}
+
+.flash-overlay {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    bottom: -50%;
+    right: -50%;
+    background: radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.4) 0%, transparent 65%);
+    opacity: 0.2;
+    animation: flashSweep 2.5s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes flashSweep {
+    0% { transform: translate(20%, 20%) scale(0.8); opacity: 0.15; }
+    100% { transform: translate(-10%, -10%) scale(1.2); opacity: 0.3; }
+}
+
+.loader-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    animation: contentEnter 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes contentEnter {
+    from { opacity: 0; transform: scale(0.8) translateY(15px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.logo-box {
+    width: 75px;
+    height: 75px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    border: 3px solid rgba(255, 255, 255, 0.9);
+}
+
+.logo-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.loader-content h2 {
+    margin: 0 0 15px 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.indicator-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.cyber-spinner {
+    width: 26px;
+    height: 26px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff !important;
+    border-right-color: #ffffff !important;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+.progress-track {
+    width: 140px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #ffffff, transparent);
+    position: absolute;
+    left: -100%;
+    animation: progressMove 1.4s ease-in-out infinite;
+}
+
+.loading-text {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin: 0;
+    letter-spacing: 1px;
+    font-weight: 500;
+    animation: pulseText 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes progressMove { 0% { left: -100%; } 50% { left: 0%; } 100% { left: 100%; } }
+@keyframes pulseText { from { opacity: 0.6; } to { opacity: 1; } }
+
+
+/* ================================
+   NAVBAR
+================================ */
+.navbar {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 30px);
+    max-width: 1100px;
+    height: 64px;
+    padding: 0 16px;
+    border-radius: 32px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid #d1d9e6;
+    box-shadow: 0 10px 30px rgba(29, 53, 87, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+}
+
+.nav-brand-logos {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mini-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1.5px solid #d1d9e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(29, 53, 87, 0.08);
+}
+
+.mini-logo img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+.brand-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: #1d3557;
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #457b9d;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 16px;
+    transition: 0.2s ease;
+}
+
+.nav-links a:hover {
+    background: #f0f4f8;
+    color: #1d3557;
+}
+
+.nav-btn-action {
+    background: #74c69d !important;
+    color: #ffffff !important;
+    border-radius: 20px !important;
+    padding: 8px 16px !important;
+}
+
+/* ================================
+   HERO SECTION — CYBER MIMPI
+================================ */
+.hero {
+    position: relative;
+    height: 120vh;
+    text-align: center;
+    background: linear-gradient(180deg, #a7f3d0 0%, #ecfdf5 60%, #ffffff 100%); 
+    overflow: hidden;
+}
+
+.hero-stage {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    min-height: 600px;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.hero-content {
+    position: absolute;
+    top: 130px;
+    left: 50%;
+    width: 92%;
+    max-width: 900px;
+    padding: 0 20px;
+    text-align: center;
+    transform: translate3d(-50%, 0, 0);
+    z-index: 100;
+    will-change: transform, opacity;
+}
+
+.hero-title {
+    font-size: clamp(28px, 5vw, 48px);
+    line-height: 1.25;
+    letter-spacing: -1.5px;
+    color: #173b57;
+    font-weight: 900;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, .6);
+}
+
+.flip-container {
+    display: inline-block;
+    perspective: 1000px;
+}
+
+.flip-box {
+    display: inline-block;
+    background: #74c69d; /* Warna hijau cerah senada sama tombol navbar di atas */
+    color: #ffffff; /* Teks putih solid */
+    padding: 6px 18px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+/* Kelas saat teks berputar/berganti */
+.flip-box.is-flipping {
+    transform: rotateX(90deg);
+    opacity: 0;
+}
+
+
+
+/* ================================
+   VECTOR SCENE & LAYERS
+================================ */
+.vector-scene {
+    position: absolute;
+    inset: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.vector-layer {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+    pointer-events: none;
+}
+
+.layer-cloud { top: 22%; height: 180px; z-index: 20; }
+.layer-mountain { bottom: 10%; height: 580px; z-index: 30; }
+.layer-birds { top: 32%; left: 0; width: 100%; height: 100px; z-index: 60; }
+.layer-school { bottom: 70px; height: 352px; z-index: 40; }
+.layer-front { bottom: 0; height: 320px; z-index: 60; }
+
+/* MATAHARI GAYA EMOJI ☀ */
+.sun-emoji {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 8;
+    will-change: transform;
+}
+
+.sun-core {
+    width: 65px;
+    height: 65px;
+    background: radial-gradient(circle, #ffea00 0%, #ff9100 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 25px #ff9100, 0 0 50px rgba(255, 145, 0, 0.5);
+    z-index: 2;
+}
+
+.sun-rays {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    animation: rotateRays 20s linear infinite;
+}
+
+.sun-rays span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 100%;
+    margin-top: -50%;
+    margin-left: -4px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.sun-rays span::before,
+.sun-rays span::after {
+    content: '';
+    width: 8px;
+    height: 16px;
+    background: #ff9100;
+    border-radius: 4px;
+}
+
+.sun-rays span:nth-child(1) { transform: rotate(0deg); }
+.sun-rays span:nth-child(2) { transform: rotate(45deg); }
+.sun-rays span:nth-child(3) { transform: rotate(90deg); }
+.sun-rays span:nth-child(4) { transform: rotate(135deg); }
+
+@keyframes rotateRays {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* AWAN VEKTOR */
+.cloud {
+    position: absolute;
+    width: 175px;
+    height: 68px;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f4f5 100%);
+    border-radius: 100px;
+    box-shadow: 0 7px 18px rgba(58, 78, 88, .08);
+}
+
+.cloud::before,
+.cloud::after {
+    content: "";
+    position: absolute;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f4f5 100%);
+    border-radius: 50%;
+}
+
+.cloud::before { width: 86px; height: 86px; left: 15px; top: -35px; }
+.cloud::after { width: 68px; height: 68px; right: 23px; top: -31px; }
+.cloud-1 { left: 18%; top: 30px; }
+.cloud-2 { right: 8%; top: 10px; transform: scale(.88); }
+
+/* GUNUNG NATURAL HIJAU */
+.mountain {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 220px solid transparent;
+    border-right: 220px solid transparent;
+}
+
+.mountain-1 { 
+    left: -80px; 
+    border-bottom: 260px solid #52b788; 
+}
+
+.mountain-2 { 
+    left: 20%; 
+    transform: scale(.85); 
+    border-bottom: 240px solid #74c69d; 
+}
+
+.mountain-3 { 
+    right: -80px; 
+    transform: scale(.95); 
+    border-bottom: 250px solid #40916c; 
+}
+
+/* SEKOLAH VEKTOR */
+.school {
+    position: absolute;
+    right: 8%;
+    bottom: 0;
+    width: 220px;
+    height: 155px;
+    background: #e8edf4;
+    border: 3px solid #1d3557;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 10px 24px rgba(29, 53, 87, .15);
+}
+
+.school-roof {
+    position: absolute;
+    top: -42px;    
+    left: -25px;   
+    width: 270px;  
+    height: 50px; 
+    background: #457b9d;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    filter: drop-shadow(0 4px 0 rgba(29, 53, 87, .18));
+}
+
+.school-name {
+    position: absolute;
+    top: 18px;
+    left: 25px;
+    width: 170px;
+    padding: 5px;
+    background: #ffffff;
+    border: 2px solid #1d3557;
+    border-radius: 6px;
+    text-align: center;
+    color: #1d3557;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.school-windows {
+    position: absolute;
+    top: 65px;
+    left: 18px;
+    right: 18px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.school-windows span {
+    height: 40px;
+    background: linear-gradient(135deg, #b1c8e6, #8da4c4);
+    border: 2px solid #1d3557;
+    border-radius: 4px;
+}
+
+/* BURUNG VEKTOR */
+.bird {
+    position: absolute;
+    width: 32px;
+    height: 16px;
+    display: block;
+    opacity: .85;
+}
+.bird-1 { left: 22%; top: 10px; }
+.bird-2 { left: 38%; top: 40px; transform: scale(.75); }
+.bird-3 { left: 52%; top: 15px; transform: scale(.85); }
+.bird-4 { right: 30%; top: 45px; transform: scale(.7); }
+.bird-5 { right: 18%; top: 10px; transform: scale(.8); }
+
+/* ELEMEN TANAH & POHON CEMARA BESAR (GAYA EMOJI 🌲) */
+.front-ground {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+    background: linear-gradient(180deg, #2d6a4f 0%, #1b4332 100%);
+    border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+}
+
+.pine-tree {
+    position: absolute;
+    bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pine-tree .tier {
+    width: 0;
+    height: 0;
+    border-left: 55px solid transparent;
+    border-right: 55px solid transparent;
+    border-bottom: 60px solid #2d6a4f;
+    margin-bottom: -32px;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,0.2));
+}
+
+.pine-tree .tier-top {
+    border-left-width: 35px;
+    border-right-width: 35px;
+    border-bottom-width: 45px;
+    border-bottom-color: #52b788;
+    z-index: 3;
+}
+
+.pine-tree .tier-mid {
+    border-left-width: 45px;
+    border-right-width: 45px;
+    border-bottom-width: 52px;
+    border-bottom-color: #40916c;
+    z-index: 2;
+}
+
+.pine-tree .tier-bot {
+    z-index: 1;
+}
+
+.pine-tree .trunk {
+    width: 18px;
+    height: 35px;
+    background: #7f4f24;
+    border-radius: 3px;
+    margin-top: 2px;
+}
+
+.tree-1 { left: 6%; transform: scale(1.4); }
+.tree-2 { left: 24%; transform: scale(1.1); }
+.tree-3 { right: 12%; transform: scale(1.3); }
+
+.front-road {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    background: #525b56;
+    border-top: 3px solid #8d99ae;
+}
+
+/* ================================
+   JADWAL PELAJARAN SECTION (VERSI KECIL/COMPACT)
+================================ */
+.schedule-section {
+    padding: 60px 20px;
+    background: #ffffff;
+    text-align: center;
+    border-bottom: 1px solid #d1d9e6;
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.schedule-card {
+    background: #f8fafc;
+    border: 1px solid #d1d9e6;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(29, 53, 87, 0.02);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.schedule-card:hover {
+    transform: translateY(-4px);
+    border-color: #1d3557;
+    box-shadow: 0 8px 18px rgba(29, 53, 87, 0.06);
+}
+
+.schedule-day {
+    font-size: 15px;
+    font-weight: 900;
+    color: #1d3557;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1.5px solid #e2eaf4;
+    padding-bottom: 8px;
+}
+
+.schedule-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.schedule-list li {
+    font-size: 11.5px;
+    color: #457b9d;
+    background: #ffffff;
+    padding: 7px 10px;
+    border-radius: 10px;
+    border: 1px solid #e2eaf4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+.schedule-list li span {
+    color: #1d3557;
+    font-weight: 700;
+    font-size: 11px;
+}
+
+/* Penyesuaian efek hari ini agar tetap pas dengan ukuran baru */
+.schedule-card.today-card {
+    background: #f0fdf4 !important;
+    border: 2px solid #10b981 !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2), 0 4px 12px rgba(29, 53, 87, 0.04) !important;
+    transform: translateY(-3px);
+}
+
+.schedule-card.today-card .schedule-day::after {
+    content: "Hari Ini 🔥";
+    margin-left: auto;
+    background: #10b981;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+/* ================================
+   SECTIONS: KENAPA & PENCAPAIAN
+================================ */
+.why-section {
+    padding: 50px 20px 70px 20px;
+    background: #ffffff;
+    text-align: center;
+}
+
+.section-title {
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: -1px;
+    color: #1d3557;
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.section-desc {
+    color: #457b9d;
+    font-size: 14px;
+    max-width: 550px;
+    margin: 0 auto 50px;
+    line-height: 1.6;
+}
+
+.why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px;
+    max-width: 1050px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.why-card {
+    border-radius: 20px;
+    padding: 28px 22px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.why-card.card-yellow { background-color: #f0fdf4; }
+.why-card.card-blue   { background-color: #eef4ff; }
+
+.why-card:nth-child(odd) { transform: rotate(-2.5deg); }
+.why-card:nth-child(even) { transform: rotate(2.5deg); }
+
+.why-card:hover,
+.why-card:active {
+    transform: rotate(0deg) translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+}
+
+.why-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.card-yellow .why-card-icon { background-color: #10b981; }
+.card-blue .why-card-icon   { background-color: #4a72ff; }
+
+.why-card-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: #ffffff;
+}
+
+.why-card h3 {
+    font-size: 17px;
+    margin-bottom: 10px;
+    font-weight: 800;
+}
+
+.card-yellow h3 { color: #065f46; }
+.card-blue h3   { color: #1e3a8a; }
+
+.why-card p {
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.card-yellow p { color: #047857; }
+.card-blue p   { color: #3b5284; }
+
+/* Footer Style */
+.site-footer {
+  background-color: #0f172a;
+  color: #94a3b8;
+  padding: 50px 20px 25px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+}
+
+.footer-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 30px;
+  padding-bottom: 35px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 220px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.footer-logo h3 {
+  color: #ffffff;
+  font-size: 20px;
+  margin: 0;
+}
+
+.footer-desc {
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background-color: #1e293b;
+  color: #ffffff;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+  background-color: #10b981;
+  transform: translateY(-3px);
+}
+
+.footer-column h4 {
+  color: #ffffff;
+  font-size: 16px;
+  margin-bottom: 18px;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-column ul li a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-column ul li a:hover {
+  color: #ffffff;
+}
+
+.footer-bottom {
+  max-width: 1100px;
+  margin: 20px auto 0;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.footer-bottom p {
+  margin: 4px 0;
+}
+
+.footer-bottom .credits {
+  margin-top: 8px;
+  color: #94a3b8;
+}
+
+.footer-bottom strong {
+  color: #10b981;
+}
+
+.footer-bottom span {
+  color: #cbd5e1;
+}
+
+@media (max-width: 768px) {
+    .navbar { top: 10px; width: calc(100% - 20px); height: 56px; padding: 0 10px; }
+    .hero { height: 115vh; }
+    .hero-content { top: 150px; width: 94%; padding: 0 10px; }
+    .hero-title { font-size: clamp(28px, 8vw, 40px); }
+    .footer-container { flex-direction: column; gap: 25px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="loading-screen">
+  <div class="flash-overlay"></div>
+  <div class="loader-content">
+    <div class="logo-box">
+      <img src="logo.jpg" alt="Logo Kelas" class="logo-img">
+    </div>
+    <h2>CYBERMIMPI</h2>
+    <div class="indicator-wrapper">
+      <div class="cyber-spinner"></div>
+      <div class="progress-track">
+        <div class="progress-bar"></div>
+      </div>
+    </div>
+    <p class="loading-text">Memuat halaman...</p>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-brand-logos">
+        <div class="mini-logo">
+            <img src="logo.jpg" alt="Logo Kelas">
+        </div>
+
+    </div>
+    <div class="nav-links">
+        <a href="idek.html">Beranda</a>
+        <a href="Wawa.html">Card</a>
+        <a href="jadwal.html" class="nav-btn-action">Jadwal</a>
+        <a href="belajar.html">Belajar</a>
+    </div>
+</nav>
+
+<!-- HERO SECTION -->
+<main>
+<section class="hero" id="home">
+    <div class="hero-stage">
+        <div class="hero-content" id="heroContent">
+            <h1 class="hero-title">
+                Tumben Ngecek Jadwal,
+                <span class="flip-container">
+                    <span class="flip-box" id="flipText">Mau nugas?</span>
+                </span>
+            </h1>
+        </div>
+
+        <div class="vector-scene">
+            <div class="sun-emoji" id="sun">
+                <div class="sun-core"></div>
+                <div class="sun-rays">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+            </div>
+
+            <div class="vector-layer layer-cloud" id="layerCloud">
+                <div class="cloud cloud-1"></div>
+                <div class="cloud cloud-2"></div>
+            </div>
+
+            <div class="vector-layer layer-mountain" id="layerMountain">
+                <div class="mountain mountain-1"></div>
+                <div class="mountain mountain-2"></div>
+                <div class="mountain mountain-3"></div>
+            </div>
+            
+            <div class="vector-layer layer-birds" id="layerBirds">
+                <svg class="bird bird-1" viewBox="0 0 120 60"><path d="M10 35 Q30 10 55 32 Q80 10 110 35" fill="none" stroke="#1d3557" stroke-width="6" stroke-linecap="round"/></svg>
+                <svg class="bird bird-2" viewBox="0 0 120 60"><path d="M10 35 Q30 10 55 32 Q80 10 110 35" fill="none" stroke="#1d3557" stroke-width="6" stroke-linecap="round"/></svg>
+                <svg class="bird bird-3" viewBox="0 0 120 60"><path d="M10 35 Q30 10 55 32 Q80 10 110 35" fill="none" stroke="#1d3557" stroke-width="6" stroke-linecap="round"/></svg>
+                <svg class="bird bird-4" viewBox="0 0 120 60"><path d="M10 35 Q30 10 55 32 Q80 10 110 35" fill="none" stroke="#1d3557" stroke-width="6" stroke-linecap="round"/></svg>
+                <svg class="bird bird-5" viewBox="0 0 120 60"><path d="M10 35 Q30 10 55 32 Q80 10 110 35" fill="none" stroke="#1d3557" stroke-width="6" stroke-linecap="round"/></svg>
+            </div>
+
+            <div class="vector-layer layer-school" id="layerSchool">
+                <div class="school">
+                    <div class="school-roof"></div>
+                    <div class="school-name">SMKN 8 GARUT</div>
+                    <div class="school-windows">
+                        <span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vector-layer layer-front" id="layerFront">
+                <div class="front-ground"></div>
+                
+                <div class="pine-tree tree-1">
+                    <div class="tier tier-top"></div>
+                    <div class="tier tier-mid"></div>
+                    <div class="tier tier-bot"></div>
+                    <div class="trunk"></div>
+                </div>
+
+                <div class="pine-tree tree-2">
+                    <div class="tier tier-top"></div>
+                    <div class="tier tier-mid"></div>
+                    <div class="tier tier-bot"></div>
+                    <div class="trunk"></div>
+                </div>
+
+                <div class="pine-tree tree-3">
+                    <div class="tier tier-top"></div>
+                    <div class="tier tier-mid"></div>
+                    <div class="tier tier-bot"></div>
+                    <div class="trunk"></div>
+                </div>
+
+                <div class="front-road"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION: KENAPA & JADWAL -->
+<section class="why-section" id="tentang">
+    <h2 class="section-title">Ini Jadwal Pelajaran</h2>
+    <p class="section-desc">Biar ga pada nanyain jadwal tinggal cek langsung atau bisa di ss wkwk</p>
+    
+    <div class="why-grid">
+        <div class="why-card card-yellow">
+            <div class="why-card-icon">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
+            </div>
+            <h3>Kenapa Bikin Jadwal</h3>
+            <p>Kenapa jadwal ini di bikin, biar kita makin gampang buat liat jadwal dan ini permanen gabakal ke hapus kalo hp kalian di reset</p>
+        </div>
+
+        <div class="why-card card-blue">
+            <div class="why-card-icon">
+                <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+            </div>
+            <h3>Tujuan Buat Jadwal</h3>
+            <p>Biar kita tau nanti pelajaran siapa, dan semoga lebi giat lagi belajar nya</p>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION: JADWAL PELAJARAN GRID -->
+<section class="schedule-section" id="jadwal">
+    <div class="schedule-grid">
+        <!-- Hari Senin -->
+        <div class="schedule-card" id="card-senin">
+            <div class="schedule-day">📅 Senin</div>
+            <ul class="schedule-list">
+                <li>Upacara / Pendalaman <span>07:00 - 08:30</span></li>
+                <li>Administrasi Infrastruktur Jaringan <span>08:30 - 12:00</span></li>
+                <li>Istirahat <span>12:00 - 12:45</span></li>
+                <li>Teknologi Layanan Jaringan <span>12:45 - 15:30</span></li>
+            </ul>
+        </div>
+
+        <!-- Hari Selasa -->
+        <div class="schedule-card" id="card-selasa">
+            <div class="schedule-day">📅 Selasa</div>
+            <ul class="schedule-list">
+                <li>Pendidikan Agama Islam <span>07:15 - 09:30</span></li>
+                <li>Teknologi Layanan Jaringan <span>09:45 - 12:00</span></li>
+                <li>Istirahat <span>12:00 - 12:45</span></li>
+                <li>Bahasa Inggris <span>12:45 - 15:30</span></li>
+            </ul>
+        </div>
+
+        <!-- Hari Rabu -->
+        <div class="schedule-card" id="card-rabu">
+            <div class="schedule-day">📅 Rabu</div>
+            <ul class="schedule-list">
+                <li>Matematika <span>07:15 - 09:30</span></li>
+                <li>Administrasi Infrastruktur Jaringan <span>09:45 - 12:00</span></li>
+                <li>Istirahat <span>12:00 - 12:45</span></li>
+                <li>Produk Kreatif & Kewirausahaan <span>12:45 - 15:30</span></li>
+            </ul>
+        </div>
+
+        <!-- Hari Kamis -->
+        <div class="schedule-card" id="card-kamis">
+            <div class="schedule-day">📅 Kamis</div>
+            <ul class="schedule-list">
+                <li>Bahasa Indonesia <span>07:15 - 09:30</span></li>
+                <li>Sejarah Indonesia <span>09:45 - 12:00</span></li>
+                <li>Istirahat <span>12:00 - 12:45</span></li>
+                <li>Simulasi & Komunikasi Digital <span>12:45 - 15:30</span></li>
+            </ul>
+        </div>
+
+        <!-- Hari Jumat -->
+        <div class="schedule-card" id="card-jumat">
+            <div class="schedule-day">📅 Jumat</div>
+            <ul class="schedule-list">
+                <li>Literasi / Keagamaan <span>07:00 - 08:00</span></li>
+                <li>Pendidikan Jasmani & Kesehatan <span>08:00 - 10:00</span></li>
+                <li>Bimbingan Konseling / Ekstra <span>10:15 - 11:30</span></li>
+            </ul>
+        </div>
+    </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-column brand-col">
+      <div class="footer-logo">
+        <span class="logo-icon">🌐</span>
+        <h3>CyberMimpi</h3>
+      </div>
+      <p class="footer-desc">
+        Platform edukasi dan portal informasi kelas XI TKJ 2 SMKN 8 Garut.
+      </p>
+      
+      <div class="social-icons">
+        <a href="https://instagram.com/username_kamu" target="_blank" aria-label="Instagram">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+        </a>
+
+        <a href="https://wa.me/6285188418938" target="_blank" aria-label="WhatsApp">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+          </svg>
+        </a>
+
+        <a href="https://t.me/username_kamu" target="_blank" aria-label="Telegram">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.196 1.006.128.832.942z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-column links-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="idek.html">Beranda</a></li>
+        <li><a href="#jadwal">Jadwal</a></li>
+        <li><a href="Wawa.html">Anggota</a></li>
+        <li><a href="Quizz.html">Quiz</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column contact-col">
+      <h4>Kontak</h4>
+      <ul>
+        <li>📍 Garut, Jawa Barat</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2026 CyberMimpi. All rights reserved.</p>
+    <p class="credits">
+      Developed by <strong>Fito Purnama</strong> | Contributed by: <span>Riska Amelia</span>, <span>Fitrah Abdulrahman</span>, <span>Restu Permana</span>, <span>Aldi Ardiansyah</span>
+    </p>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('load', () => {
+    const loader = document.getElementById('loading-screen');
+    setTimeout(() => {
+      loader.classList.add('hide');
+    }, 2000);
+  });
+
+  
+
+const hero = document.querySelector(".hero");
+const heroContent = document.getElementById("heroContent");
+const layerCloud = document.getElementById("layerCloud");
+const layerMountain = document.getElementById("layerMountain");
+const layerBirds = document.getElementById("layerBirds");
+const layerSchool = document.getElementById("layerSchool");
+const layerFront = document.getElementById("layerFront");
+const sun = document.getElementById("sun");
+
+let heroTicking = false;
+
+function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+
+function updateHeroStack() {
+    if (!hero) return;
+    const rect = hero.getBoundingClientRect();
+    const travel = Math.max(1, hero.offsetHeight - window.innerHeight);
+    let progress = clamp(-rect.top / travel, 0, 1);
+
+    heroContent.style.transform = `translate3d(-50%, ${progress * 42}px, 0)`;
+    heroContent.style.opacity = 1 - progress * .25;
+    layerCloud.style.transform = `translate3d(0, ${progress * 70}px, 0)`;
+    layerMountain.style.transform = `translate3d(0, ${progress * -40}px, 0)`;
+    
+    if (layerBirds) {
+        layerBirds.style.transform = `translate3d(${progress * 18}px, ${progress * -35}px, 0)`;
+    }
+    layerSchool.style.transform = `translate3d(0, ${progress * -30}px, 0)`;
+    layerFront.style.transform = `translate3d(0, ${progress * -70}px, 0)`;
+
+    if (sun) {
+        sun.style.transform = `translate3d(${progress * -20}px, ${progress * 60}px, 0) scale(${1 - progress * .1})`;
+    }
+
+    heroTicking = false;
+}
+
+window.addEventListener("scroll", () => {
+    if (!heroTicking) {
+        requestAnimationFrame(updateHeroStack);
+        heroTicking = true;
+    }
+}, { passive: true });
+
+updateHeroStack();
+
+const flipTextElement = document.getElementById("flipText");
+const words = ["Mau Nugas?", "Atau caper ke dia? hayoo"];
+let currentIndex = 0;
+setInterval(() => {
+    flipTextElement.classList.add("is-flipping");
+    setTimeout(() => {
+        currentIndex = (currentIndex + 1) % words.length;
+        flipTextElement.textContent = words[currentIndex];
+    }, 250);
+    setTimeout(() => { flipTextElement.classList.remove("is-flipping"); }, 500);
+}, 3000);
+
+const daysMap = {
+    1: 'card-senin',
+    2: 'card-selasa',
+    3: 'card-rabu',
+    4: 'card-kamis',
+    5: 'card-jumat'
+};
+
+const todayIndex = new Date().getDay();
+const todaysCardId = daysMap[todayIndex];
+
+if (todaysCardId) {
+    const activeCard = document.getElementById(todaysCardId);
+    if (activeCard) {
+        activeCard.classList.add('today-card');
+    }
+}
+</script>
+
+</body>
+</html>
