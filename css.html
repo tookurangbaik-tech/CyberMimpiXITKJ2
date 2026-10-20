@@ -196,10 +196,10 @@ let correctCount = parseInt(localStorage.getItem("css_studio_correct")) || 0;
 let wrongCount = parseInt(localStorage.getItem("css_studio_wrong")) || 0;
 let completedMissions = JSON.parse(localStorage.getItem("css_studio_completed")) || new Array(30).fill(false);
 
-// Ambil nama dari localStorage, default ke "Fito" jika belum ada
 const userName = localStorage.getItem('cyberMimpi_userName') || "Fito";
 
-let savedCode = localStorage.getItem("css_studio_code") || `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <title>Portofolio CSS</title>\n  <style>\n    /* Ketik kode CSS kamu di bawah sini */\n    \n  </style>\n</head>\n<body>\n  <div class="kartu">\n    <h1>Halo ${userName}!</h1>\n    <p>Ini adalah halaman portofolio styling CSS.</p>\n    <a href="#" class="btn">Kontak Saya</a>\n  </div>\n</body>\n</html>`;
+// Ambil kode tersimpan di localStorage atau gunakan default template
+let savedCode = localStorage.getItem("css_studio_code") || `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <title>Portofolio CSS</title>\n  <style>\n    /* Ketik kode CSS kamu di bawah sini */\n    \n  </style>\n</head>\n<body>\n  <div class=\"kartu\">\n    <h1>Halo ${userName}!</h1>\n    <p>Ini adalah halaman portofolio styling CSS.</p>\n    <a href=\"#\" class=\"btn\">Kontak Saya</a>\n  </div>\n</body>\n</html>`;
 
 const storyTitle = document.getElementById("storyTitle");
 const storyText = document.getElementById("storyText");
@@ -263,7 +263,7 @@ function renderMissionGrid() {
     
     box.onclick = () => {
       currentMission = idx;
-      clueClickCount = 0; // Reset clue saat pindah misi
+      clueClickCount = 0;
       loadMission();
     };
     missionGridBoxes.appendChild(box);
@@ -280,9 +280,8 @@ function loadMission() {
   storyTitle.textContent = m.sub;
   storyText.textContent = introDialogs[currentMission];
   
-  if(!codeEditor.value || codeEditor.value.trim() === "") {
-    codeEditor.value = savedCode;
-  }
+  // Set isi editor dengan kode tersimpan atau savedCode terbaru
+  codeEditor.value = savedCode;
   
   updatePreview(codeEditor.value);
   renderMissionGrid();
@@ -293,6 +292,7 @@ function loadMission() {
   feedbackStatus.style.color = "#64748b";
 }
 
+// Event input yang responsif secara real-time
 codeEditor.oninput = (e) => {
   const code = e.target.value;
   savedCode = code;
@@ -345,7 +345,7 @@ function nextMission() {
 
   currentMission++;
   localStorage.setItem("css_studio_mission", currentMission);
-  clueClickCount = 0; // Reset clue untuk misi baru
+  clueClickCount = 0;
 
   if(currentMission < missions.length){
     loadMission();
@@ -356,7 +356,7 @@ function nextMission() {
     storyTitle.textContent = "🏆 30 MISI CSS SELESAI!";
     storyText.textContent = `Luar biasa, ${userName}! Kamu menamatkan seluruh 30 misi CSS Styling!`;
     lessonInstructions.innerHTML = "<h4>Master CSS Styling!</h4><p>Seluruh 30 misi styling telah kamu selesaikan.</p>";
-    nextBtn.style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
     feedbackStatus.textContent = "🎉 Selamat, Tuntas 100%!";
   }
 }
@@ -370,24 +370,13 @@ function downloadCode() {
   URL.revokeObjectURL(a.href);
 }
 
-// SISTEM CLUE BERTAHAP ELAINA KHUSUS CSS (GALAU -> TEKNIS -> BOCORAN)
 let clueClickCount = 0;
 const elainaCssClueSteps = [
-  {
-    text: " \"Hidup ini mirip CSS Flexbox. Kadang kita pengen posisinya di tengah hati seseorang, tapi takdir malah bikin dia nge-`float: right` menjauh tanpa alasan... Cek lagi selektornya ya! ✨\""
-  },
-  {
-    text: " \"Ngetik animasi keyframes di CSS gampang... yang susah itu bikin perasaan dia bergerak dari `opacity: 0` ke `opacity: 1`, tapi malah di-`display: none` selamanya. Periksa propertinya ya!\""
-  },
-  {
-    text: "<b>Clue Spesifik:</b> Pastikan penulisan properti dan tanda kurung kurawal \`{ }\` pada selektor CSS sudah sesuai dengan instruksi misi."
-  },
-  {
-    text: "<b>Clue Spesifik:</b> Jangan lupa akhiri setiap baris properti CSS dengan tanda titik koma (\`;\`)."
-  },
-  {
-    text: "💢<b></b> \"Hadeuh, udah 5 kali mencet clue mulu! Nih, ikuti persis contoh aturan CSS di instruksi kotak atas. Makanya, lebih teliti dong! \""
-  }
+  { text: " \"Hidup ini mirip CSS Flexbox. Kadang kita pengen posisinya di tengah hati seseorang, tapi takdir malah bikin dia nge-`float: right` menjauh tanpa alasan... Cek lagi selektornya ya! ✨\"" },
+  { text: " \"Ngetik animasi keyframes di CSS gampang... yang susah itu bikin perasaan dia bergerak dari `opacity: 0` ke `opacity: 1`, tapi malah di-`display: none` selamanya. Periksa propertinya ya!\"" },
+  { text: "<b>Clue Spesifik:</b> Pastikan penulisan properti dan tanda kurung kurawal <code>{ }</code> pada selektor CSS sudah sesuai dengan instruksi misi." },
+  { text: "<b>Clue Spesifik:</b> Jangan lupa akhiri setiap baris properti CSS dengan tanda titik koma (<code>;</code>)." },
+  { text: "💢 \"Hadeuh, udah 5 kali mencet clue mulu! Nih, ikuti persis contoh aturan CSS di instruksi kotak atas. Makanya, lebih teliti dong! \"" }
 ];
 
 function triggerHint(){
@@ -400,6 +389,7 @@ function triggerHint(){
   }
 }
 
+// Inisialisasi awal saat halaman dibuka
 loadMission();
 </script>
 </body>
