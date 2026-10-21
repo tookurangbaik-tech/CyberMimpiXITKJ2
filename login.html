@@ -453,8 +453,6 @@ form h1 {
             <p id="greetingText" style="color: #64748b; margin: 15px 0 25px; line-height: 1.5;">
                 Login berhasil. Kamu sudah login. Pilih halaman CyberMimpi yang ingin dibuka.
             </p>
-            <button type="button" class="btn" onclick="window.location.href='belajarm.html'">Buka Belajar</button>
-            <button type="button" class="btn" style="margin-top:10px" onclick="window.location.href='Wawa.html'">Buka Wawa</button>
         </form>
     </div>
 
@@ -463,7 +461,7 @@ form h1 {
         <div class="toggle-panel toggle-left">
             <h1>Sesi Aktif!</h1>
             <p>Sesi akun Supabase kamu aktif dan bisa dipakai di halaman CyberMimpi pada domain yang sama.</p>
-            <button type="button" class="btn" style="background: #fff; color: #1d3557;" onclick="window.location.href='belajarm.html'">Lanjut ke Belajar</button>
+            <button type="button" class="btn" style="background: #fff; color: #1d3557;" onclick="window.location.href='index.html'">Lanjut</button>
         </div>
         <div class="toggle-panel toggle-right">
             <h1>Hello, Welcome!</h1>
@@ -539,7 +537,7 @@ const loginError = document.getElementById('loginError');
 const loginButton = document.getElementById('loginButton');
 const params = new URLSearchParams(window.location.search);
 const requestedNext = params.get('next');
-const allowedNext = new Set(['belajarm.html', 'Wawa.html']);
+const allowedNext = new Set(['index.html']);
 const nextPage = allowedNext.has(requestedNext) ? requestedNext : 'belajarm.html';
 
 function togglePasswordVisibility() {
