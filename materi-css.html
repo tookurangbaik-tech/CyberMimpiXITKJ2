@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Learning • CyberMimpi</title>
+<meta name="description" content="Pembelajaran CSS interaktif super lengkap XI TKJ 2 CyberMimpi.">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#f5f8fc;color:#172033}
+body{padding:22px 14px 50px}
+button,input{font:inherit}
+button{cursor:pointer}
+.page{width:min(980px,100%);margin:auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:42px;height:42px;object-fit:contain;border-radius:12px;background:#fff;border:1px solid #e5eaf1;padding:5px}
+.brand small{display:block;color:#789;font-size:10px;font-weight:800;letter-spacing:1.4px}
+.brand b{font-size:17px;color:#1d3557}
+.back{border:1px solid #dce4ee;background:#fff;color:#36506e;padding:10px 14px;border-radius:14px;text-decoration:none;font-size:12px;font-weight:800}
+
+.hero{position:relative;overflow:hidden;background:#fff;border:1px solid #e0e8f2;border-radius:28px;padding:26px;box-shadow:0 16px 45px rgba(29,53,87,.06)}
+.eyebrow{margin:0 0 6px;color:#5b7ea6;font-size:10px;font-weight:900;letter-spacing:2px}
+.hero h1{margin:0;font-size:clamp(28px,6vw,44px);letter-spacing:-1.5px;color:#172b46}
+.hero p{margin:10px 0 0;color:#64748b;line-height:1.6;font-size:13px;max-width:620px}
+
+/* ASISTEN BELAJAR */
+.assistant-section{margin-top:20px;display:grid;grid-template-columns:100px 1fr;gap:14px;align-items:center}
+.assistant-img{height:120px;display:flex;align-items:flex-end;justify-content:center;animation:float 3.5s ease-in-out infinite}
+.assistant-img img{max-width:100%;max-height:100%;object-fit:contain;display:block;filter:drop-shadow(0 8px 12px rgba(29,53,87,.12))}
+.assistant-bubble{position:relative;background:#fff;border:1px solid #dce6ef;border-radius:20px;padding:14px 16px;box-shadow:0 6px 18px rgba(29,53,87,.05)}
+.assistant-bubble:before{content:"";position:absolute;left:-7px;top:50%;transform:translateY(-50%) rotate(45deg);width:12px;height:12px;background:#fff;border-left:1px solid #dce6ef;border-bottom:1px solid #dce6ef}
+.assistant-name{font-size:10px;font-weight:900;color:#3974aa;letter-spacing:.8px}
+#assistantText{margin:4px 0 0;font-size:13px;line-height:1.5;color:#26384d;transition:opacity .2s}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* MATERI GRID CARDS (2 Kolom) */
+.theory-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
+.theory-card{border:1px solid #dce5ee;background:#fff;border-radius:18px;padding:16px;text-align:left;transition:.2s ease;box-shadow:0 4px 15px rgba(29,53,87,.04);cursor:pointer;display:flex;flex-direction:column;justify-content:space-between}
+.theory-card:hover{transform:translateY(-3px);border-color:#82afd2;box-shadow:0 8px 25px rgba(29,53,87,.08)}
+.theory-card .t-icon{font-size:24px;margin-bottom:8px}
+.theory-card b{display:block;font-size:14px;color:#1d3557;margin-bottom:4px}
+.theory-card span{display:block;color:#64748b;font-size:11px;line-height:1.4}
+.theory-card .read-btn{margin-top:12px;display:inline-block;font-size:11px;font-weight:800;color:#1d5f91}
+
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.mode{border:1px solid #dfe7ef;background:#fff;border-radius:20px;padding:20px;text-align:left;transition:.22s ease;box-shadow:0 7px 20px rgba(29,53,87,.05)}
+.mode:hover{transform:translateY(-3px);border-color:#a9cbe8}
+.mode .icon{font-size:28px;margin-bottom:10px}
+.mode b{display:block;font-size:15px;color:#1d3557}
+.mode span{display:block;color:#718096;font-size:12px;line-height:1.55;margin-top:5px}
+
+.section{margin-top:18px;background:#fff;border:1px solid #e1e8f0;border-radius:24px;padding:20px;box-shadow:0 12px 35px rgba(29,53,87,.06)}
+.hidden{display:none!important}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}
+.section-head h2{margin:0;font-size:20px;color:#1d3557}
+.pill{padding:7px 10px;border-radius:999px;background:#eef6ff;color:#4a76a0;font-size:11px;font-weight:900}
+
+/* KUIS & BATTLE CARD */
+.question-card{border:1px solid #e5ebf2;border-radius:20px;padding:18px;background:#fbfdff}
+.question-top{display:flex;justify-content:space-between;gap:10px;color:#789;font-size:11px;font-weight:900}
+.question{margin:14px 0 16px;font-size:18px;line-height:1.45;color:#1d2e43}
+.choices{display:grid;gap:10px}
+.choice{width:100%;text-align:left;border:1px solid #dce5ee;background:#fff;border-radius:15px;padding:13px 14px;color:#334e68;font-weight:750;transition:.18s}
+.choice:hover:not(:disabled){border-color:#82afd2;transform:translateX(2px)}
+.choice.correct{background:#eaf8ef;border-color:#78c795;color:#176b39}
+.choice.wrong{background:#fff0f0;border-color:#e69a9a;color:#9d2f2f}
+.feedback{min-height:25px;margin-top:13px;font-size:12px;font-weight:800;color:#64748b}
+.next{display:none;margin-top:8px;border:0;background:#1d5f91;color:#fff;border-radius:13px;padding:11px 16px;font-weight:900}
+.primary{border:0;background:#1d5f91;color:#fff;border-radius:13px;padding:11px 17px;font-weight:900}
+.secondary{border:1px solid #dce4ee;background:#fff;color:#456078;border-radius:13px;padding:11px 15px;font-weight:850}
+.actions{display:flex;gap:9px;justify-content:center;margin-top:14px}
+.setup{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.inputbox{padding:14px;border:1px solid #e1e8f0;border-radius:16px;background:#fbfdff}
+.inputbox label{display:block;font-size:10px;font-weight:900;color:#54708b;margin-bottom:7px}
+.inputbox input{width:100%;border:1px solid #dce5ee;border-radius:11px;padding:10px 11px;outline:none}
+.arena{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.player{border:1px solid #e1e8f0;border-radius:18px;padding:15px;background:#fbfdff}
+.player.p1{border-top:4px solid #5597cf}
+.player.p2{border-top:4px solid #e5a54f}
+.player-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}
+.player-head b{font-size:13px;color:#30475f}
+.score{font-size:20px;font-weight:950;color:#1d3557}
+.bq{font-size:14px;font-weight:800;line-height:1.45;min-height:61px;margin-bottom:10px}
+.bchoice{width:100%;margin:4px 0;border:1px solid #dce5ee;background:#fff;border-radius:11px;padding:9px;text-align:left;font-size:12px;font-weight:750}
+.bchoice.correct{background:#eaf8ef;border-color:#78c795}
+.bchoice.wrong{background:#fff0f0;border-color:#e69a9a}
+.status{font-size:11px;font-weight:800;min-height:20px;margin-top:7px;color:#667}
+.note{margin-top:15px;padding:12px 14px;border-radius:14px;background:#f4f8fc;color:#64748b;font-size:11px;line-height:1.55}
+
+/* MODAL POPUP */
+.modal-overlay{position:fixed;inset:0;background:rgba(9,13,22,0.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:all .25s ease}
+.modal-overlay.active{opacity:1;pointer-events:auto}
+.modal-box{background:#fff;border-radius:24px;border:1px solid #e1e8f0;max-width:650px;width:100%;max-height:85vh;overflow-y:auto;padding:24px;box-shadow:0 20px 50px rgba(29,53,87,.2);transform:translateY(15px);transition:all .25s ease}
+.modal-overlay.active .modal-box{transform:translateY(0)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #edf2f7;padding-bottom:12px}
+.modal-header h3{margin:0;font-size:18px;color:#1d3557}
+.close-modal{background:#f1f5f9;border:0;width:32px;height:32px;border-radius:50%;font-weight:bold;color:#475569;cursor:pointer}
+.modal-body{font-size:13px;color:#475569;line-height:1.6}
+.modal-body h4{color:#1d3557;font-size:14px;margin:16px 0 6px}
+.modal-body ul{padding-left:18px;margin:6px 0}
+.modal-body li{margin-bottom:6px}
+.modal-body code{background:#f1f5f9;color:#1d5f91;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px}
+.fun-fact{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px;margin:12px 0;color:#92400e;font-size:12px;line-height:1.5}
+
+@media(max-width:650px){
+  body{padding:13px 10px 35px}
+  .hero{padding:20px;border-radius:23px}
+  .assistant-section{grid-template-columns:80px 1fr;gap:10px}
+  .assistant-img{height:95px}
+  .assistant-bubble{padding:12px}
+  .mode-grid,.setup,.arena{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="topbar">
+  <div class="brand">
+    <img src="logo.jpg" alt="Logo XI TKJ 2" onerror="this.src='https://via.placeholder.com/42?text=TKJ'">
+    <div><small>CYBERMIMPI</small><b>XI TKJ 2 • CSS Learning</b></div>
+  </div>
+  <a class="back" href="belajar.html">← Kembali</a>
+</header>
+
+<section class="hero">
+  <p class="eyebrow">CSS LEARNING ROOM • LEVEL DEWA</p>
+  <h1>Belajar CSS: Jangan Biarkan Web Kamu Mirip Dokumen Notepad 2003!</h1>
+  <p>Pilih modul teori di bawah ini. Dibaca yang teliti ya, biar pas praktik nggak nangis-nangis karena kodenya <i>error</i> atau layoutnya berantakan! 😼</p>
+
+  <!-- ASISTEN BELAJAR -->
+  <div class="assistant-section">
+    <div class="assistant-img">
+      <img id="assistantImg" src="assisten.png" alt="Asisten belajar" onerror="this.src='https://via.placeholder.com/100x120?text=Asisten'">
+    </div>
+    <div class="assistant-bubble">
+      <div class="assistant-name">Asisten Belajar Elaina</div>
+      <p id="assistantText">Halo anak-anak TKJ! Klik kartu materi di bawah untuk membaca teori lengkap CSS sebelum kalian bikin guru ngelus dada. 👋</p>
+    </div>
+  </div>
+
+  <!-- MODUL KARTU MATERI (2 Kolom) -->
+  <div class="theory-grid">
+    <div class="theory-card" onclick="openModal('selectorModal')">
+      <div>
+        <div class="t-icon">🎯</div>
+        <b>1. Selektor & Sintaks CSS</b>
+        <span>Ilmu cara memilih elemen HTML supaya tidak salah sasaran.</span>
+      </div>
+      <span class="read-btn">Baca Materi Lengkap →</span>
+    </div>
+    <div class="theory-card" onclick="openModal('colorModal')">
+      <div>
+        <div class="t-icon">🎨</div>
+        <b>2. Warna & Background</b>
+        <span>Biar web kamu nggak cuma hitam putih kayak koran jadul.</span>
+      </div>
+      <span class="read-btn">Baca Materi Lengkap →</span>
+    </div>
+    <div class="theory-card" onclick="openModal('fontModal')">
+      <div>
+        <div class="t-icon">✍️</div>
+        <b>3. Teks & Tipografi (Font)</b>
+        <span>Mengatur ukuran, ketebalan, dan estetika huruf agar terlihat pro.</span>
+      </div>
+      <span class="read-btn">Baca Materi Lengkap →</span>
+    </div>
+    <div class="theory-card" onclick="openModal('boxmodelModal')">
+      <div>
+        <div class="t-icon">📦</div>
+        <b>4. Box Model (Padding & Margin)</b>
+        <span>Seni mengatur jarak antar elemen agar tidak saling dempetan.</span>
+      </div>
+      <span class="read-btn">Baca Materi Lengkap →</span>
+    </div>
+    <div class="theory-card" onclick="openModal('borderModal')">
+      <div>
+        <div class="t-icon">🔲</div>
+        <b>5. Border & Border-Radius</b>
+        <span>Membuat garis tepi dan trik menyulap kotak jadi lingkaran.</span>
+      </div>
+      <span class="read-btn">Baca Materi Lengkap →</span>
+    </div>
+    <div class="theory-card" onclick="openModal('flexboxModal')">
+      <div>
+        <div class="t-icon">📐</div>
+        <b>6. Flexbox Layout Modern</b>
+        <span>Penyelamat umat manusia dari stress saat mengatur tata letak web.</span>
+      </div>
+      <span class="read-btn">Baca Materi Lengkap →</span>
+    </div>
+  </div>
+
+  <div class="mode-grid" id="modePicker">
+    <button class="mode" id="soloBtn"><div class="icon">📚</div><b>Kuis Teori Solo</b><span>Uji pemahaman teori CSS satu per satu bareng Elaina.</span></button>
+    <button class="mode" id="battleBtn"><div class="icon">⚔️</div><b>Battle 2 Player</b><span>Adu gengsi jawab soal teori CSS bareng teman sebangku.</span></button>
+  </div>
+</section>
+
+<!-- MODE SOLO -->
+<section class="section hidden" id="soloSection">
+  <div class="section-head">
+    <h2>Kuis Teori Solo</h2>
+    <span class="pill" id="soloCounter">SOAL 1 / 10</span>
+  </div>
+  <div class="question-card">
+    <div class="question-top">
+      <span>CSS THEORY CHALLENGE</span>
+      <span id="soloScore">Skor: 0</span>
+    </div>
+    <div class="question" id="soloQuestion"></div>
+    <div class="choices" id="soloChoices"></div>
+    <div class="feedback" id="soloFeedback">Pilih satu jawaban.</div>
+    <button class="next" id="soloNext">Soal Berikutnya →</button>
+  </div>
+</section>
+
+<!-- MODE BATTLE -->
+<section class="section hidden" id="battleSection">
+  <div class="section-head">
+    <h2>Battle 2 Player</h2>
+    <span class="pill">DUA PEMAIN</span>
+  </div>
+  <div class="setup" id="battleSetup">
+    <div class="inputbox">
+      <label>🔵 PLAYER 1</label>
+      <input id="name1" maxlength="18" placeholder="Nama pemain 1">
+    </div>
+    <div class="inputbox">
+      <label>🟠 PLAYER 2</label>
+      <input id="name2" maxlength="18" placeholder="Nama pemain 2">
+    </div>
+    <button class="primary start" id="startBattle" style="grid-column:1/-1; margin-top:10px;">Mulai Battle →</button>
+  </div>
+
+  <div class="arena hidden" id="arena">
+    <div class="player p1">
+      <div class="player-head">
+        <b id="p1Name">PLAYER 1</b>
+        <span class="score" id="p1Score">0</span>
+      </div>
+      <div class="bq" id="p1Question"></div>
+      <div id="p1Choices"></div>
+      <div class="status" id="p1Status"></div>
+    </div>
+    <div class="player p2">
+      <div class="player-head">
+        <b id="p2Name">PLAYER 2</b>
+        <span class="score" id="p2Score">0</span>
+      </div>
+      <div class="bq" id="p2Question"></div>
+      <div id="p2Choices"></div>
+      <div class="status" id="p2Status"></div>
+    </div>
+  </div>
+
+  <div class="finish hidden" id="battleFinish" style="text-align:center; padding:20px;">
+    <h3>🏆 Battle selesai!</h3>
+    <p id="winner"></p>
+    <div class="actions">
+      <button class="secondary" onclick="location.reload()">Main Lagi</button>
+    </div>
+  </div>
+</section>
+
+<div class="note">💡 <b>Catatan Penting:</b> Memahami teori ini bikin kamu keliatan keren pas ujian, kayak anak kulon, padahal bacanya di web buatan Fito & Elaina wkwk.</div>
+</div>
+
+<!-- MODAL POPUP 1: SELEKTOR & SINTAKS -->
+<div class="modal-overlay" id="selectorModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🎯 Materi: Selektor & Sintaks CSS (Ilmu Pilih-Memilih)</h3>
+      <button class="close-modal" onclick="closeModal('selectorModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian Dasar:</strong> HTML itu ibarat kerangka tubuh manusia (tulang doang tanpa baju), sedangkan <strong>CSS (Cascading Style Sheets)</strong> adalah pakaian, jaket, dan makeup-nya agar keliatan ganteng/cantik.</p>
+      <div class="fun-fact">💡 <b>Fakta Unik:</b> Kata "Cascading" artinya berjenjang atau menular. Mirip kayak gosip di kelas XI TKJ—kalau pusatnya nyebar, semuanya ikutan kena!</div>
+      
+      <h4>Anatomi Penulisan CSS (Sintaks):</h4>
+      <ul>
+        <li><code>selektor { properti: nilai; }</code></li>
+        <li>Contoh nyata: <code>h1 { color: blue; }</code></li>
+        <li><strong>Selektor:</strong> Menunjuk elemen mana yang mau diubah (misal: <code>h1</code>).</li>
+        <li><strong>Properti:</strong> Bagian apa yang mau diubah (misal: <code>color</code> / warna).</li>
+        <li><strong>Nilai (Value):</strong> Mau diubah jadi seperti apa (misal: <code>blue</code> / biru).</li>
+      </ul>
+
+      <h4>3 Jenis Selektor Paling Sakti:</h4>
+      <ul>
+        <li><strong>Tag Selector:</strong> Menyerang seluruh tag yang sama sekaligus (contoh: <code>p { ... }</code> bikin semua paragraf berubah).</li>
+        <li><strong>Class Selector (Pakai titik <code>.</code>):</strong> Penanda fleksibel. Bisa dipasang ke banyak elemen berbeda (contoh: <code>.kartu-keren</code>).</li>
+        <li><strong>ID Selector (Pakai pagar <code>#</code>):</strong> Sifatnya egois dan unik. Hanya boleh dipakai oleh 1 elemen spesifik per halaman (contoh: <code>#header-utama</code>).</li>
+      </ul>
+      <p>⚠️ <strong>Catatan Kematian:</strong> Jangan pernah lupa nulis titik koma <code>;</code> di akhir baris properti. Kalau lupa, web kamu bakal ngambek massal nggak mau berubah gayanya!</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP 2: WARNA & BACKGROUND -->
+<div class="modal-overlay" id="colorModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🎨 Materi: Warna & Background (Biar Nggak Monoton)</h3>
+      <button class="close-modal" onclick="closeModal('colorModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian:</strong> Kalau web isinya cuma tulisan hitam di atas latar putih polos dari tahun 1990-an, dijamin pengunjungnya langsung kabur karena dikira web horor.</p>
+      
+      <h4>Properti Utama Pewarnaan:</h4>
+      <ul>
+        <li><code>color</code>: Digunakan khusus untuk mewarnai <strong>teks/huruf</strong>. (Bukan mewarnai latar belakang ya, awas kebalik!).</li>
+        <li><code>background-color</code>: Digunakan untuk mewarnai <strong>latar belakang</strong> suatu kotak atau elemen.</li>
+      </ul>
+
+      <h4>3 Cara Menulis Warna di CSS:</h4>
+      <ul>
+        <li><strong>Nama Warna Langsung:</strong> <code>red</code>, <code>blue</code>, <code>cyan</code>, <code>crimson</code>, dll. (Gampang, tapi pilihannya terbatas).</li>
+        <li><strong>Kode Hexadecimal (Hex):</strong> Awalan tanda pagar diikuti 6 karakter, contoh <code>#ff0000</code> (merah pekat), <code>#00ff00</code> (hijau), <code>#1d5f91</code> (biru cyber).</li>
+        <li><strong>Format RGB (Red, Green, Blue):</strong> Mengatur takaran cahaya angka dari 0 sampai 255, contoh <code>rgb(29, 95, 145)</code>.</li>
+      </ul>
+      <div class="fun-fact">💡 <b>Tips Estetik:</b> Hindari pakai warna hijau neon terang menyilaukan kalau nggak mau teman sekelas kamu mendadak buta massal di ruang lab komputer!</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP: FONT STYLING -->
+<div class="modal-overlay" id="fontModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>✍️ Materi: Teks & Tipografi (Font Styling)</h3>
+      <button class="close-modal" onclick="closeModal('fontModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian:</strong> Mengatur tulisan agar enak dipandang mata. Huruf yang berantakan bikin web kelihatan kayak surat kaleng.</p>
+
+      <h4>Properti Wajib Hafal:</h4>
+      <ul>
+        <li><code>font-size</code>: Mengatur ukuran huruf. Bisa pakai satuan piksel (<code>16px</code>), rem (<code>1.5rem</code>), atau persen (<code>120%</code>).</li>
+        <li><code>font-family</code>: Mengatur jenis huruf (font). Contoh: <code>Arial, sans-serif</code> atau <code>Courier New, monospace</code>.</li>
+        <li><code>font-weight</code>: Mengatur ketebalan huruf. Nilainya bisa <code>bold</code>, <code>normal</code>, atau angka ketebalan seperti <code>400</code> dan <code>700</code>.</li>
+        <li><code>text-align</code>: Mengatur posisi perataan teks. Pilihannya: <code>left</code> (kiri), <code>center</code> (tengah), <code>right</code> (kanan), atau <code>justify</code> (rata kiri-kanan ala proposal sekolah).</li>
+        <li><code>text-decoration</code>: Untuk ngasih garis bawah (<code>underline</code>), coret tengah (<code>line-through</code>), atau menghilangkan garis bawah bawaan link (<code>none</code>).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP: BOX MODEL -->
+<div class="modal-overlay" id="boxmodelModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>📦 Materi: Box Model (Padding vs Margin)</h3>
+      <button class="close-modal" onclick="closeModal('boxmodelModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian Konsep:</strong> Di dalam dunia CSS, <em>semua elemen dianggap sebagai kotak</em> (box). Masalah paling klasik umat manusia belajar koding adalah sering tertukar antara <strong>Padding</strong> dan <strong>Margin</strong>.</p>
+      
+      <div class="fun-fact">🧠 <b>Analogi Gampang (Paling Masuk Akal):</b>
+        <ul>
+          <li><b>Padding:</b> Jarak ruang di <i>dalam</i> kotak. Ibarat jarak antara barang belanjaan di dalam kardus dengan dinding kardus itu sendiri.</li>
+          <li><b>Margin:</b> Jarak ruang di <i>luar</i> kotak. Ibarat jarak antar kardus belanjaan yang kamu letakkan berdampingan di lantai supaya nggak saling dempetan.</li>
+        </ul>
+      </div>
+
+      <h4>Urutan Penulisan Arah Jam (Atas, Kanan, Bawah, Kiri):</h4>
+      <ul>
+        <li>Contoh: <code>margin: 10px 20px 10px 20px;</code> (Atas 10px, Kanan 20px, Bawah 10px, Kiri 20px).</li>
+        <li>Atau cukup <code>margin: 15px auto;</code> biar otomatis berada di tengah halaman!</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP: BORDER & RADIUS -->
+<div class="modal-overlay" id="borderModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🔲 Materi: Border & Border-Radius (Seni Kotak Melengkung)</h3>
+      <button class="close-modal" onclick="closeModal('borderModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian:</strong> Kalau kotak web kamu kelihatan kaku bersudut tajam 90 derajat, kita bisa kasih bingkai (border) dan melengkungkan sudutnya pakai trik sihir CSS.</p>
+
+      <h4>Properti Border:</h4>
+      <ul>
+        <li><code>border</code>: Menggabungkan ketebalan, jenis garis, dan warna sekaligus dalam satu baris.</li>
+        <li>Contoh: <code>border: 2px solid black;</code> (Tebal garis 2px, garis lurus solid, warna hitam). Jenis garis lain ada <code>dashed</code> (putus-putus) dan <code>dotted</code> (titik-titik).</li>
+      </ul>
+
+      <h4>Properti Border-Radius:</h4>
+      <ul>
+        <li><code>border-radius</code>: Mengubah sudut kotak yang tadinya lancip jadi tumpul melengkung.</li>
+        <li>Contoh: <code>border-radius: 12px;</code> bikin sudutnya halus estetik ala tombol aplikasi modern.</li>
+        <li>Kalau nilainya dibikin <code>50%</code>, kotak persegi bakal berubah sulap jadi lingkaran bulat sempurna! Keren kan? ✨</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP: FLEXBOX -->
+<div class="modal-overlay" id="flexboxModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>📐 Materi: Flexbox Layout (Penyelamat Stres Koding)</h3>
+      <button class="close-modal" onclick="closeModal('flexboxModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Pengertian:</strong> Dulu sebelum ada Flexbox, mengatur posisi elemen agar sejajar ke samping atau berada persis di tengah layar adalah ujian kesucian tingkat dewa yang bikin frustrasi.</p>
+
+      <h4>Cara Kerja Utama Flexbox:</h4>
+      <ul>
+        <li><code>display: flex;</code> : Senjata utama yang wajib dipasang di kotak pembungkus (parent). Sekali diketik, anak-anak di dalamnya langsung patuh berbaris rapi secara horizontal!</li>
+        <li><code>justify-content</code> : Mengatur pergerakan posisi item secara <strong>horizontal</strong> (mendatar). Nilainya bisa <code>center</code> (di tengah), <code>space-between</code> (jarak merata mentok pinggir), atau <code>space-around</code>.</li>
+        <li><code>align-items</code> : Mengatur pergerakan posisi item secara <strong>vertikal</strong> (tegak lurus). Sangat ampuh buat bikin elemen pas di tengah secara vertikal tanpa bikin emosi.</li>
+      </ul>
+      <div class="fun-fact">🔥 <b>Kesimpulan:</b> Menguasai Flexbox artinya kamu sudah melewati 50% rintangan terbesar menjadi web developer sejati!</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal(id) { document.getElementById(id).classList.add("active"); }
+function closeModal(id) { document.getElementById(id).classList.remove("active"); }
+window.onclick = function(event) {
+  if (event.target.classList.contains('modal-overlay')) { event.target.classList.remove('active'); }
+}
+
+const rawQuestions = [
+  { q: "Apa kepanjangan resmi dari CSS?", choices: ["Computer Style Sheets", "Cascading Style Sheets", "Creative Style System", "Colorful Sheet Style"], answer: 1 },
+  { q: "Bagaimana format penulisan selektor CSS yang benar untuk tag <h1>?", choices: ["h1 { color: red; }", "#h1 { color: red; }", ".h1 { color: red; }", "<h1 color='red'>"], answer: 0 },
+  { q: "Simbol apa yang digunakan di CSS untuk mendefinisikan sebuah Class selector?", choices: ["#", ".", "*", "/"], answer: 1 },
+  { q: "Properti CSS apa yang digunakan khusus untuk mengubah warna teks/huruf?", choices: ["background-color", "text-color", "color", "font-color"], answer: 2 },
+  { q: "Simbol apa yang digunakan untuk mendefinisikan ID selector di CSS?", choices: [".", "#", "@", "!"], answer: 1 },
+  { q: "Properti CSS apa yang digunakan untuk mengubah warna latar belakang elemen?", choices: ["color", "bg-color", "background-color", "fill"], answer: 2 },
+  { q: "Apa fungsi dari properti 'font-size' di dalam CSS?", choices: ["Mengubah jenis huruf", "Mengatur ukuran huruf", "Mengatur ketebalan huruf", "Memberikan garis bawah"], answer: 1 },
+  { q: "Jarak ruang di *dalam* elemen antara isi teks dan garis tepi disebut...", choices: ["Margin", "Padding", "Border", "Spacing"], answer: 1 },
+  { q: "Jarak ruang di *luar* elemen yang memisahkan antar kotak disebut...", choices: ["Margin", "Padding", "Border", "Gap"], answer: 0 },
+  { q: "Nilai properti display apa yang digunakan untuk mengaktifkan sistem Flexbox?", choices: ["block", "inline", "flex", "grid-box"], answer: 2 }
+];
+
+const assistantText = document.getElementById("assistantText");
+const modePicker = document.getElementById("modePicker");
+const soloSection = document.getElementById("soloSection");
+const battleSection = document.getElementById("battleSection");
+
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function prepareShuffledQuestions() {
+  const shuffledList = shuffleArray(rawQuestions);
+  return shuffledList.map(item => {
+    const originalAnswerText = item.choices[item.answer];
+    const shuffledChoices = shuffleArray(item.choices);
+    return { q: item.q, choices: shuffledChoices, answer: shuffledChoices.indexOf(originalAnswerText) };
+  });
+}
+
+let activeQuestions = prepareShuffledQuestions();
+let soloIndex = parseInt(localStorage.getItem("css_solo_index")) || 0;
+let soloScore = parseInt(localStorage.getItem("css_solo_score")) || 0;
+
+document.getElementById("soloBtn").onclick = () => {
+  modePicker.classList.add("hidden");
+  soloSection.classList.remove("hidden");
+  if(soloIndex >= activeQuestions.length) { soloIndex = 0; }
+  renderSolo();
+  assistantText.textContent = "Mode Kuis Teori Solo aktif! Jawab pertanyaannya pelan-pelan sambil diingat materinya ya. 🧠";
+};
+
+function renderSolo(){
+  const q = activeQuestions[soloIndex];
+  if(!q) return;
+  document.getElementById("soloCounter").textContent = `SOAL ${soloIndex + 1} / ${activeQuestions.length}`;
+  document.getElementById("soloScore").textContent = `Skor: ${soloScore}`;
+  document.getElementById("soloQuestion").textContent = q.q;
+  document.getElementById("soloFeedback").textContent = "Pilih satu jawaban.";
+  document.getElementById("soloNext").style.display = "none";
+  
+  const box = document.getElementById("soloChoices");
+  box.innerHTML = "";
+  q.choices.forEach((c, i) => {
+    const b = document.createElement("button");
+    b.className = "choice";
+    b.textContent = c;
+    b.onclick = () => answerSolo(i, b);
+    box.appendChild(b);
+  });
+}
+
+function answerSolo(i, btn){
+  const q = activeQuestions[soloIndex];
+  const all = document.querySelectorAll("#soloChoices .choice");
+  all.forEach(b => b.disabled = true);
+  
+  if(i === q.answer){
+    btn.classList.add("correct");
+    soloScore += 100;
+    document.getElementById("soloFeedback").textContent = "✅ Benar! +100 XP";
+  } else {
+    btn.classList.add("wrong");
+    all[q.answer].classList.add("correct");
+    document.getElementById("soloFeedback").textContent = "❌ Kurang tepat, makanya dibaca dulu materinya wkwk.";
+  }
+  
+  document.getElementById("soloScore").textContent = `Skor: ${soloScore}`;
+  document.getElementById("soloNext").style.display = "inline-block";
+  localStorage.setItem("css_solo_index", soloIndex + 1);
+  localStorage.setItem("css_solo_score", soloScore);
+}
+
+document.getElementById("soloNext").onclick = () => {
+  soloIndex++;
+  if(soloIndex < activeQuestions.length){
+    renderSolo();
+  } else {
+    document.getElementById("soloQuestion").textContent = "🎉 Selamat! Kamu sudah menamatkan seluruh kuis teori CSS!";
+    document.getElementById("soloChoices").innerHTML = "";
+    document.getElementById("soloFeedback").textContent = `Skor Akhir Kamu: ${soloScore} XP`;
+    document.getElementById("soloNext").style.display = "none";
+    document.getElementById("soloCounter").textContent = "SELESAI";
+    assistantText.textContent = `Keren! Skor kuis teori CSS kamu ${soloScore}. Sekarang kamu siap tempur masuk ke Studio CSS! 🎉`;
+  }
+};
+
+let battleIndex = 0, bScores = [0, 0], names = ["PLAYER 1", "PLAYER 2"], answered = [false, false];
+
+document.getElementById("battleBtn").onclick = () => {
+  modePicker.classList.add("hidden");
+  battleSection.classList.remove("hidden");
+  assistantText.textContent = "Mode Battle 2 Player aktif! Masukkan nama kalian lalu tunjukkan siapa yang paling jago teori CSS! ⚔️";
+};
+
+document.getElementById("startBattle").onclick = () => {
+  names[0] = document.getElementById("name1").value.trim() || "PLAYER 1";
+  names[1] = document.getElementById("name2").value.trim() || "PLAYER 2";
+  document.getElementById("p1Name").textContent = names[0];
+  document.getElementById("p2Name").textContent = names[1];
+  document.getElementById("battleSetup").classList.add("hidden");
+  document.getElementById("arena").classList.remove("hidden");
+  
+  activeQuestions = prepareShuffledQuestions();
+  battleIndex = 0;
+  bScores = [0, 0];
+  renderBattle();
+};
+
+function renderBattle(){
+  answered = [false, false];
+  const q = activeQuestions[battleIndex];
+  document.getElementById("p1Question").textContent = q.q;
+  document.getElementById("p2Question").textContent = q.q;
+  document.getElementById("p1Status").textContent = "Pilih jawaban.";
+  document.getElementById("p2Status").textContent = "Pilih jawaban.";
+  
+  [1, 2].forEach(p => {
+    const box = document.getElementById(`p${p}Choices`);
+    box.innerHTML = "";
+    q.choices.forEach((c, i) => {
+      const b = document.createElement("button");
+      b.className = "bchoice";
+      b.textContent = c;
+      b.onclick = () => battleAnswer(p - 1, i, b);
+      box.appendChild(b);
+    });
+  });
+}
+
+function battleAnswer(player, i, btn){
+  if(answered[player]) return;
+  answered[player] = true;
+  
+  const q = activeQuestions[battleIndex];
+  const box = document.getElementById(`p${player + 1}Choices`);
+  const all = box.querySelectorAll("button");
+  all.forEach(b => b.disabled = true);
+  
+  if(i === q.answer){
+    btn.classList.add("correct");
+    bScores[player] += 100;
+    document.getElementById(`p${player + 1}Status`).textContent = "✅ Benar! +100";
+  } else {
+    btn.classList.add("wrong");
+    all[q.answer].classList.add("correct");
+    document.getElementById(`p${player + 1}Status`).textContent = "❌ Yah, salah!";
+  }
+  
+  document.getElementById(`p${player + 1}Score`).textContent = bScores[player];
+  
+  if(answered[0] && answered[1]){
+    battleIndex++;
+    if(battleIndex < activeQuestions.length){
+      setTimeout(renderBattle, 700);
+    } else {
+      setTimeout(finishBattle, 700);
+    }
+  }
+}
+
+function finishBattle(){
+  document.getElementById("arena").classList.add("hidden");
+  document.getElementById("battleFinish").classList.remove("hidden");
+  let result = (bScores[0] === bScores[1]) ? `Hasil Seri! Skor kalian berdua sama: ${bScores[0]} poin.` : (bScores[0] > bScores[1] ? `${names[0]} Keluar Sebagai Pemenang (${bScores[0]} pts)! 🏆` : `${names[1]} Keluar Sebagai Pemenang (${bScores[1]} pts)! 🏆`);
+  document.getElementById("winner").textContent = result;
+}
+</script>
+</body>
+</html>

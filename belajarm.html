@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Meta Tags SEO untuk Google -->
+    <meta name="google-site-verification" content="vEdbQDzSs7t_-audjIpEZ1WsJ_l5zzhmQXI7WZTFGDE" />
     <meta name="description" content="CyberMimpi adalah portal informasi dan ruang digital kelas XI TKJ 2 SMKN 8 Garut, dikembangkan oleh Fito Purnama.">
     <meta name="keywords" content="CyberMimpi, XI TKJ 2, SMKN 8 Garut, Fito Purnama">
     <meta name="author" content="Fito Purnama">
@@ -915,6 +916,35 @@ body {
     .photo-featured { grid-column: span 1; }
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>html.cm-auth-check body{visibility:hidden!important;}</style>
+<script>
+document.documentElement.classList.add('cm-auth-check');
+window.CM_SUPABASE_URL = 'https://hcxsrabeaxkkknamrrle.supabase.co';
+window.CM_SUPABASE_ANON_KEY = 'sb_publishable_9M77eMaJT1Bcb2EOSedePQ_X2ku031T';
+window.CM_MEMBER_MAP = {"Pak Agus Sobarudin": "pak-agus", "Marcelia Dwi Mulyani": "marcelia", "Sakinah Awaliah": "sakinah", "Devita": "devita", "Salwa Ainul Fauziah": "salwa", "Denis Alfarizi": "denis", "Asti Puspa Dewi": "asti", "Aldi Ardiansyah": "aldi", "Ali Akbar Siddiq": "ali", "Anggun Pebrianti Permata": "anggun", "Arni Anggraeni": "arni", "Bilqis Sherin Natasya": "bilqis", "Dikdik Hilman Maulana": "dikdik", "Fito Purnama": "fito", "Fitrah Abdullah Fatah": "fitrah", "Intan Ramadani": "intan", "Jajang Sopian": "jajang", "Miftah Fauzi Hariri": "miftah", "Moch Gathan Naofal": "gathan", "Muhamad Irfan Permana": "irfan", "Muhamad Rafli": "rafli", "Muhammad Ramdan Solihin": "ramdan", "Muhammad Dani Ramdani": "dani", "Natasya Anggraeni Putri": "natasya", "Neni Anggraeni": "neni", "Pahri Haruna Rosid": "pahri", "Prima Ahmad Maulana": "prima", "Restu Permana": "restu", "Reva Septi Auliyanti": "reva", "Ridwan Sopian": "ridwan", "Riska Amelia": "riska", "Riska Nur Rahayu": "rahayu", "Rizqi Maulana": "rizqi", "Sifa Nur Anisa": "sifa", "Sopandi Sopyan": "sopandi", "Triani Desvita Nurmalasari": "triani", "Wada Maulida Solikhah": "wada", "Zikri Pebrian": "zikri"};
+window.CM_AUTH_CLIENT = window.supabase.createClient(window.CM_SUPABASE_URL, window.CM_SUPABASE_ANON_KEY);
+(async function checkCyberMimpiAuth() {
+  const loginUrl = 'login.html?next=' + encodeURIComponent('belajarm.html');
+  try {
+    const { data, error } = await window.CM_AUTH_CLIENT.auth.getSession();
+    if (error || !data.session) { window.location.replace(loginUrl); return; }
+    const username = (data.session.user.email || '').split('@')[0].toLowerCase();
+    if (!Object.values(window.CM_MEMBER_MAP).includes(username)) {
+      await window.CM_AUTH_CLIENT.auth.signOut();
+      localStorage.removeItem('cyber_session');
+      window.location.replace('login.html');
+      return;
+    }
+    const displayName = Object.keys(window.CM_MEMBER_MAP).find(n => window.CM_MEMBER_MAP[n] === username) || username;
+    localStorage.setItem('cyber_session', JSON.stringify({id: username, name: displayName, loginTime: new Date().toISOString(), authUserId: data.session.user.id}));
+    document.documentElement.classList.remove('cm-auth-check');
+  } catch (e) {
+    console.error('Tidak dapat memverifikasi sesi Supabase:', e);
+    window.location.replace(loginUrl);
+  }
+})();
+</script>
 </head>
 
 <body>
@@ -1186,7 +1216,7 @@ body {
         <h3>Modul CSS Styling</h3>
         <p>Pilih mau baca teori styling CSS dulu atau langsung tancap gas ke studio praktek?</p>
         <div class="modal-options">
-            <a href="css1.html" class="modal-btn btn-materi">
+            <a href="materi-css.html" class="modal-btn btn-materi">
                 <span>📚</span>
                 <span>Materi</span>
             </a>

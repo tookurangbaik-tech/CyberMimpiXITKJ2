@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Absensi • CyberMimpi</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f0f4ff 0%, #e2e8f0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 16px;
+}
+
+.container {
+    position: relative;
+    width: 880px;
+    max-width: 100%;
+    height: 580px;
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(59, 130, 246, 0.12);
+    overflow: hidden;
+}
+
+.form-box {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    text-align: center;
+    padding: 30px 40px;
+    z-index: 1;
+    transition: 0.6s ease-in-out;
+}
+
+.container.active .form-box.login {
+    right: 50%;
+}
+
+.form-box.register {
+    left: 0;
+    right: auto;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.container.active .form-box.register {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+form {
+    width: 100%;
+}
+
+form h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #1e293b;
+}
+
+/* TRIGGER KOTAK PILIH NAMA */
+.name-picker-trigger {
+    width: 100%;
+    padding: 13px 18px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #64748b;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.2s;
+    margin: 12px 0;
+}
+
+.name-picker-trigger:hover {
+    background: #fff;
+    border-color: #3b82f6;
+}
+
+.name-picker-trigger.has-value {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+/* MODAL POPUP PILIH NAMA */
+.name-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease;
+}
+
+.name-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.name-modal-card {
+    background: #fff;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    transform: scale(0.9) translateY(20px);
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: left;
+}
+
+.name-modal-overlay.active .name-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.name-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+.name-modal-header h3 {
+    font-size: 16px;
+    color: #1e293b;
+}
+
+.name-modal-close {
+    background: #f1f5f9;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 14px;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.name-modal-list {
+    max-height: 320px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 4px;
+}
+
+.name-modal-list::-webkit-scrollbar {
+    width: 6px;
+}
+.name-modal-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.name-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 13px;
+    color: #334155;
+    background: #f8fafc;
+}
+
+.name-item:hover {
+    background: #e2e8f0;
+}
+
+.name-item.selected {
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+/* KOTAK BULAT DENGAN VEKTOR CEKLIS */
+.custom-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    flex-shrink: 0;
+    background: #fff;
+}
+
+.name-item.selected .custom-checkbox {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.custom-checkbox i {
+    font-size: 10px;
+    color: #fff;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: 0.2s;
+}
+
+.name-item.selected .custom-checkbox i {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.input-box {
+    position: relative;
+    margin: 12px 0;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 13px 45px 13px 18px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    outline: none;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #333;
+    transition: 0.2s;
+}
+
+.input-box input:focus {
+    background: #fff;
+    border-color: #3b82f6;
+}
+
+.input-box i {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.forgot-link {
+    display: block;
+    text-align: right;
+    margin: 6px 0 15px;
+    font-size: 12px;
+    color: #64748b;
+    text-decoration: none;
+}
+
+.btn {
+    width: 100%;
+    height: 42px;
+    background: #3b82f6;
+    border: none;
+    outline: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    cursor: pointer;
+    font-size: 14px;
+    color: #fff;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn:hover {
+    background: #2563eb;
+}
+
+/* TOGGLE BOX / OVERLAY DESKTOP */
+.toggle-box {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.toggle-box::before {
+    content: '';
+    position: absolute;
+    left: -250%;
+    width: 300%;
+    height: 100%;
+    background: #3b82f6;
+    border-radius: 150px;
+    z-index: 2;
+    transition: 1.8s ease-in-out;
+}
+
+.container.active .toggle-box::before {
+    left: 50%;
+}
+
+.toggle-panel {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+    transition: 0.6s ease-in-out;
+    padding: 0 30px;
+    text-align: center;
+    pointer-events: auto;
+}
+
+.toggle-panel.toggle-left {
+    left: 0;
+    transition-delay: 0.6s;
+}
+
+.container.active .toggle-panel.toggle-left {
+    left: -50%;
+    transition-delay: 0s;
+}
+
+.toggle-panel.toggle-right {
+    right: -50%;
+    transition-delay: 0s;
+}
+
+.container.active .toggle-panel.toggle-right {
+    right: 0;
+    transition-delay: 0.6s;
+}
+
+.toggle-panel h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.toggle-panel p {
+    font-size: 13px;
+    margin-bottom: 20px;
+    opacity: 0.9;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   RESPONSIF HP
+========================================================= */
+@media screen and (max-width: 768px) {
+    body { padding: 10px; }
+    .container { width: 100%; height: 650px; }
+
+    .form-box.login {
+        top: 38%; bottom: auto; width: 100%; height: 62%; right: 0; left: 0; padding: 20px;
+    }
+    .container.active .form-box.login {
+        top: 100%; bottom: auto;
+    }
+
+    .form-box.register {
+        top: 100%; bottom: auto; left: 0; right: 0; width: 100%; height: 50%;
+    }
+    .container.active .form-box.register {
+        top: 0; height: 50%;
+    }
+
+    .toggle-box::before {
+        left: 0; top: 0; width: 100%; height: 38%; background: #3b82f6; border-radius: 0 0 30px 30px; transition: 0.6s ease-in-out;
+    }
+    .container.active .toggle-box::before {
+        left: 0; top: 50%; height: 50%; border-radius: 30px 30px 0 0;
+    }
+
+    .toggle-panel { width: 100%; padding: 20px; }
+
+    .toggle-panel.toggle-left {
+        top: 100%; left: 0; height: 50%; transition: 0.6s ease-in-out;
+    }
+    .container.active .toggle-panel.toggle-left {
+        top: 50%; left: 0;
+    }
+
+    .toggle-panel.toggle-right {
+        top: 0; left: 0; height: 38%; transition: 0.6s ease-in-out;
+    }
+    .container.active .toggle-panel.toggle-right {
+        top: -50%; left: 0;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="container">
+    <!-- FORM LOGIN -->
+    <div class="form-box login">
+        <form id="loginForm">
+            <h1>Login Absensi</h1>
+            
+            <div class="input-box">
+                <input type="text" id="usernameInput" placeholder="Username (contoh: fito)" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+            </div>
+            <div class="input-box">
+                <input type="password" id="passwordInput" placeholder="Sandi akun" autocomplete="current-password" required>
+                <i class="fa-solid fa-eye-slash" id="togglePassword" onclick="togglePasswordVisibility()"></i>
+            </div>
+            <p id="loginError" role="alert" style="color:#b91c1c;font-size:13px;min-height:18px;margin:8px 0;"></p>
+            <a href="#" class="forgot-link">Akun dibuat oleh admin CyberMimpi</a>
+            <button type="submit" class="btn" id="loginButton">Masuk</button>
+        </form>
+    </div>
+
+    <!-- HALAMAN SETELAH LOGIN (WELCOME PANEL) -->
+    <div class="form-box register">
+        <form>
+            <h1>Selamat Datang!</h1>
+            <p id="greetingText" style="color: #64748b; margin: 15px 0 25px; line-height: 1.5;">
+                Login berhasil. Pilih halaman yang ingin dibuka.
+            </p>
+            <button type="button" class="btn" onclick="window.location.href='belajarm.html'">Buka Belajar</button>
+            <button type="button" class="btn" style="margin-top:10px" onclick="window.location.href='Wawa.html'">Buka Wawa</button>
+        </form>
+    </div>
+
+    <!-- OVERLAY SLIDE PANEL -->
+    <div class="toggle-box">
+        <div class="toggle-panel toggle-left">
+            <h1>Sesi Aktif!</h1>
+            <p>Data kamu sudah tersimpan di perangkat ini.</p>
+            <button type="button" class="btn" style="background: #fff; color: #1d3557;" onclick="window.location.href='belajarm.html'">Lanjut ke Belajar</button>
+        </div>
+        <div class="toggle-panel toggle-right">
+            <h1>Hello, Welcome!</h1>
+            <p>Pilih nama kamu dari daftar absen dan masukkan PIN untuk mulai menjelajahi CyberMimpi.</p>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL POPUP DAFTAR NAMA -->
+<div class="name-modal-overlay" id="nameModal">
+    <div class="name-modal-card">
+        <div class="name-modal-header">
+            <h3>Pilih Nama Absensi</h3>
+            <button class="name-modal-close" onclick="closeNameModal()">&times;</button>
+        </div>
+        <div class="name-modal-list" id="nameListContainer">
+            <!-- Daftar nama dirender otomatis lewat JS -->
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const CM_MEMBER_MAP = {
+  "Pak Agus Sobarudin": "pak-agus",
+  "Marcelia Dwi Mulyani": "marcelia",
+  "Sakinah Awaliah": "sakinah",
+  "Devita": "devita",
+  "Salwa Ainul Fauziah": "salwa",
+  "Denis Alfarizi": "denis",
+  "Asti Puspa Dewi": "asti",
+  "Aldi Ardiansyah": "aldi",
+  "Ali Akbar Siddiq": "ali",
+  "Anggun Pebrianti Permata": "anggun",
+  "Arni Anggraeni": "arni",
+  "Bilqis Sherin Natasya": "bilqis",
+  "Dikdik Hilman Maulana": "dikdik",
+  "Fito Purnama": "fito",
+  "Fitrah Abdullah Fatah": "fitrah",
+  "Intan Ramadani": "intan",
+  "Jajang Sopian": "jajang",
+  "Miftah Fauzi Hariri": "miftah",
+  "Moch Gathan Naofal": "gathan",
+  "Muhamad Irfan Permana": "irfan",
+  "Muhamad Rafli": "rafli",
+  "Muhammad Ramdan Solihin": "ramdan",
+  "Muhammad Dani Ramdani": "dani",
+  "Natasya Anggraeni Putri": "natasya",
+  "Neni Anggraeni": "neni",
+  "Pahri Haruna Rosid": "pahri",
+  "Prima Ahmad Maulana": "prima",
+  "Restu Permana": "restu",
+  "Reva Septi Auliyanti": "reva",
+  "Ridwan Sopian": "ridwan",
+  "Riska Amelia": "riska",
+  "Riska Nur Rahayu": "rahayu",
+  "Rizqi Maulana": "rizqi",
+  "Sifa Nur Anisa": "sifa",
+  "Sopandi Sopyan": "sopandi",
+  "Triani Desvita Nurmalasari": "triani",
+  "Wada Maulida Solikhah": "wada",
+  "Zikri Pebrian": "zikri"
+};
+const CM_ALLOWED_USERNAMES = new Set(Object.values(CM_MEMBER_MAP));
+const SUPABASE_URL = 'https://hcxsrabeaxkkknamrrle.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_9M77eMaJT1Bcb2EOSedePQ_X2ku031T';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const container = document.getElementById('container');
+const loginForm = document.getElementById('loginForm');
+const usernameInput = document.getElementById('usernameInput');
+const passwordInput = document.getElementById('passwordInput');
+const loginError = document.getElementById('loginError');
+const loginButton = document.getElementById('loginButton');
+const params = new URLSearchParams(window.location.search);
+const requestedNext = params.get('next');
+const allowedNext = new Set(['belajarm.html', 'Wawa.html']);
+const nextPage = allowedNext.has(requestedNext) ? requestedNext : 'belajarm.html';
+
+function togglePasswordVisibility() {
+    const toggleIcon = document.getElementById('togglePassword');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    }
+}
+
+loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    loginError.textContent = '';
+    const username = usernameInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
+    if (!CM_ALLOWED_USERNAMES.has(username)) {
+        loginError.textContent = 'Username tidak terdaftar. Periksa username dari admin.';
+        return;
+    }
+    loginButton.disabled = true;
+    loginButton.textContent = 'Memeriksa...';
+    try {
+        // Akun dibuat admin di Supabase dengan email internal username@cybermimpi.invalid.
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: `${username}@cybermimpi.invalid`,
+            password
+        });
+        if (error) throw error;
+        const displayName = Object.keys(CM_MEMBER_MAP).find(name => CM_MEMBER_MAP[name] === username) || username;
+        localStorage.setItem('cyber_session', JSON.stringify({
+            id: username, name: displayName, loginTime: new Date().toISOString(), authUserId: data.user.id
+        }));
+        document.getElementById('greetingText').textContent = `Halo, ${displayName}! Login berhasil diverifikasi oleh Supabase.`;
+        container.classList.add('active');
+    } catch (error) {
+        console.error('Login Supabase gagal:', error);
+        loginError.textContent = 'Username atau sandi salah, atau akun belum dibuat/diaktifkan admin.';
+    } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = 'Masuk';
+    }
+});
+
+// Jika sesi masih aktif, pengguna bisa langsung menuju halaman tujuan.
+supabaseClient.auth.getSession().then(({ data }) => {
+    if (data.session) {
+        const username = (data.session.user.email || '').split('@')[0].toLowerCase();
+        if (CM_ALLOWED_USERNAMES.has(username)) window.location.replace(nextPage);
+    }
+}).catch(console.error);
+</script>
+
+</body>
+</html>

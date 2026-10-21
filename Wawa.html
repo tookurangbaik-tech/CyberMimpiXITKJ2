@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Meta Tags SEO untuk Google -->
+    <meta name="google-site-verification" content="vEdbQDzSs7t_-audjIpEZ1WsJ_l5zzhmQXI7WZTFGDE" />
     <meta name="description" content="CyberMimpi adalah portal informasi, kuis interaktif, dan ruang digital kelas XI TKJ 2 SMKN 8 Garut, dikembangkan oleh Fito Purnama.">
     <meta name="keywords" content="CyberMimpi, XI TKJ 2, SMKN 8 Garut, Fito Purnama">
     <meta name="author" content="Fito Purnama">
@@ -14,6 +15,8 @@
     <meta property="og:type" content="website">
 <title>Anggota Kelas • CyberMimpi</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 :root {
     --loader-theme: #ffffff;
@@ -513,7 +516,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
 .modal-fito-card .play-btn { background: #1d4ed8 !important; }
 .modal-fito-card .audio-progress-bar { background: #3b82f6 !important; }
 
-/* Overlay & Modal Pop-up */
+/* Overlay & Modal Pop-up Lama */
 .overlay {
     position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
     backdrop-filter: blur(5px); opacity: 0; pointer-events: none; transition: 0.3s ease; z-index: 1999;
@@ -531,28 +534,255 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
 .status-badge { display: inline-block; padding: 4px 12px; background: #dcfce7; color: #166534; border-radius: 12px; font-size: 12px; font-weight: bold; margin-bottom: 15px; }
 .bio-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 15px; text-align: left; font-size: 13px; margin-bottom: 15px; }
 
-.modal-popup.modal-theme-kuning { background: #fefce8 !important; border: 2px solid #fde047 !important; }
-.modal-popup.modal-theme-kuning .foto-pop { border-color: #eab308 !important; }
-.modal-popup.modal-theme-kuning h3 { color: #854d0e !important; }
+/* =========================================================
+   MODAL PROFIL SELAYAR FULLSCREEN (ALA INSTAGRAM / TIKTOK)
+========================================================= */
+.ig-modal-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000000;
+    color: #ffffff;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.3s ease;
+    overflow-y: auto;
+}
 
-.modal-popup.modal-theme-biru { background: #eff6ff !important; border: 2px solid #bfdbfe !important; }
-.modal-popup.modal-theme-biru .foto-pop { border-color: #3b82f6 !important; }
-.modal-popup.modal-theme-biru h3 { color: #1e40af !important; }
+.ig-modal-fullscreen.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
 
-.modal-popup.modal-theme-hijau { background: #f0fdf4 !important; border: 2px solid #bbf7d0 !important; }
-.modal-popup.modal-theme-hijau .foto-pop { border-color: #22c55e !important; }
-.modal-popup.modal-theme-hijau h3 { color: #166534 !important; }
+.ig-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #0f172a;
+    border-bottom: 1px solid #1e293b;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
 
-.modal-popup.modal-theme-ungu { background: #faf5ff !important; border: 2px solid #e9d5ff !important; }
-.modal-popup.modal-theme-ungu .foto-pop { border-color: #a855f7 !important; }
-.modal-popup.modal-theme-ungu h3 { color: #6b21a8 !important; }
+.ig-header-title {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
 
-.modal-popup.modal-fito-card { background: #eff6ff !important; border: 2px solid #93c5fd !important; }
-.modal-popup.modal-fito-card .foto-pop { border-color: #3b82f6 !important; }
-.modal-popup.modal-fito-card h3 { color: #1e40af !important; }
+.ig-close-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.ig-profile-body {
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    flex: 1;
+}
+
+.ig-profile-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.ig-avatar-box {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.ig-avatar-img {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f77f00;
+    padding: 2px;
+}
+
+.ig-stats-row {
+    display: flex;
+    justify-content: space-around;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.ig-stat-num {
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.ig-stat-label {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+.ig-bio-section {
+    margin-bottom: 20px;
+}
+
+.ig-bio-name {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 2px;
+}
+
+.ig-bio-role {
+    font-size: 12px;
+    color: #38bdf8;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.ig-bio-desc {
+    font-size: 13px;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+.ig-action-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.ig-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+}
+
+.ig-btn-primary { background: #f77f00; color: #ffffff; }
+.ig-btn-secondary { background: #1e293b; color: #ffffff; border: 1px solid #334155; }
+.ig-btn-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+.ig-btn:hover { opacity: 0.9; }
+
+.ig-gallery-tabs {
+    display: flex;
+    border-top: 1px solid #1e293b;
+    border-bottom: 1px solid #1e293b;
+    margin-bottom: 15px;
+}
+
+.ig-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    font-size: 16px;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.ig-tab.active {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+}
+
+.ig-grid-uploads {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+
+.ig-grid-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: #1e293b;
+    overflow: hidden;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.ig-grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ig-empty-grid {
+    grid-column: span 3;
+    text-align: center;
+    padding: 40px 10px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.ig-custom-form-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.85);
+    z-index: 4000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.ig-form-card {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+    color: #ffffff;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.ig-form-card h3 { font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid #1e293b; padding-bottom: 10px; }
+.ig-form-group { margin-bottom: 12px; text-align: left; }
+.ig-form-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+.ig-form-group input, .ig-form-group textarea, .ig-form-group select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #ffffff;
+    font-size: 13px;
+    outline: none;
+}
+
+.ig-lightbox {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.95); z-index: 5000; display: none;
+    justify-content: center; align-items: center; padding: 20px;
+}
+.ig-lightbox img { max-width: 100%; max-height: 80vh; border-radius: 12px; }
 
 /* ========================================
-   WIDGET ASISTEN ELAINA (POJOK KANAN BAWAH)
+   WIDGET ASISTEN ELAINA
 ======================================== */
 .menfess-widget-wrapper {
     position: fixed;
@@ -564,7 +794,6 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
     align-items: flex-end;
 }
 
-/* ANIMASI BUBBLE CHAT TAMPIL & HILANG BERGANTIAN */
 .menfess-chat-bubble {
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(8px);
@@ -584,21 +813,9 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
 }
 
 @keyframes popInOut {
-    0% {
-        opacity: 0;
-        transform: translateY(10px) scale(0.9);
-        pointer-events: none;
-    }
-    10%, 45% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        pointer-events: auto;
-    }
-    55%, 100% {
-        opacity: 0;
-        transform: translateY(10px) scale(0.9);
-        pointer-events: none;
-    }
+    0% { opacity: 0; transform: translateY(10px) scale(0.9); pointer-events: none; }
+    10%, 45% { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    55%, 100% { opacity: 0; transform: translateY(10px) scale(0.9); pointer-events: none; }
 }
 
 .menfess-btn-avatar {
@@ -625,7 +842,6 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
     object-fit: contain;
 }
 
-/* MODAL INFORMASI ASISTEN (POP-UP INFO) */
 .info-modal-overlay {
     position: fixed;
     inset: 0;
@@ -642,10 +858,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-.info-modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
+.info-modal-overlay.active { opacity: 1; visibility: visible; }
 
 .info-modal-card {
     background: rgba(255, 255, 255, 0.96);
@@ -661,101 +874,43 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
     text-align: center;
 }
 
-.info-modal-overlay.active .info-modal-card {
-    transform: scale(1) translateY(0);
-}
+.info-modal-overlay.active .info-modal-card { transform: scale(1) translateY(0); }
 
 .info-close-btn {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 30px;
-    height: 30px;
+    top: 15px; right: 15px;
+    width: 30px; height: 30px;
     border-radius: 50%;
-    background: #f1f5f9;
-    border: none;
-    font-size: 16px;
-    color: #64748b;
+    background: #f1f5f9; border: none;
+    font-size: 16px; color: #64748b;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex; justify-content: center; align-items: center;
     transition: 0.2s ease;
 }
 
 .info-close-btn:hover { background: #e2e8f0; color: #0f172a; }
-
-.info-avatar-pop {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-    margin: 0 auto 10px auto;
-}
-
-.info-modal-card h3 {
-    font-size: 18px;
-    font-weight: 900;
-    color: #1d3557;
-    margin-bottom: 8px;
-}
-
+.info-avatar-pop { width: 70px; height: 70px; object-fit: contain; margin: 0 auto 10px auto; }
+.info-modal-card h3 { font-size: 18px; font-weight: 900; color: #1d3557; margin-bottom: 8px; }
 .info-modal-card p {
-    font-size: 13px;
-    color: #475569;
-    line-height: 1.6;
-    margin-bottom: 16px;
-    text-align: left;
-    background: #f8fafc;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    font-size: 13px; color: #475569; line-height: 1.6; margin-bottom: 16px;
+    text-align: left; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;
 }
-
 .info-ok-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 14px;
-    border: none;
+    width: 100%; padding: 12px; border-radius: 14px; border: none;
     background: linear-gradient(135deg, #5FC9F9 0%, #0284c7 100%);
-    color: #ffffff;
-    font-size: 13px;
-    font-weight: 800;
-    cursor: pointer;
+    color: #ffffff; font-size: 13px; font-weight: 800; cursor: pointer;
     box-shadow: 0 6px 15px rgba(2, 132, 199, 0.3);
     transition: transform 0.2s ease;
 }
-
 .info-ok-btn:hover { transform: translateY(-2px); }
 
-@media (max-width: 768px) {
-  .footer-container {
-    flex-direction: column;
-    gap: 25px;
-  }
-}
-@media (max-width: 768px) {
-    .navbar { top: 10px; width: calc(100% - 20px); height: 56px; padding: 0 10px; }
-    .hero { height: 115vh; }
-    .hero-content { top: 150px; width: 94%; padding: 0 10px; }
-    .hero-title { font-size: clamp(28px, 8vw, 40px); }
-    .menfess-btn-avatar { width: 54px; height: 54px; }
-    .menfess-btn-avatar img { width: 70px; height: 70px; }
-    .menfess-widget-wrapper { bottom: 16px; right: 16px; }
-}
-
-@media (min-width: 769px) {
-    .hero { height: 120vh; }
-    .hero-stage { height: 100vh; min-height: 650px; }
-    .hero-content { top: 190px; width: min(850px, 82vw); }
-}
-
 /* ================================
-   CTA & FOOTER (TEMA ORANYE)
+   CTA & FOOTER
 ================================ */
 .cta-section {
     position: relative;
     padding: 80px 15px;
-    background: #f77f00; /* Warna Oranye #f77f00 */
+    background: #f77f00;
     color: #ffffff;
     text-align: center;
 }
@@ -768,7 +923,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
     align-items: center;
     gap: 8px;
     background: #ffffff;
-    color: #f77f00; /* Teks Oranye */
+    color: #f77f00;
     font-size: 13px;
     font-weight: 800;
     padding: 14px 28px;
@@ -808,7 +963,67 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
 .footer-bottom { max-width: 1100px; margin: 20px auto 0; text-align: center; font-size: 13px; color: #64748b; }
 .footer-bottom strong { color: #10b981; }
 .footer-bottom span { color: #cbd5e1; }
+
+#igProfileModal{--profile-accent:#f77f00;--profile-surface:#000000}
+#igProfileModal .ig-avatar-img{border-color:var(--profile-accent)}
+#igProfileModal .ig-bio-role{color:var(--profile-accent)}
+#igProfileModal .ig-tab.active{border-bottom-color:var(--profile-accent)}
+#igProfileModal .ig-btn-primary{background:var(--profile-accent)}
+#igProfileModal.profile-bg-gradient{background:linear-gradient(160deg,#0f172a,#111827 55%,#172554)}
+#igProfileModal.profile-bg-soft{background:linear-gradient(160deg,#172033,#24203b 60%,#172554)}
+#igProfileModal .ig-avatar-img.border-double{border-style:double;border-width:5px;padding:2px}
+#igProfileModal .ig-avatar-img.border-dashed{border-style:dashed}
+#igProfileModal .ig-avatar-img.border-glow{box-shadow:0 0 0 3px color-mix(in srgb,var(--profile-accent) 25%,transparent),0 0 18px var(--profile-accent)}
+#igProfileModal .ig-avatar-img.border-dots{border-style:dotted}
+.profile-custom-note{font-size:11px;color:#94a3b8;line-height:1.5;margin-top:5px}
+.ig-form-group input[type="color"]{height:42px;padding:4px;cursor:pointer}
+@media(prefers-reduced-motion:reduce){#igProfileModal{transition:none!important}}
+
+@media (max-width: 768px) {
+  .footer-container { flex-direction: column; gap: 25px; }
+  .navbar { top: 10px; width: calc(100% - 20px); height: 56px; padding: 0 10px; }
+  .hero { height: 115vh; }
+  .hero-content { top: 150px; width: 94%; padding: 0 10px; }
+  .hero-title { font-size: clamp(28px, 8vw, 40px); }
+  .menfess-btn-avatar { width: 54px; height: 54px; }
+  .menfess-btn-avatar img { width: 70px; height: 70px; }
+  .menfess-widget-wrapper { bottom: 16px; right: 16px; }
+}
+
+@media (min-width: 769px) {
+  .hero { height: 120vh; }
+  .hero-stage { height: 100vh; min-height: 650px; }
+  .hero-content { top: 190px; width: min(850px, 82vw); }
+}
 </style>
+<style>html.cm-auth-check body{visibility:hidden!important;}</style>
+<script>
+document.documentElement.classList.add('cm-auth-check');
+window.CM_SUPABASE_URL = 'https://hcxsrabeaxkkknamrrle.supabase.co';
+window.CM_SUPABASE_ANON_KEY = 'sb_publishable_9M77eMaJT1Bcb2EOSedePQ_X2ku031T';
+window.CM_MEMBER_MAP = {"Pak Agus Sobarudin": "pak-agus", "Marcelia Dwi Mulyani": "marcelia", "Sakinah Awaliah": "sakinah", "Devita": "devita", "Salwa Ainul Fauziah": "salwa", "Denis Alfarizi": "denis", "Asti Puspa Dewi": "asti", "Aldi Ardiansyah": "aldi", "Ali Akbar Siddiq": "ali", "Anggun Pebrianti Permata": "anggun", "Arni Anggraeni": "arni", "Bilqis Sherin Natasya": "bilqis", "Dikdik Hilman Maulana": "dikdik", "Fito Purnama": "fito", "Fitrah Abdullah Fatah": "fitrah", "Intan Ramadani": "intan", "Jajang Sopian": "jajang", "Miftah Fauzi Hariri": "miftah", "Moch Gathan Naofal": "gathan", "Muhamad Irfan Permana": "irfan", "Muhamad Rafli": "rafli", "Muhammad Ramdan Solihin": "ramdan", "Muhammad Dani Ramdani": "dani", "Natasya Anggraeni Putri": "natasya", "Neni Anggraeni": "neni", "Pahri Haruna Rosid": "pahri", "Prima Ahmad Maulana": "prima", "Restu Permana": "restu", "Reva Septi Auliyanti": "reva", "Ridwan Sopian": "ridwan", "Riska Amelia": "riska", "Riska Nur Rahayu": "rahayu", "Rizqi Maulana": "rizqi", "Sifa Nur Anisa": "sifa", "Sopandi Sopyan": "sopandi", "Triani Desvita Nurmalasari": "triani", "Wada Maulida Solikhah": "wada", "Zikri Pebrian": "zikri"};
+window.CM_AUTH_CLIENT = window.supabase.createClient(window.CM_SUPABASE_URL, window.CM_SUPABASE_ANON_KEY);
+(async function checkCyberMimpiAuth() {
+  const loginUrl = 'login.html?next=' + encodeURIComponent('Wawa.html');
+  try {
+    const { data, error } = await window.CM_AUTH_CLIENT.auth.getSession();
+    if (error || !data.session) { window.location.replace(loginUrl); return; }
+    const username = (data.session.user.email || '').split('@')[0].toLowerCase();
+    if (!Object.values(window.CM_MEMBER_MAP).includes(username)) {
+      await window.CM_AUTH_CLIENT.auth.signOut();
+      localStorage.removeItem('cyber_session');
+      window.location.replace('login.html');
+      return;
+    }
+    const displayName = Object.keys(window.CM_MEMBER_MAP).find(n => window.CM_MEMBER_MAP[n] === username) || username;
+    localStorage.setItem('cyber_session', JSON.stringify({id: username, name: displayName, loginTime: new Date().toISOString(), authUserId: data.session.user.id}));
+    document.documentElement.classList.remove('cm-auth-check');
+  } catch (e) {
+    console.error('Tidak dapat memverifikasi sesi Supabase:', e);
+    window.location.replace(loginUrl);
+  }
+})();
+</script>
 </head>
 <body>
 
@@ -839,7 +1054,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
         <a href="index.html">Beranda</a>
         <a href="Wawa.html" class="waw">Card</a>
         <a href="idek.html">Jadwal</a>
-        <a href="belajarm.html">Belajar</a>
+        <a href="belajar.html">Belajar</a>
     </div>
 </nav>
 
@@ -903,7 +1118,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
     </div>
 </section>
 
-<!-- MODAL POPUP DATA DENGAN AUTO-PLAY AUDIO -->
+<!-- MODAL POPUP DATA -->
 <div class="overlay"></div>
 <div class="modal-popup" id="userModal">
     <img src="" id="popFoto" class="foto-pop">
@@ -912,7 +1127,6 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
     <div class="status-badge" id="popStatus">Status</div>
     <div class="bio-box" id="popBio"></div>
 
-    <!-- CUSTOM AUDIO PLAYER -->
     <div class="custom-audio-player" id="audioPlayerWrapper" style="display: none;">
         <button class="play-btn" id="playBtn" onclick="toggleAudio()">
             <i class="fa-solid fa-play" id="playIcon"></i>
@@ -925,6 +1139,147 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
         </div>
         <audio id="popAudio" preload="none"></audio>
     </div>
+</div>
+
+<!-- MODAL FULLSCREEN PROFIL -->
+<div class="ig-modal-fullscreen" id="igProfileModal">
+    <div class="ig-header">
+        <span class="ig-header-title" id="igHeaderUsername">@username</span>
+        <button class="ig-close-btn" aria-label="Tutup profil" onclick="closeIgModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="ig-profile-body">
+        <div class="ig-profile-top">
+            <div class="ig-avatar-box">
+                <img src="" id="igProfilePic" class="ig-avatar-img">
+            </div>
+            <div class="ig-stats-row">
+                <div>
+                    <div class="ig-stat-num" id="igTotalUploads">0</div>
+                    <div class="ig-stat-label">Uploads</div>
+                </div>
+                <div>
+                    <div class="ig-stat-num">XI TKJ 2</div>
+                    <div class="ig-stat-label">Kelas</div>
+                </div>
+                <div>
+                    <div class="ig-stat-num" id="igUserStatus">Aktif</div>
+                    <div class="ig-stat-label">Status</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ig-bio-section">
+            <div class="ig-bio-name" id="igProfileName">Nama Lengkap</div>
+            <div class="ig-bio-role" id="igProfileRole">Jabatan</div>
+            <div class="ig-bio-desc" id="igProfileBioText">
+                Memuat bio profil...
+            </div>
+        </div>
+
+        <div class="custom-audio-player" id="igAudioPlayerWrapper" style="display: none; margin-bottom: 15px; background: #1e293b; border-color: #334155;">
+            <button class="play-btn" id="igPlayBtn" onclick="toggleIgAudio()" style="background: #f77f00;">
+                <i class="fa-solid fa-play" id="igPlayIcon"></i>
+            </button>
+            <div class="audio-info">
+                <span class="audio-title" id="igAudioLabel" style="color: #cbd5e1;">Lagu Favorit</span>
+                <div class="audio-progress-container" id="igProgressContainer" onclick="seekIgAudio(event)">
+                    <div class="audio-progress-bar" id="igProgressBar" style="background: #f77f00;"></div>
+                </div>
+            </div>
+            <audio id="igPopAudio" preload="none"></audio>
+        </div>
+
+        <div class="ig-action-btns" id="ownerActionBtns" style="display: none;">
+            <div style="display: flex; gap: 10px; width: 100%;">
+                <button class="ig-btn ig-btn-primary" onclick="openUploadModal()"><i class="fa-solid fa-plus"></i> Upload Foto</button>
+                <button class="ig-btn ig-btn-secondary" onclick="openCustomProfileModal()"><i class="fa-solid fa-pen-to-square"></i> Edit Profil</button>
+            </div>
+            <button class="ig-btn ig-btn-danger" onclick="logoutSession()"><i class="fa-solid fa-right-from-bracket"></i> Keluar (Logout Akun)</button>
+        </div>
+
+        <div class="ig-gallery-tabs">
+            <div class="ig-tab active"><i class="fa-solid fa-grid-2"></i> Gallery</div>
+        </div>
+
+        <div class="ig-grid-uploads" id="igGridContainer"></div>
+    </div>
+</div>
+
+<!-- FORM CUSTOMISASI PROFIL MODAL -->
+<div class="ig-custom-form-modal" id="customProfileModal">
+    <div class="ig-form-card">
+        <h3>Customisasi Profil</h3>
+        <div class="ig-form-group">
+            <label>Hobi</label>
+            <input type="text" id="editHobi" placeholder="Contoh: Game / Nyanyi">
+        </div>
+        <div class="ig-form-group">
+            <label>Cita-Cita</label>
+            <input type="text" id="editCita" placeholder="Contoh: Pengusaha / Dokter">
+        </div>
+        <div class="ig-form-group">
+            <label>Instagram Username/Link</label>
+            <input type="text" id="editIg" placeholder="@username atau https://instagram.com/...">
+        </div>
+        <div class="ig-form-group">
+            <label>File Lagu (.mp3 / URL Musik)</label>
+            <input type="text" id="editAudio" placeholder="nama_file.mp3">
+        </div>
+        <div class="ig-form-group">
+            <label>Warna aksen profil</label>
+            <input type="color" id="editProfileColor" value="#f77f00">
+        </div>
+        <div class="ig-form-group">
+            <label>Gaya border foto</label>
+            <select id="editProfileBorder">
+                <option value="solid">Polos minimalis</option>
+                <option value="double">Double ring</option>
+                <option value="dashed">Putus-putus</option>
+                <option value="dots">Titik-titik</option>
+                <option value="glow">Glow lembut</option>
+            </select>
+        </div>
+        <div class="ig-form-group">
+            <label>Latar profil</label>
+            <select id="editProfileBackground">
+                <option value="dark">Dark clean</option>
+                <option value="gradient">Gradient navy</option>
+                <option value="soft">Midnight pastel</option>
+            </select>
+            <p class="profile-custom-note">Pilihan ini tersimpan khusus untuk profil anggota yang sedang dibuka.</p>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="ig-btn ig-btn-primary" onclick="saveCustomProfile()">Simpan</button>
+            <button class="ig-btn ig-btn-secondary" onclick="closeCustomProfileModal()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<!-- FORM UPLOAD FOTO GALLERY MODAL -->
+<div class="ig-custom-form-modal" id="uploadModal">
+    <div class="ig-form-card">
+        <h3>Upload Ke Gallery Kelas</h3>
+        <div class="ig-form-group">
+            <label>Pilih Foto / URL Gambar</label>
+            <input type="file" id="uploadFileImage" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
+            <button class="ig-btn ig-btn-secondary" style="margin-bottom:8px;" onclick="document.getElementById('uploadFileImage').click()"><i class="fa-solid fa-image"></i> Pilih Foto dari HP/Laptop</button>
+            <input type="text" id="uploadUrlImage" placeholder="Atau masukkan Link/URL Gambar">
+        </div>
+        <div class="ig-form-group">
+            <label>Caption Foto</label>
+            <textarea id="uploadCaption" rows="3" placeholder="Tulis caption foto kamu..."></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="ig-btn ig-btn-primary" onclick="submitGalleryUpload()">Post Sekarang</button>
+            <button class="ig-btn ig-btn-secondary" onclick="closeUploadModal()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<!-- LIGHTBOX FOTO -->
+<div class="ig-lightbox" id="igLightbox" onclick="closeLightbox()">
+    <img src="" id="igLightboxImg">
 </div>
 
 <section id="anggota">
@@ -940,7 +1295,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
     <div class="pembungkus-anggota">
         <!-- WALI KELAS -->
         <div class="baris-ketua">
-            <div class="orang ketua">
+            <div class="orang ketua" data-id="pak-agus">
                 <span class="badge-ketua">👑 Wali Kelas</span>
                 <img src="walikelas.jpg" class="foto">
                 <h3>Pak Agus Sobarudin</h3>
@@ -955,7 +1310,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
 
         <!-- PENGURUS KELAS -->
         <div class="baris-pengurus">
-            <div class="orang pengurus">
+            <div class="orang pengurus" data-id="marcelia">
                 <img src="marsel.jpg" class="foto">
                 <h3>Marcelia Dwi Mulyani</h3>
                 <p>Sekertaris</p>
@@ -970,7 +1325,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang pengurus">
+            <div class="orang pengurus" data-id="sakinah">
                 <img src="sakinah.jpg" class="foto">
                 <h3>Sakinah Awaliah</h3>
                 <p>Sekertaris</p>
@@ -985,7 +1340,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang pengurus">
+            <div class="orang pengurus" data-id="devita">
                 <img src="vita.jpg" class="foto">
                 <h3>Devita</h3>
                 <p>Ketua Kelas</p>
@@ -1000,7 +1355,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang pengurus">
+            <div class="orang pengurus" data-id="salwa">
                 <img src="awa.jpg" class="foto">
                 <h3>Salwa Ainul Fauziah</h3>
                 <p>Bendahara</p>
@@ -1015,7 +1370,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang pengurus">
+            <div class="orang pengurus" data-id="denis">
                 <img src="denis.jpg" class="foto">
                 <h3>Denis Alfarizi</h3>
                 <p>Wakil Ketua Kelas</p>
@@ -1030,7 +1385,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang pengurus">
+            <div class="orang pengurus" data-id="asti">
                 <img src="asti.jpg" class="foto">
                 <h3>Asti Puspa Dewi</h3>
                 <p>Bendahara</p>
@@ -1050,7 +1405,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
 
         <!-- ANGGOTA BIASA -->
         <div class="baris-anggota">
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="aldi">
                 <img src="aldi.jpg" class="foto">
                 <h3>Aldi Ardiansyah</h3>
                 <p>Anggota</p>
@@ -1065,7 +1420,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="ali">
                 <img src="ali.jpg" class="foto">
                 <h3>Ali Akbar Siddiq</h3>
                 <p>Anggota</p>
@@ -1079,7 +1434,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="anggun">
                 <img src="anggun.jpg" class="foto">
                 <h3>Anggun Pebrianti Permata</h3>
                 <p>Anggota</p>
@@ -1093,7 +1448,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="arni">
                 <img src="arni.jpg" class="foto">
                 <h3>Arni Anggraeni</h3>
                 <p>Anggota</p>
@@ -1108,7 +1463,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="bilqis">
                 <img src="serin.jpg" class="foto">
                 <h3>Bilqis Sherin Natasya</h3>
                 <p>Anggota</p>
@@ -1122,7 +1477,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="dikdik">
                 <img src="dikdik.jpg" class="foto">
                 <h3>Dikdik Hilman Maulana</h3>
                 <p>Anggota</p>
@@ -1138,7 +1493,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
             </div>
 
             <!-- Fito Purnama -->
-            <div class="orang anggota-biasa fito-card">
+            <div class="orang anggota-biasa fito-card" data-id="fito">
                 <img src="gwee.jpg" class="foto">
                 <h3 style="color: #1e40af; font-weight: 700;">Fito Purnama</h3>
                 <p style="color: #3b82f6; font-weight: 600;">Anggota</p>
@@ -1152,7 +1507,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="fitrah">
                 <img src="Fitrah.jpg" class="foto">
                 <h3>Fitrah Abdullah Fatah</h3>
                 <p>Anggota</p>
@@ -1167,7 +1522,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="intan">
                 <img src="intan.jpg" class="foto">
                 <h3>Intan Ramadani</h3>
                 <p>Anggota</p>
@@ -1182,7 +1537,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="jajang">
                 <img src="jajang.jpg" class="foto">
                 <h3>Jajang Sopian</h3>
                 <p>Anggota</p>
@@ -1197,7 +1552,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="miftah">
                 <img src="miftah.jpg" class="foto">
                 <h3>Miftah Fauzi Hariri</h3>
                 <p>Anggota</p>
@@ -1212,7 +1567,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="gathan">
                 <img src="gathan.jpg" class="foto">
                 <h3>Moch Gathan Naofal</h3>
                 <p>Anggota</p>
@@ -1227,7 +1582,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="irfan">
                 <img src="irfan.jpg" class="foto">
                 <h3>Muhamad Irfan Permana</h3>
                 <p>Anggota</p>
@@ -1242,7 +1597,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="rafli">
                 <img src="rafli.jpg" class="foto">
                 <h3>Muhamad Rafli</h3>
                 <p>Anggota</p>
@@ -1257,7 +1612,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="ramdan">
                 <img src="ramdan.jpg" class="foto">
                 <h3>Muhammad Ramdan Solihin</h3>
                 <p>Anggota</p>
@@ -1272,7 +1627,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="dani">
                 <img src="dani.jpg" class="foto">
                 <h3>Muhammad Dani Ramdani</h3>
                 <p>Anggota</p>
@@ -1287,7 +1642,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="natasya">
                 <img src="natasya.jpg" class="foto">
                 <h3>Natasya Anggraeni Putri</h3>
                 <p>Anggota</p>
@@ -1302,7 +1657,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="neni">
                 <img src="neni.jpg" class="foto">
                 <h3>Neni Anggraeni</h3>
                 <p>Anggota</p>
@@ -1317,7 +1672,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="pahri">
                 <img src="pahri.jpg" class="foto">
                 <h3>Pahri Haruna Rosid</h3>
                 <p>Anggota</p>
@@ -1332,7 +1687,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="prima">
                 <img src="https://share.google/UztiHo89L4aLULBCv.jpg" class="foto">
                 <h3>Prima Ahmad Maulana</h3>
                 <p>Anggota</p>
@@ -1347,7 +1702,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="restu">
                 <img src="restu.jpg" class="foto">
                 <h3>Restu Permana</h3>
                 <p>Anggota</p>
@@ -1362,7 +1717,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="reva">
                 <img src="reva.jpg" class="foto">
                 <h3>Reva Septi Auliyanti</h3>
                 <p>Anggota</p>
@@ -1377,7 +1732,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="ridwan">
                 <img src="ridwan.jpg" class="foto">
                 <h3>Ridwan Sopian</h3>
                 <p>Anggota</p>
@@ -1392,7 +1747,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="riska">
                 <img src="riska.jpg" class="foto">
                 <h3>Riska Amelia</h3>
                 <p>Anggota</p>
@@ -1407,7 +1762,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="rahayu">
                 <img src="rahayu.jpg" class="foto">
                 <h3>Riska Nur Rahayu</h3>
                 <p>Anggota</p>
@@ -1422,7 +1777,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="rizqi">
                 <img src="iki.jpg" class="foto">
                 <h3>Rizqi Maulana</h3>
                 <p>Anggota</p>
@@ -1437,7 +1792,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="sifa">
                 <img src="sifa.jpg" class="foto">
                 <h3>Sifa Nur Anisa</h3>
                 <p>Anggota</p>
@@ -1452,7 +1807,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="sopandi">
                 <img src="sopandi.jpg" class="foto">
                 <h3>Sopandi Sopyan</h3>
                 <p>Anggota</p>
@@ -1467,7 +1822,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="triani">
                 <img src="triani.jpg" class="foto">
                 <h3>Triani Desvita Nurmalasari</h3>
                 <p>Anggota</p>
@@ -1482,7 +1837,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="wada">
                 <img src="wada.jpg" class="foto">
                 <h3>Wada Maulida Solikhah</h3>
                 <p>Anggota</p>
@@ -1497,7 +1852,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
                 </div>
             </div>
 
-            <div class="orang anggota-biasa">
+            <div class="orang anggota-biasa" data-id="zikri">
                 <img src="zikri.jpg" class="foto">
                 <h3>Zikri Pebrian</h3>
                 <p>Anggota</p>
@@ -1515,7 +1870,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
     </div>
 </section>
 
-<!-- WIDGET ASISTEN ELAINA (POJOK KANAN BAWAH) -->
+<!-- WIDGET ASISTEN ELAINA -->
 <div class="menfess-widget-wrapper">
     <div class="menfess-chat-bubble" onclick="openInfoModal()">
         Pssst... Jangan ngintip mulu, klik aku dong! ✨
@@ -1525,7 +1880,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
     </div>
 </div>
 
-<!-- MODAL POPUP INFORMASI & CANDAAN -->
+<!-- MODAL INFORMASI -->
 <div class="info-modal-overlay" id="infoModal">
     <div class="info-modal-card">
         <button class="info-close-btn" onclick="closeInfoModal()">&times;</button>
@@ -1533,14 +1888,15 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
         <h3>Halo, Pendatang</h3>
         <p>
             Kamu lagi nyari siapa nih di ID Card kelas XI TKJ 2? Pastii nyari justfriend atau engga mantan nyaa wkwk<br><br>
-            💡 <em>Tips Pro:</em> Kalau capek scroll, tinggal ketik aja namanya di kolom pencarian atas. siapa tauu gampangg ketemu mantan sama justfriend nyaa ahaha, Jangan lupa dengerin lagu tiap anak kelasnya biar gak jenuh!
+            💡 <em>Tips Pro:</em> Kalau capek scroll, tinggal ketik aja namanya di kolom pencarian atas.<br>
+            Jangan lupa dengerin lagu tiap anak kelasnya biar gak jenuh!
         </p>
         <button class="info-ok-btn" onclick="closeInfoModal()">Okee siappp</button>
     </div>
 </div>
 
-<!-- SECTION: CTA (WARNA ORANYE) -->
-<section class="cta-section" id="anggota">
+<!-- SECTION: CTA -->
+<section class="cta-section">
     <h2 class="section-title">Udah Cukup Liatnya?</h2>
     <p class="section-desc">Yuk, kenalan lebih dekat sama semua anggota kelas XI TKJ 2 dan lihat ID Card unik masing-masing!</p>
     <div style="margin-top: 30px;">
@@ -1564,21 +1920,15 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
       
       <div class="social-icons">
         <a href="https://instagram.com/username_kamu" target="_blank" aria-label="Instagram">
-          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-          </svg>
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
         </a>
 
         <a href="https://wa.me/6285188418938" target="_blank" aria-label="WhatsApp">
-          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
-          </svg>
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
         </a>
 
         <a href="https://t.me/username_kamu" target="_blank" aria-label="Telegram">
-          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.196 1.006.128.832.942z"/>
-          </svg>
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.196 1.006.128.832.942z"/></svg>
         </a>
       </div>
     </div>
@@ -1614,6 +1964,7 @@ window.addEventListener('load', () => {
     const loader = document.getElementById('loading-screen');
     setTimeout(() => { loader.classList.add('hide'); }, 1800);
 });
+
 const hero = document.querySelector(".hero");
 const heroContent = document.getElementById("heroContent");
 const layerCloud = document.getElementById("layerCloud");
@@ -1677,111 +2028,273 @@ document.querySelectorAll('.baris-anggota .orang:not(.fito-card), .baris-penguru
     card.classList.add(colors[index % colors.length]);
 });
 
-const overlay = document.querySelector('.overlay');
-const modal = document.getElementById('userModal');
-const popFoto = document.getElementById('popFoto');
-const popNama = document.getElementById('popNama');
-const popJabatan = document.getElementById('popJabatan');
-const popStatus = document.getElementById('popStatus');
-const popBio = document.getElementById('popBio');
-const popAudio = document.getElementById('popAudio');
-const playBtn = document.getElementById('playBtn');
-const playIcon = document.getElementById('playIcon');
-const progressBar = document.getElementById('progressBar');
-const audioPlayerWrapper = document.getElementById('audioPlayerWrapper');
+let activeUserCard = null;
+let activeUserId = "";
+
+function getLoginSession() {
+    return JSON.parse(localStorage.getItem('cyber_session') || '{}');
+}
+
+async function logoutSession() {
+    try {
+        if (window.CM_AUTH_CLIENT) await window.CM_AUTH_CLIENT.auth.signOut();
+        else if (window.supabaseClient) await window.supabaseClient.auth.signOut();
+    } catch (error) {
+        console.error('Logout Supabase gagal:', error);
+    } finally {
+        localStorage.removeItem('cyber_session');
+        window.location.href = 'login.html';
+    }
+}
+
+function getGalleryData() {
+    return JSON.parse(localStorage.getItem('cyber_gallery_data') || '{}');
+}
+
+function saveGalleryData(data) {
+    localStorage.setItem('cyber_gallery_data', JSON.stringify(data));
+}
+
+function getUserCustomData(id) {
+    const custom = JSON.parse(localStorage.getItem('cyber_user_custom') || '{}');
+    return custom[id] || {};
+}
+
+function saveUserCustomData(id, obj) {
+    const custom = JSON.parse(localStorage.getItem('cyber_user_custom') || '{}');
+    custom[id] = { ...custom[id], ...obj };
+    localStorage.setItem('cyber_user_custom', JSON.stringify(custom));
+}
 
 document.querySelectorAll('.orang').forEach(card => {
     card.addEventListener('click', () => {
-        modal.classList.remove('modal-theme-kuning', 'modal-theme-biru', 'modal-theme-hijau', 'modal-theme-ungu', 'modal-fito-card');
-
-        if (card.classList.contains('theme-kuning')) modal.classList.add('modal-theme-kuning');
-        else if (card.classList.contains('theme-biru')) modal.classList.add('modal-theme-biru');
-        else if (card.classList.contains('theme-hijau')) modal.classList.add('modal-theme-hijau');
-        else if (card.classList.contains('theme-ungu')) modal.classList.add('modal-theme-ungu');
-        else if (card.classList.contains('fito-card')) modal.classList.add('modal-fito-card');
-
-        const foto = card.querySelector('.foto').src;
-        const nama = card.querySelector('h3').innerText;
-        const jabatan = card.querySelector('p').innerText;
-        const modalData = card.querySelector('.modal-data');
-        const status = modalData ? modalData.querySelector('.status').innerText : 'Aktif';
-        const bioHTML = modalData ? modalData.querySelector('.bio-content').innerHTML : '<p>Belum ada biodata.</p>';
-        const audioSrc = modalData ? modalData.querySelector('.audio-src').innerText.trim() : '';
-
-        popFoto.src = foto;
-        popNama.innerText = nama;
-        popJabatan.innerText = jabatan;
-        popStatus.innerText = 'Status: ' + status;
-        popBio.innerHTML = bioHTML;
-
-        // Reset Custom Player
-        popAudio.pause();
-        popAudio.currentTime = 0;
-        progressBar.style.width = '0%';
-        playIcon.className = "fa-solid fa-play";
-
-        if (audioSrc !== '' && audioSrc !== '-') {
-            popAudio.src = audioSrc;
-            popAudio.load();
-            audioPlayerWrapper.style.display = 'flex';
-
-            popAudio.play().then(() => {
-                playIcon.className = "fa-solid fa-pause";
-            }).catch(e => {
-                console.log("Autoplay dicegah browser / file kosong:", e);
-            });
-
-        } else {
-            popAudio.src = '';
-            audioPlayerWrapper.style.display = 'none';
-        }
-
-        overlay.classList.add('active');
-        modal.classList.add('active');
+        activeUserCard = card;
+        activeUserId = card.getAttribute('data-id') || card.querySelector('h3').innerText.toLowerCase().replace(/\s+/g, '-');
+        openIgProfileModal(card);
     });
 });
 
-function toggleAudio() {
-    if (popAudio.paused) {
-        popAudio.play().then(() => {
-            playIcon.className = "fa-solid fa-pause";
-        }).catch(e => {
-            alert("File audio gagal diputar. Pastikan file .mp3 tersedia.");
+const igModal = document.getElementById('igProfileModal');
+const igPopAudio = document.getElementById('igPopAudio');
+const igPlayIcon = document.getElementById('igPlayIcon');
+const igProgressBar = document.getElementById('igProgressBar');
+const igAudioPlayerWrapper = document.getElementById('igAudioPlayerWrapper');
+
+function openIgProfileModal(card) {
+    const foto = card.querySelector('.foto').src;
+    const nama = card.querySelector('h3').innerText;
+    const jabatan = card.querySelector('p').innerText;
+    const modalData = card.querySelector('.modal-data');
+    const status = modalData ? modalData.querySelector('.status').innerText : 'Aktif';
+    
+    const custom = getUserCustomData(activeUserId);
+    applyProfileStyle(custom);
+    const session = getLoginSession();
+    
+    const isOwner = (session.id === activeUserId);
+    const actionBtnsContainer = document.getElementById('ownerActionBtns');
+    if (actionBtnsContainer) {
+        actionBtnsContainer.style.display = isOwner ? 'flex' : 'none';
+    }
+
+    const modalAudioSrc = modalData ? modalData.querySelector('.audio-src').innerText.trim() : '';
+    const audioSrc = custom.audioSrc || modalAudioSrc;
+
+    document.getElementById('igHeaderUsername').innerText = `@${activeUserId}${isOwner ? ' (Kamu)' : ''}`;
+    document.getElementById('igProfilePic').src = foto;
+    document.getElementById('igProfileName').innerText = nama;
+    document.getElementById('igProfileRole').innerText = jabatan;
+    document.getElementById('igUserStatus').innerText = status;
+
+    let defaultBio = modalData ? modalData.querySelector('.bio-content').innerHTML : '<p>Belum ada biodata.</p>';
+    if(custom.hobi || custom.cita || custom.ig) {
+        defaultBio = `
+            <p><strong>Hobi:</strong> ${custom.hobi || '-'}</p>
+            <p><strong>Cita-cita:</strong> ${custom.cita || '-'}</p>
+            <p><strong>Instagram:</strong> ${custom.ig ? `<a href="${custom.ig}" target="_blank" style="color:#38bdf8">${custom.ig}</a>` : '-'}</p>
+        `;
+    }
+    document.getElementById('igProfileBioText').innerHTML = defaultBio;
+
+    igPopAudio.pause();
+    igPopAudio.currentTime = 0;
+    igProgressBar.style.width = '0%';
+    igPlayIcon.className = "fa-solid fa-play";
+
+    if (audioSrc && audioSrc !== '-') {
+        igPopAudio.src = audioSrc;
+        igPopAudio.load();
+        igAudioPlayerWrapper.style.display = 'flex';
+    } else {
+        igPopAudio.src = '';
+        igAudioPlayerWrapper.style.display = 'none';
+    }
+
+    renderUserGalleryGrid();
+    igModal.classList.add('active');
+}
+
+function closeIgModal() {
+    igModal.classList.remove('active');
+    igPopAudio.pause();
+    igPopAudio.currentTime = 0;
+}
+
+function toggleIgAudio() {
+    if (igPopAudio.paused) {
+        igPopAudio.play().then(() => {
+            igPlayIcon.className = "fa-solid fa-pause";
+        }).catch(() => {
+            alert("Audio tidak dapat diputar. Pastikan file terhubung.");
         });
     } else {
-        popAudio.pause();
-        playIcon.className = "fa-solid fa-play";
+        igPopAudio.pause();
+        igPlayIcon.className = "fa-solid fa-play";
     }
 }
 
-popAudio.addEventListener('timeupdate', () => {
-    if (popAudio.duration) {
-        const percent = (popAudio.currentTime / popAudio.duration) * 100;
-        progressBar.style.width = percent + '%';
+igPopAudio.addEventListener('timeupdate', () => {
+    if (igPopAudio.duration) {
+        const percent = (igPopAudio.currentTime / igPopAudio.duration) * 100;
+        igProgressBar.style.width = percent + '%';
     }
 });
 
-popAudio.addEventListener('ended', () => {
-    playIcon.className = "fa-solid fa-play";
-    progressBar.style.width = '0%';
+igPopAudio.addEventListener('ended', () => {
+    igPlayIcon.className = "fa-solid fa-play";
+    igProgressBar.style.width = '0%';
 });
 
-function seekAudio(event) {
-    const container = document.getElementById('progressContainer');
+function seekIgAudio(event) {
+    const container = document.getElementById('igProgressContainer');
     const clickX = event.offsetX;
     const width = container.clientWidth;
-    if (popAudio.duration) {
-        popAudio.currentTime = (clickX / width) * popAudio.duration;
+    if (igPopAudio.duration) {
+        igPopAudio.currentTime = (clickX / width) * igPopAudio.duration;
     }
 }
 
-overlay.addEventListener('click', () => {
-    overlay.classList.remove('active');
-    modal.classList.remove('active');
-    popAudio.pause();
-    popAudio.currentTime = 0;
-    playIcon.className = "fa-solid fa-play";
-});
+function renderUserGalleryGrid() {
+    const galleryData = getGalleryData();
+    const userPosts = galleryData[activeUserId] || [];
+    const container = document.getElementById('igGridContainer');
+    document.getElementById('igTotalUploads').innerText = userPosts.length;
+
+    if (userPosts.length === 0) {
+        container.innerHTML = `<div class="ig-empty-grid"><i class="fa-regular fa-image" style="font-size:30px; margin-bottom:8px; display:block;"></i>Belum ada foto yang diupload.</div>`;
+        return;
+    }
+
+    container.innerHTML = userPosts.map((post) => `
+        <div class="ig-grid-item" onclick="openLightbox('${post.img}')">
+            <img src="${post.img}" alt="Post">
+        </div>
+    `).join('');
+}
+
+function applyProfileStyle(custom) {
+    const profile = document.getElementById('igProfileModal');
+    const avatar = document.getElementById('igProfilePic');
+    if (!profile || !avatar) return;
+    profile.style.setProperty('--profile-accent', custom.profileColor || '#f77f00');
+    profile.classList.remove('profile-bg-gradient', 'profile-bg-soft');
+    if (custom.profileBackground === 'gradient') profile.classList.add('profile-bg-gradient');
+    if (custom.profileBackground === 'soft') profile.classList.add('profile-bg-soft');
+    avatar.classList.remove('border-double', 'border-dashed', 'border-dots', 'border-glow');
+    if (custom.profileBorder && custom.profileBorder !== 'solid') {
+        avatar.classList.add('border-' + custom.profileBorder);
+    }
+}
+
+function openCustomProfileModal() {
+    const custom = getUserCustomData(activeUserId);
+    document.getElementById('editHobi').value = custom.hobi || '';
+    document.getElementById('editCita').value = custom.cita || '';
+    document.getElementById('editIg').value = custom.ig || '';
+    document.getElementById('editAudio').value = custom.audioSrc || '';
+    document.getElementById('editProfileColor').value = custom.profileColor || '#f77f00';
+    document.getElementById('editProfileBorder').value = custom.profileBorder || 'solid';
+    document.getElementById('editProfileBackground').value = custom.profileBackground || 'dark';
+    document.getElementById('customProfileModal').style.display = 'flex';
+}
+
+function closeCustomProfileModal() {
+    document.getElementById('customProfileModal').style.display = 'none';
+}
+
+function saveCustomProfile() {
+    const hobi = document.getElementById('editHobi').value;
+    const cita = document.getElementById('editCita').value;
+    const ig = document.getElementById('editIg').value;
+    const audioSrc = document.getElementById('editAudio').value;
+    const profileColor = document.getElementById('editProfileColor').value;
+    const profileBorder = document.getElementById('editProfileBorder').value;
+    const profileBackground = document.getElementById('editProfileBackground').value;
+
+    saveUserCustomData(activeUserId, { hobi, cita, ig, audioSrc, profileColor, profileBorder, profileBackground });
+    closeCustomProfileModal();
+    if (activeUserCard) openIgProfileModal(activeUserCard);
+    alert('Profil berhasil diperbarui!');
+}
+
+let selectedBase64Image = "";
+
+function openUploadModal() {
+    selectedBase64Image = "";
+    document.getElementById('uploadUrlImage').value = "";
+    document.getElementById('uploadCaption').value = "";
+    document.getElementById('uploadModal').style.display = 'flex';
+}
+
+function closeUploadModal() {
+    document.getElementById('uploadModal').style.display = 'none';
+}
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            selectedBase64Image = e.target.result;
+            alert('Foto berhasil dipilih!');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function submitGalleryUpload() {
+    const urlImg = document.getElementById('uploadUrlImage').value;
+    const caption = document.getElementById('uploadCaption').value;
+    const finalImg = selectedBase64Image || urlImg;
+
+    if (!finalImg) {
+        alert('Pilih file gambar atau masukkan URL gambar dulu ya!');
+        return;
+    }
+
+    const galleryData = getGalleryData();
+    if (!galleryData[activeUserId]) galleryData[activeUserId] = [];
+
+    galleryData[activeUserId].unshift({
+        img: finalImg,
+        caption: caption,
+        date: new Date().toLocaleDateString()
+    });
+
+    saveGalleryData(galleryData);
+    closeUploadModal();
+    renderUserGalleryGrid();
+    alert('Foto berhasil di-upload ke profil!');
+}
+
+function openLightbox(src) {
+    document.getElementById('igLightboxImg').src = src;
+    document.getElementById('igLightbox').style.display = 'flex';
+}
+
+function closeLightbox() {
+    document.getElementById('igLightbox').style.display = 'none';
+}
 
 document.getElementById('inputCari').addEventListener('input', (e) => {
     const kataKunci = e.target.value.toLowerCase().trim();
@@ -1792,15 +2305,82 @@ document.getElementById('inputCari').addEventListener('input', (e) => {
     });
 });
 
-/* ========================================
-   FUNGSI MODAL INFORMASI ASISTEN
-======================================== */
 function openInfoModal() {
     document.getElementById('infoModal').classList.add('active');
 }
 
 function closeInfoModal() {
     document.getElementById('infoModal').classList.remove('active');
+}
+
+// Supabase Integration (Dideklarasikan hanya sekali secara aman)
+window.SUPABASE_URL = 'https://hcxsrabeaxkkknamrrle.supabase.co';
+window.SUPABASE_ANON_KEY = 'sb_publishable_9M77eMaJT1Bcb2EOSedePQ_X2ku031T';
+window.supabaseClient = window.CM_AUTH_CLIENT || window.supabase.createClient(
+    window.SUPABASE_URL,
+    window.SUPABASE_ANON_KEY
+);
+
+async function loadProfilesFromCloud() {
+    const { data, error } = await window.supabaseClient.from('profiles').select('*');
+    if (error) {
+        console.error('Gagal memuat profil:', error.message);
+        return;
+    }
+
+    data.forEach(profile => {
+        const card = document.querySelector(`[data-id="${profile.id}"]`);
+        if (card) {
+            if (profile.name) card.querySelector('h3').innerText = profile.name;
+            if (profile.jabatan) card.querySelector('p').innerText = profile.jabatan;
+            if (profile.avatar_url) card.querySelector('.foto').src = profile.avatar_url;
+            
+            const modalData = card.querySelector('.modal-data');
+            if (modalData && profile.bio) {
+                const bioContent = modalData.querySelector('.bio-content');
+                if (bioContent) bioContent.innerHTML = `<p>${profile.bio}</p>`;
+            }
+        }
+    });
+}
+
+window.addEventListener('DOMContentLoaded', loadProfilesFromCloud);
+
+async function updateProfileToCloud(userId, updatedData) {
+    const { data, error } = await window.supabaseClient
+        .from('profiles')
+        .upsert({ id: userId, ...updatedData });
+
+    if (error) {
+        console.error('Gagal menyimpan profil:', error.message);
+        alert('Gagal menyimpan perubahan ke cloud.');
+    } else {
+        alert('Yeay! Perubahan profil berhasil disimpan secara online! ✨');
+        location.reload();
+    }
+}
+
+async function uploadAvatarToCloud(file, userId) {
+    try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${userId}-${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await window.supabaseClient.storage
+            .from('avatars')
+            .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = window.supabaseClient.storage
+            .from('avatars')
+            .getPublicUrl(fileName);
+
+        await updateProfileToCloud(userId, { avatar_url: publicUrl });
+
+    } catch (error) {
+        console.error('Gagal upload foto:', error.message);
+        alert('Terjadi kesalahan saat mengupload foto.');
+    }
 }
 </script>
 </body>
