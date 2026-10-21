@@ -538,6 +538,8 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
    MODAL PROFIL SELAYAR FULLSCREEN (ALA INSTAGRAM / TIKTOK)
 ========================================================= */
 .ig-modal-fullscreen {
+    background: var(--popup-card-bg, #000000);
+    color: var(--popup-text-color, #ffffff);
     position: fixed;
     top: 0;
     left: 0;
@@ -562,6 +564,9 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
 }
 
 .ig-header {
+    background: color-mix(in srgb, var(--popup-card-bg, #0f172a) 82%, #1e293b);
+    border-bottom-color: color-mix(in srgb, var(--popup-accent, #93c5fd) 35%, transparent);
+    color: var(--popup-text-color, #ffffff);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -995,6 +1000,29 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
   .hero-stage { height: 100vh; min-height: 650px; }
   .hero-content { top: 190px; width: min(850px, 82vw); }
 }
+
+#igProfileModal{background:var(--popup-card-bg,#000000)!important;color:var(--popup-text-color,#ffffff)!important}
+#igProfileModal .ig-profile-body{background:transparent!important;color:var(--popup-text-color,#fff)!important}
+#igProfileModal .ig-bio-section,#igProfileModal .ig-profile-top{background:rgba(255,255,255,.48);border:1px solid color-mix(in srgb,var(--popup-accent,#93c5fd) 28%,transparent);border-radius:18px;margin:12px;padding:16px;backdrop-filter:blur(12px)}
+#igProfileModal .ig-bio-name,#igProfileModal .ig-bio-role,#igProfileModal .ig-stat-num,#igProfileModal .ig-stat-label,#igProfileModal .ig-bio-desc{color:var(--popup-text-color,#17324d)!important}
+#igProfileModal .ig-gallery-tabs{background:rgba(255,255,255,.38);border-color:color-mix(in srgb,var(--popup-accent,#93c5fd) 30%,transparent)}
+/* CyberMimpi soft customizer polish */
+.ig-form-card{background:linear-gradient(145deg,#101b32 0%,#14243d 55%,#172d49 100%);border:1px solid rgba(186,220,255,.24);box-shadow:0 24px 70px rgba(2,12,27,.42),inset 0 1px rgba(255,255,255,.08)}
+.ig-form-card h3{color:#f4f9ff;border-bottom-color:rgba(186,220,255,.2)}
+.ig-form-group label{color:#d7e9ff;font-weight:700;letter-spacing:.15px}
+.ig-form-group input:not([type=color]):not([type=file]),.ig-form-group textarea,.ig-form-group select{background:rgba(255,255,255,.08);border:1px solid rgba(191,219,254,.28);color:#f8fbff;transition:border-color .2s,box-shadow .2s,background .2s}
+.ig-form-group input:focus,.ig-form-group textarea:focus,.ig-form-group select:focus{border-color:#93c5fd;box-shadow:0 0 0 3px rgba(147,197,253,.14);background:rgba(255,255,255,.12)}
+.ig-form-group select option{background:#14243d;color:#fff}
+.ig-btn,.cm-picker-btn{border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:10px 14px;min-height:42px;font:700 13px/1.2 'Segoe UI',sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;text-decoration:none;transition:transform .18s,box-shadow .18s,filter .18s;background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#10233d;box-shadow:0 5px 16px rgba(37,99,235,.12)}
+.ig-btn:hover,.cm-picker-btn:hover{transform:translateY(-1px);filter:brightness(1.04);box-shadow:0 8px 20px rgba(37,99,235,.18)}
+.ig-btn-secondary{background:linear-gradient(135deg,#f8fbff,#dbeafe)!important;color:#183451!important;border:1px solid #bfdbfe!important}
+.ig-btn-primary{background:linear-gradient(135deg,#dbeafe,#7dd3fc)!important;color:#0f2944!important}
+.ig-btn-danger{background:linear-gradient(135deg,#fee2e2,#fca5a5)!important;color:#7f1d1d!important}
+.cm-file-input-hidden{display:none!important}.cm-file-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.cm-file-name{display:block;margin-top:7px;font-size:12px;color:#c7e3ff;overflow-wrap:anywhere}.cm-theme-swatches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:7px}.cm-theme-swatch{height:38px;border:2px solid rgba(255,255,255,.4);border-radius:12px;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.6);transition:transform .18s}.cm-theme-swatch:hover{transform:translateY(-2px)}
+#profileEffectsLayer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1;border-radius:inherit}.ig-modal-fullscreen>*:not(#profileEffectsLayer){position:relative;z-index:2}.cm-falling-particle{position:absolute;top:-30px;left:var(--left);font-size:var(--size);opacity:var(--opacity);animation:cmFall var(--duration) linear var(--delay) infinite;filter:drop-shadow(0 0 5px rgba(255,255,255,.45))}
+@keyframes cmFall{0%{transform:translate3d(0,-5vh,0) rotate(0deg);opacity:0}10%{opacity:var(--opacity)}90%{opacity:var(--opacity)}100%{transform:translate3d(var(--drift),110vh,0) rotate(360deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.cm-falling-particle{animation:none;display:none}.ig-btn,.cm-picker-btn{transition:none}}
+
 </style>
 </head>
 <body>
@@ -1115,6 +1143,7 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
 
 <!-- MODAL FULLSCREEN PROFIL -->
 <div class="ig-modal-fullscreen" id="igProfileModal">
+    <div id="profileEffectsLayer" aria-hidden="true"></div>
     <div class="ig-header">
         <span class="ig-header-title" id="igHeaderUsername">@username</span>
         <button class="ig-close-btn" aria-label="Tutup profil" onclick="closeIgModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -1187,9 +1216,10 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
             <div style="display:flex;align-items:center;gap:14px;margin:8px 0 12px;">
                 <img id="editAvatarPreview" src="" alt="Pratinjau foto profil" style="width:76px;height:76px;border-radius:50%;object-fit:cover;border:3px solid #f77f00;background:#0f172a;">
                 <div style="flex:1;min-width:0;">
-                    <input type="file" id="editAvatarFile" accept="image/*" onchange="previewAvatarFile(event)" style="width:100%;font-size:12px;">
-                    <small style="display:block;color:#94a3b8;margin-top:6px;">Foto akan otomatis diperkecil agar lebih hemat kuota.</small>
-                    <button type="button" class="ig-btn ig-btn-secondary" style="margin-top:8px;padding:7px 10px;" onclick="resetAvatarSelection()">Batal ganti foto</button>
+                    <input type="file" id="editAvatarFile" class="cm-file-input-hidden" accept="image/*" onchange="previewAvatarFile(event)">
+                    <div class="cm-file-row"><button type="button" class="cm-picker-btn" onclick="document.getElementById('editAvatarFile').click()"><i class="fa-solid fa-camera"></i> Pilih Foto Profil</button><button type="button" class="ig-btn ig-btn-secondary" onclick="resetAvatarSelection()"><i class="fa-solid fa-rotate-left"></i> Batal</button></div>
+                    <span class="cm-file-name" id="avatarFileName">Belum memilih foto</span>
+                    <small style="display:block;color:#c7dff8;margin-top:6px;">Foto otomatis diperkecil agar lebih hemat kuota.</small>
                 </div>
             </div>
         </div>
@@ -1206,8 +1236,32 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
             <input type="text" id="editIg" placeholder="@username atau https://instagram.com/...">
         </div>
         <div class="ig-form-group">
-            <label>File Lagu (.mp3 / URL Musik)</label>
-            <input type="text" id="editAudio" placeholder="nama_file.mp3">
+            <label>Musik Profil (.mp3 / URL Musik)</label>
+            <input type="text" id="editAudio" placeholder="Tempel URL musik atau nama_file.mp3">
+            <input type="file" id="editAudioFile" class="cm-file-input-hidden" accept="audio/*,.mp3,.m4a,.ogg,.wav" onchange="previewMusicFile(event)">
+            <div class="cm-file-row" style="margin-top:8px"><button type="button" class="cm-picker-btn" onclick="document.getElementById('editAudioFile').click()"><i class="fa-solid fa-music"></i> Pilih Musik dari HP</button><button type="button" class="ig-btn ig-btn-secondary" onclick="resetMusicSelection()"><i class="fa-solid fa-xmark"></i> Batal pilihan</button></div>
+            <span class="cm-file-name" id="musicFileName">Belum memilih file musik</span>
+            <small style="display:block;color:#c7dff8;margin-top:6px">File musik akan diunggah ke bucket Supabase Storage bernama <b>music</b>. URL musik juga bisa ditempel manual.</small>
+        </div>
+        <div class="ig-form-group">
+            <label>Warna popup profil — 6 tema</label>
+            <select id="editPopupTheme" onchange="applyPopupThemePreview()">
+                <option value="ice">Putih + biru lembut</option><option value="white">Putih bersih</option><option value="ocean">Biru laut</option><option value="lavender">Lavender</option><option value="mint">Mint pastel</option><option value="rose">Pink lembut</option><option value="custom">Warna pilihan sendiri</option>
+            </select>
+            <div class="cm-theme-swatches" aria-label="Pilihan warna popup">
+                <button type="button" class="cm-theme-swatch" style="background:linear-gradient(135deg,#fff,#dbeafe)" title="Putih + biru lembut" onclick="selectPopupTheme('ice')"></button>
+                <button type="button" class="cm-theme-swatch" style="background:linear-gradient(135deg,#fff,#f1f5f9)" title="Putih bersih" onclick="selectPopupTheme('white')"></button>
+                <button type="button" class="cm-theme-swatch" style="background:linear-gradient(135deg,#dbeafe,#60a5fa)" title="Biru laut" onclick="selectPopupTheme('ocean')"></button>
+                <button type="button" class="cm-theme-swatch" style="background:linear-gradient(135deg,#f3e8ff,#c4b5fd)" title="Lavender" onclick="selectPopupTheme('lavender')"></button>
+                <button type="button" class="cm-theme-swatch" style="background:linear-gradient(135deg,#d1fae5,#6ee7b7)" title="Mint pastel" onclick="selectPopupTheme('mint')"></button>
+                <button type="button" class="cm-theme-swatch" style="background:linear-gradient(135deg,#ffe4e6,#f9a8d4)" title="Pink lembut" onclick="selectPopupTheme('rose')"></button>
+            </div>
+            <label style="margin-top:10px">Warna custom</label><input type="color" id="editPopupCustomColor" value="#eaf4ff" onchange="selectCustomPopupColor()">
+        </div>
+        <div class="ig-form-group">
+            <label>Efek partikel profil</label>
+            <select id="editProfileEffect"><option value="none">Tanpa efek</option><option value="snow">Salju berjatuhan ❄</option><option value="stars">Bintang berjatuhan ✦</option><option value="hearts">Hati berjatuhan ♥</option><option value="bubbles">Gelembung melayang ○</option><option value="sparkles">Kilau ajaib ✨</option></select>
+            <small style="display:block;color:#c7dff8;margin-top:6px">Efek hanya dekorasi, tidak menghalangi tombol atau foto.</small>
         </div>
         <div class="ig-form-group">
             <label>Warna aksen profil</label>
@@ -2072,6 +2126,8 @@ async function openIgProfileModal(card) {
     
     const custom = getUserCustomData(activeUserId);
     applyProfileStyle(custom);
+    applyPopupThemeToProfile(custom);
+    startProfileEffects(custom.profileEffect || 'none');
 
     // Halaman profil bersifat publik. Tombol edit hanya muncul jika sesi Supabase
     // valid dan username akun yang login cocok dengan pemilik profil yang dibuka.
@@ -2166,23 +2222,47 @@ function seekIgAudio(event) {
     }
 }
 
-function renderUserGalleryGrid() {
+async function renderUserGalleryGrid() {
     const galleryData = getGalleryData();
     const userPosts = galleryData[activeUserId] || [];
     const container = document.getElementById('igGridContainer');
     document.getElementById('igTotalUploads').innerText = userPosts.length;
+    const canDelete = await canEditActiveProfile();
 
     if (userPosts.length === 0) {
         container.innerHTML = `<div class="ig-empty-grid"><i class="fa-regular fa-image" style="font-size:30px; margin-bottom:8px; display:block;"></i>Belum ada foto yang diupload.</div>`;
         return;
     }
 
-    container.innerHTML = userPosts.map((post) => `
-        <div class="ig-grid-item" onclick="openLightbox('${post.img}')">
-            <img src="${post.img}" alt="Post">
+    container.innerHTML = userPosts.map((post, index) => `
+        <div class="ig-grid-item" style="position:relative" onclick="openLightboxByIndex(${index})">
+            <img src="${String(post.img).replace(/&/g, '&amp;').replace(/"/g, '&quot;')}" alt="Post">
+            ${canDelete ? `<button type="button" aria-label="Hapus postingan" title="Hapus postingan" onclick="event.stopPropagation(); deleteProfileGalleryPost(${index})" style="position:absolute;right:7px;top:7px;z-index:3;border:0;border-radius:999px;background:#dc2626;color:white;width:32px;height:32px;cursor:pointer;box-shadow:0 2px 8px #0005"><i class="fa-solid fa-trash"></i></button>` : ''}
         </div>
     `).join('');
 }
+
+function openLightboxByIndex(index) {
+    const post = (getGalleryData()[activeUserId] || [])[index];
+    if (post && post.img) openLightbox(post.img);
+}
+
+async function deleteProfileGalleryPost(index) {
+    if (!(await canEditActiveProfile())) {
+        alert('Hanya pemilik profil yang sedang login yang bisa menghapus postingan ini.');
+        return;
+    }
+    const galleryData = getGalleryData();
+    const userPosts = galleryData[activeUserId] || [];
+    if (!userPosts[index]) return;
+    if (!confirm('Yakin ingin menghapus postingan ini dari profil?')) return;
+    userPosts.splice(index, 1);
+    galleryData[activeUserId] = userPosts;
+    saveGalleryData(galleryData);
+    renderUserGalleryGrid();
+}
+
+function applyPopupThemeToProfile(custom){const profile=document.getElementById('igProfileModal');if(!profile)return;const key=custom.popupTheme||'ice';const t=CM_POPUP_THEMES[key];const customColor=custom.popupCustomColor||'#eaf4ff';profile.style.setProperty('--popup-card-bg',t?t.bg:`linear-gradient(145deg,#ffffff,${customColor})`);profile.style.setProperty('--popup-text-color',t?t.text:'#17324d');profile.style.setProperty('--popup-accent',t?t.accent:customColor);}
 
 function applyProfileStyle(custom) {
     const profile = document.getElementById('igProfileModal');
@@ -2210,12 +2290,24 @@ async function canEditActiveProfile() {
 }
 
 let selectedAvatarFile = null;
+let selectedMusicFile = null;
 let originalAvatarPreview = '';
+
+const CM_POPUP_THEMES = { ice:{bg:'linear-gradient(145deg,#ffffff 0%,#eff6ff 58%,#dbeafe 100%)',text:'#17324d',accent:'#60a5fa'}, white:{bg:'linear-gradient(145deg,#ffffff,#f8fafc)',text:'#1e293b',accent:'#94a3b8'}, ocean:{bg:'linear-gradient(145deg,#eff6ff,#bfdbfe 60%,#93c5fd)',text:'#12345a',accent:'#2563eb'}, lavender:{bg:'linear-gradient(145deg,#faf5ff,#ede9fe 60%,#ddd6fe)',text:'#3b2860',accent:'#8b5cf6'}, mint:{bg:'linear-gradient(145deg,#f0fdf4,#d1fae5 60%,#a7f3d0)',text:'#14532d',accent:'#10b981'}, rose:{bg:'linear-gradient(145deg,#fff1f2,#ffe4e6 60%,#fbcfe8)',text:'#881337',accent:'#ec4899'} };
+function selectPopupTheme(theme){document.getElementById('editPopupTheme').value=theme;applyPopupThemePreview();}
+function selectCustomPopupColor(){document.getElementById('editPopupTheme').value='custom';applyPopupThemePreview();}
+function applyPopupThemePreview(){const theme=document.getElementById('editPopupTheme')?.value||'ice';const customColor=document.getElementById('editPopupCustomColor')?.value||'#eaf4ff';const t=CM_POPUP_THEMES[theme];const bg=t?t.bg:`linear-gradient(145deg,#ffffff,${customColor})`;document.querySelector('#customProfileModal .ig-form-card').style.setProperty('--preview-popup-bg',bg);document.querySelector('#customProfileModal .ig-form-card').style.background=bg;document.querySelector('#customProfileModal .ig-form-card').style.color=t?t.text:'#17324d';}
+function previewMusicFile(event){const file=event.target.files?.[0];if(!file)return;if(!file.type.startsWith('audio/')&&!/\.(mp3|m4a|ogg|wav|aac|flac)$/i.test(file.name)){alert('Pilih file musik/audio yang valid.');event.target.value='';return;}if(file.size>30*1024*1024){alert('Ukuran musik maksimal 30 MB.');event.target.value='';return;}selectedMusicFile=file;document.getElementById('musicFileName').textContent='Terpilih: '+file.name;}
+function resetMusicSelection(){selectedMusicFile=null;const input=document.getElementById('editAudioFile');if(input)input.value='';const label=document.getElementById('musicFileName');if(label)label.textContent='Belum memilih file musik';}
+function startProfileEffects(effect){const layer=document.getElementById('profileEffectsLayer');if(!layer)return;layer.innerHTML='';if(!effect||effect==='none')return;const glyphs={snow:['❄','❅','❆'],stars:['✦','✧','★','☆'],hearts:['♥','♡','❤'],bubbles:['○','◦','◯'],sparkles:['✨','✧','✦']};const list=glyphs[effect]||[];if(!list.length)return;for(let i=0;i<28;i++){const el=document.createElement('span');el.className='cm-falling-particle';el.textContent=list[Math.floor(Math.random()*list.length)];el.style.setProperty('--left',Math.random()*100+'%');el.style.setProperty('--size',(10+Math.random()*15)+'px');el.style.setProperty('--opacity',(0.25+Math.random()*0.65).toFixed(2));el.style.setProperty('--duration',(7+Math.random()*11)+'s');el.style.setProperty('--delay',(-Math.random()*16)+'s');el.style.setProperty('--drift',(-60+Math.random()*120)+'px');layer.appendChild(el);}}
+
 
 async function openCustomProfileModal() {
     if (!(await canEditActiveProfile())) { alert('Silakan login dengan akun pemilik profil untuk mengedit.'); return; }
     const custom = getUserCustomData(activeUserId);
     selectedAvatarFile = null;
+    selectedMusicFile = null;
+    resetMusicSelection();
     const avatarInput = document.getElementById('editAvatarFile');
     if (avatarInput) avatarInput.value = '';
     originalAvatarPreview = custom.avatarUrl || (activeUserCard?.querySelector('.foto')?.src || '');
@@ -2227,7 +2319,12 @@ async function openCustomProfileModal() {
     document.getElementById('editProfileColor').value = custom.profileColor || '#f77f00';
     document.getElementById('editProfileBorder').value = custom.profileBorder || 'solid';
     document.getElementById('editProfileBackground').value = custom.profileBackground || 'dark';
+    document.getElementById('editPopupTheme').value = custom.popupTheme || 'ice';
+    document.getElementById('editPopupCustomColor').value = custom.popupCustomColor || '#eaf4ff';
+    document.getElementById('editProfileEffect').value = custom.profileEffect || 'none';
+    document.getElementById('avatarFileName').textContent = 'Belum memilih foto';
     document.getElementById('customProfileModal').style.display = 'flex';
+    applyPopupThemePreview();
 }
 
 function closeCustomProfileModal() {
@@ -2248,6 +2345,7 @@ function previewAvatarFile(event) {
         return;
     }
     selectedAvatarFile = file;
+    const fileLabel = document.getElementById('avatarFileName'); if(fileLabel) fileLabel.textContent = 'Terpilih: ' + file.name;
     const reader = new FileReader();
     reader.onload = e => { document.getElementById('editAvatarPreview').src = e.target.result; };
     reader.readAsDataURL(file);
@@ -2255,6 +2353,7 @@ function previewAvatarFile(event) {
 
 function resetAvatarSelection() {
     selectedAvatarFile = null;
+    const label = document.getElementById('avatarFileName'); if(label) label.textContent = 'Belum memilih foto';
     const input = document.getElementById('editAvatarFile');
     if (input) input.value = '';
     document.getElementById('editAvatarPreview').src = originalAvatarPreview;
@@ -2289,15 +2388,32 @@ async function saveCustomProfile() {
     const hobi = document.getElementById('editHobi').value;
     const cita = document.getElementById('editCita').value;
     const ig = document.getElementById('editIg').value;
-    const audioSrc = document.getElementById('editAudio').value;
+    let audioSrc = document.getElementById('editAudio').value.trim();
+    const popupTheme = document.getElementById('editPopupTheme').value;
+    const popupCustomColor = document.getElementById('editPopupCustomColor').value;
+    const profileEffect = document.getElementById('editProfileEffect').value;
     const profileColor = document.getElementById('editProfileColor').value;
     const profileBorder = document.getElementById('editProfileBorder').value;
     const profileBackground = document.getElementById('editProfileBackground').value;
 
-    saveUserCustomData(activeUserId, { hobi, cita, ig, audioSrc, profileColor, profileBorder, profileBackground });
+    const client = window.supabaseClient || window.CM_AUTH_CLIENT;
+    if (selectedMusicFile) {
+        try {
+            if (!client) throw new Error('Koneksi Supabase belum tersedia.');
+            const { data: sessionData, error: sessionError } = await client.auth.getSession();
+            if (sessionError || !sessionData?.session) throw new Error('Silakan login ulang untuk mengunggah musik.');
+            const safeName = selectedMusicFile.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+            const path = `${sessionData.session.user.id}/${Date.now()}-${safeName}`;
+            const { error: uploadError } = await client.storage.from('music').upload(path, selectedMusicFile, { upsert: true, contentType: selectedMusicFile.type || 'audio/mpeg' });
+            if (uploadError) throw uploadError;
+            const { data: publicData } = client.storage.from('music').getPublicUrl(path);
+            if (!publicData?.publicUrl) throw new Error('URL musik tidak tersedia. Pastikan bucket music bersifat public.');
+            audioSrc = publicData.publicUrl;
+        } catch (error) { console.error('Upload musik gagal:', error); alert('Musik belum berhasil diunggah. Pastikan bucket Storage bernama music tersedia dan kebijakannya benar. Detail: '+(error.message||'')); return; }
+    }
+    saveUserCustomData(activeUserId, { hobi, cita, ig, audioSrc, profileColor, profileBorder, profileBackground, popupTheme, popupCustomColor, profileEffect });
     if (selectedAvatarFile) {
         const fileToUpload = selectedAvatarFile;
-        const client = window.supabaseClient || window.CM_AUTH_CLIENT;
         try {
             if (!client) throw new Error('Koneksi Supabase belum tersedia.');
             const { data: sessionData, error: sessionError } = await client.auth.getSession();
