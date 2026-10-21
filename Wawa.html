@@ -996,34 +996,6 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
   .hero-content { top: 190px; width: min(850px, 82vw); }
 }
 </style>
-<style>html.cm-auth-check body{visibility:hidden!important;}</style>
-<script>
-document.documentElement.classList.add('cm-auth-check');
-window.CM_SUPABASE_URL = 'https://hcxsrabeaxkkknamrrle.supabase.co';
-window.CM_SUPABASE_ANON_KEY = 'sb_publishable_9M77eMaJT1Bcb2EOSedePQ_X2ku031T';
-window.CM_MEMBER_MAP = {"Pak Agus Sobarudin": "pak-agus", "Marcelia Dwi Mulyani": "marcelia", "Sakinah Awaliah": "sakinah", "Devita": "devita", "Salwa Ainul Fauziah": "salwa", "Denis Alfarizi": "denis", "Asti Puspa Dewi": "asti", "Aldi Ardiansyah": "aldi", "Ali Akbar Siddiq": "ali", "Anggun Pebrianti Permata": "anggun", "Arni Anggraeni": "arni", "Bilqis Sherin Natasya": "bilqis", "Dikdik Hilman Maulana": "dikdik", "Fito Purnama": "fito", "Fitrah Abdullah Fatah": "fitrah", "Intan Ramadani": "intan", "Jajang Sopian": "jajang", "Miftah Fauzi Hariri": "miftah", "Moch Gathan Naofal": "gathan", "Muhamad Irfan Permana": "irfan", "Muhamad Rafli": "rafli", "Muhammad Ramdan Solihin": "ramdan", "Muhammad Dani Ramdani": "dani", "Natasya Anggraeni Putri": "natasya", "Neni Anggraeni": "neni", "Pahri Haruna Rosid": "pahri", "Prima Ahmad Maulana": "prima", "Restu Permana": "restu", "Reva Septi Auliyanti": "reva", "Ridwan Sopian": "ridwan", "Riska Amelia": "riska", "Riska Nur Rahayu": "rahayu", "Rizqi Maulana": "rizqi", "Sifa Nur Anisa": "sifa", "Sopandi Sopyan": "sopandi", "Triani Desvita Nurmalasari": "triani", "Wada Maulida Solikhah": "wada", "Zikri Pebrian": "zikri"};
-window.CM_AUTH_CLIENT = window.supabase.createClient(window.CM_SUPABASE_URL, window.CM_SUPABASE_ANON_KEY);
-(async function checkCyberMimpiAuth() {
-  const loginUrl = 'login.html?next=' + encodeURIComponent('Wawa.html');
-  try {
-    const { data, error } = await window.CM_AUTH_CLIENT.auth.getSession();
-    if (error || !data.session) { window.location.replace(loginUrl); return; }
-    const username = (data.session.user.email || '').split('@')[0].toLowerCase();
-    if (!Object.values(window.CM_MEMBER_MAP).includes(username)) {
-      await window.CM_AUTH_CLIENT.auth.signOut();
-      localStorage.removeItem('cyber_session');
-      window.location.replace('login.html');
-      return;
-    }
-    const displayName = Object.keys(window.CM_MEMBER_MAP).find(n => window.CM_MEMBER_MAP[n] === username) || username;
-    localStorage.setItem('cyber_session', JSON.stringify({id: username, name: displayName, loginTime: new Date().toISOString(), authUserId: data.session.user.id}));
-    document.documentElement.classList.remove('cm-auth-check');
-  } catch (e) {
-    console.error('Tidak dapat memverifikasi sesi Supabase:', e);
-    window.location.replace(loginUrl);
-  }
-})();
-</script>
 </head>
 <body>
 
@@ -1055,6 +1027,7 @@ window.CM_AUTH_CLIENT = window.supabase.createClient(window.CM_SUPABASE_URL, win
         <a href="Wawa.html" class="waw">Card</a>
         <a href="idek.html">Jadwal</a>
         <a href="belajar.html">Belajar</a>
+        <a href="/login.html" aria-label="Login akun CyberMimpi">Login</a>
     </div>
 </nav>
 
@@ -2043,7 +2016,7 @@ async function logoutSession() {
         console.error('Logout Supabase gagal:', error);
     } finally {
         localStorage.removeItem('cyber_session');
-        window.location.href = 'login.html';
+        window.location.href = 'Wawa.html';
     }
 }
 
@@ -2080,7 +2053,7 @@ const igPlayIcon = document.getElementById('igPlayIcon');
 const igProgressBar = document.getElementById('igProgressBar');
 const igAudioPlayerWrapper = document.getElementById('igAudioPlayerWrapper');
 
-function openIgProfileModal(card) {
+async function openIgProfileModal(card) {
     const foto = card.querySelector('.foto').src;
     const nama = card.querySelector('h3').innerText;
     const jabatan = card.querySelector('p').innerText;
@@ -2089,13 +2062,22 @@ function openIgProfileModal(card) {
     
     const custom = getUserCustomData(activeUserId);
     applyProfileStyle(custom);
-    const session = getLoginSession();
-    
-    const isOwner = (session.id === activeUserId);
-    const actionBtnsContainer = document.getElementById('ownerActionBtns');
-    if (actionBtnsContainer) {
-        actionBtnsContainer.style.display = isOwner ? 'flex' : 'none';
+
+    // Halaman profil bersifat publik. Tombol edit hanya muncul jika sesi Supabase
+    // valid dan username akun yang login cocok dengan pemilik profil yang dibuka.
+    let isOwner = false;
+    try {
+        const client = window.supabaseClient || window.CM_AUTH_CLIENT;
+        if (client) {
+            const { data } = await client.auth.getSession();
+            const loggedUsername = (data?.session?.user?.email || '').split('@')[0].toLowerCase();
+            isOwner = Boolean(data?.session && loggedUsername && loggedUsername === String(activeUserId).toLowerCase());
+        }
+    } catch (err) {
+        console.warn('Sesi login belum tersedia; profil ditampilkan sebagai pengunjung.', err);
     }
+    const actionBtnsContainer = document.getElementById('ownerActionBtns');
+    if (actionBtnsContainer) actionBtnsContainer.style.display = isOwner ? 'flex' : 'none';
 
     const modalAudioSrc = modalData ? modalData.querySelector('.audio-src').innerText.trim() : '';
     const audioSrc = custom.audioSrc || modalAudioSrc;
@@ -2206,7 +2188,19 @@ function applyProfileStyle(custom) {
     }
 }
 
-function openCustomProfileModal() {
+async function canEditActiveProfile() {
+    try {
+        const client = window.supabaseClient || window.CM_AUTH_CLIENT;
+        if (!client) return false;
+        const { data, error } = await client.auth.getSession();
+        if (error || !data?.session) return false;
+        const username = (data.session.user.email || '').split('@')[0].toLowerCase();
+        return Boolean(username && username === String(activeUserId).toLowerCase());
+    } catch (_) { return false; }
+}
+
+async function openCustomProfileModal() {
+    if (!(await canEditActiveProfile())) { alert('Silakan login dengan akun pemilik profil untuk mengedit.'); return; }
     const custom = getUserCustomData(activeUserId);
     document.getElementById('editHobi').value = custom.hobi || '';
     document.getElementById('editCita').value = custom.cita || '';
@@ -2222,7 +2216,8 @@ function closeCustomProfileModal() {
     document.getElementById('customProfileModal').style.display = 'none';
 }
 
-function saveCustomProfile() {
+async function saveCustomProfile() {
+    if (!(await canEditActiveProfile())) { alert('Silakan login dengan akun pemilik profil untuk menyimpan perubahan.'); return; }
     const hobi = document.getElementById('editHobi').value;
     const cita = document.getElementById('editCita').value;
     const ig = document.getElementById('editIg').value;
@@ -2239,7 +2234,8 @@ function saveCustomProfile() {
 
 let selectedBase64Image = "";
 
-function openUploadModal() {
+async function openUploadModal() {
+    if (!(await canEditActiveProfile())) { alert('Silakan login dengan akun pemilik profil untuk mengunggah foto.'); return; }
     selectedBase64Image = "";
     document.getElementById('uploadUrlImage').value = "";
     document.getElementById('uploadCaption').value = "";
