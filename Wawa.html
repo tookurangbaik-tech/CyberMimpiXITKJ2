@@ -2506,8 +2506,40 @@ async function submitGalleryUpload() {
             const { data: publicData } = client.storage.from('profile-gallery').getPublicUrl(path);
             imageUrl = publicData.publicUrl;
         }
-        const { error } = await client.from('profile_gallery_posts').insert({ profile_id: String(activeUserId), image_url: imageUrl, caption });
+        let feedSyncError = null;
+        const { data: profilePost, error } = await client
+            .from('profile_gallery_posts')
+            .insert({ profile_id: String(activeUserId), image_url: imageUrl, caption })
+            .select('id')
+            .single();
         if (error) throw error;
+
+        // Sinkronkan juga ke Feed Utama di Gallery.html.
+        // Kalau sinkronisasi feed gagal, postingan profil tetap tersimpan.
+        const { data: sessionInfo, error: currentSessionError } = await client.auth.getSession();
+        if (!currentSessionError && sessionInfo?.session?.user) {
+            const sessionUser = sessionInfo.session.user;
+            const authorName = activeUserCard?.querySelector('h3')?.innerText?.trim()
+                || sessionUser.user_metadata?.full_name
+                || sessionUser.user_metadata?.name
+                || sessionUser.email?.split('@')[0]
+                || 'Anggota CyberMimpi';
+            const authorAvatar = activeUserCard?.querySelector('.foto')?.src || '';
+            const { error: feedError } = await client.from('gallery_posts').insert({
+                user_id: sessionUser.id,
+                author_name: authorName,
+                author_avatar: authorAvatar,
+                image_url: imageUrl,
+                caption,
+                source: 'profile',
+                source_key: `profile-${profilePost.id}`
+            });
+            if (feedError) {
+                feedSyncError = feedError;
+                console.warn('Foto tersimpan di galeri profil, tetapi gagal masuk Feed Utama:', feedError.message);
+            }
+        }
+
         const galleryData = getGalleryData();
         if (!galleryData[activeUserId]) galleryData[activeUserId] = [];
         galleryData[activeUserId].unshift({ img: imageUrl, caption, date: new Date().toLocaleDateString() });
@@ -2515,7 +2547,11 @@ async function submitGalleryUpload() {
         selectedBase64Image = '';
         closeUploadModal();
         await renderUserGalleryGrid();
-        alert('Foto berhasil diunggah dan disimpan online! ✨');
+        if (feedSyncError) {
+            alert('Foto tersimpan di galeri profil, tetapi belum masuk Gallery utama. Detail: ' + feedSyncError.message);
+        } else {
+            alert('Foto berhasil diunggah ke galeri profil dan Gallery utama! ✨');
+        }
     } catch (error) {
         console.error('Upload gallery gagal:', error);
         alert('Foto belum berhasil disimpan online. Pastikan tabel profile_gallery_posts dan bucket profile-gallery sudah dibuat. Detail: ' + (error.message || ''));
