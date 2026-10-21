@@ -1180,8 +1180,19 @@ section#anggota { position: relative; z-index: 20; padding: 40px 7% 60px 7%; bac
 
 <!-- FORM CUSTOMISASI PROFIL MODAL -->
 <div class="ig-custom-form-modal" id="customProfileModal">
-    <div class="ig-form-card">
+        <div class="ig-form-card">
         <h3>Customisasi Profil</h3>
+        <div class="ig-form-group">
+            <label>Foto Profil</label>
+            <div style="display:flex;align-items:center;gap:14px;margin:8px 0 12px;">
+                <img id="editAvatarPreview" src="" alt="Pratinjau foto profil" style="width:76px;height:76px;border-radius:50%;object-fit:cover;border:3px solid #f77f00;background:#0f172a;">
+                <div style="flex:1;min-width:0;">
+                    <input type="file" id="editAvatarFile" accept="image/*" onchange="previewAvatarFile(event)" style="width:100%;font-size:12px;">
+                    <small style="display:block;color:#94a3b8;margin-top:6px;">Foto akan otomatis diperkecil agar lebih hemat kuota.</small>
+                    <button type="button" class="ig-btn ig-btn-secondary" style="margin-top:8px;padding:7px 10px;" onclick="resetAvatarSelection()">Batal ganti foto</button>
+                </div>
+            </div>
+        </div>
         <div class="ig-form-group">
             <label>Hobi</label>
             <input type="text" id="editHobi" placeholder="Contoh: Game / Nyanyi">
@@ -2082,7 +2093,7 @@ async function openIgProfileModal(card) {
     const audioSrc = custom.audioSrc || modalAudioSrc;
 
     document.getElementById('igHeaderUsername').innerText = `@${activeUserId}${isOwner ? ' (Kamu)' : ''}`;
-    document.getElementById('igProfilePic').src = foto;
+    document.getElementById('igProfilePic').src = custom.avatarUrl || foto;
     document.getElementById('igProfileName').innerText = nama;
     document.getElementById('igProfileRole').innerText = jabatan;
     document.getElementById('igUserStatus').innerText = status;
@@ -2198,9 +2209,17 @@ async function canEditActiveProfile() {
     } catch (_) { return false; }
 }
 
+let selectedAvatarFile = null;
+let originalAvatarPreview = '';
+
 async function openCustomProfileModal() {
     if (!(await canEditActiveProfile())) { alert('Silakan login dengan akun pemilik profil untuk mengedit.'); return; }
     const custom = getUserCustomData(activeUserId);
+    selectedAvatarFile = null;
+    const avatarInput = document.getElementById('editAvatarFile');
+    if (avatarInput) avatarInput.value = '';
+    originalAvatarPreview = custom.avatarUrl || (activeUserCard?.querySelector('.foto')?.src || '');
+    document.getElementById('editAvatarPreview').src = originalAvatarPreview;
     document.getElementById('editHobi').value = custom.hobi || '';
     document.getElementById('editCita').value = custom.cita || '';
     document.getElementById('editIg').value = custom.ig || '';
@@ -2215,6 +2234,56 @@ function closeCustomProfileModal() {
     document.getElementById('customProfileModal').style.display = 'none';
 }
 
+function previewAvatarFile(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+        alert('Pilih file gambar yang valid ya.');
+        event.target.value = '';
+        return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+        alert('Ukuran foto maksimal 15 MB sebelum dikompres.');
+        event.target.value = '';
+        return;
+    }
+    selectedAvatarFile = file;
+    const reader = new FileReader();
+    reader.onload = e => { document.getElementById('editAvatarPreview').src = e.target.result; };
+    reader.readAsDataURL(file);
+}
+
+function resetAvatarSelection() {
+    selectedAvatarFile = null;
+    const input = document.getElementById('editAvatarFile');
+    if (input) input.value = '';
+    document.getElementById('editAvatarPreview').src = originalAvatarPreview;
+}
+
+async function compressAvatarImage(file, maxSide = 900, quality = 0.82) {
+    const imageUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+    const img = await new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = imageUrl;
+    });
+    const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+    if (!blob) throw new Error('Foto gagal dikompres.');
+    return new File([blob], `avatar-${Date.now()}.jpg`, { type: 'image/jpeg' });
+}
+
 async function saveCustomProfile() {
     if (!(await canEditActiveProfile())) { alert('Silakan login dengan akun pemilik profil untuk menyimpan perubahan.'); return; }
     const hobi = document.getElementById('editHobi').value;
@@ -2226,6 +2295,22 @@ async function saveCustomProfile() {
     const profileBackground = document.getElementById('editProfileBackground').value;
 
     saveUserCustomData(activeUserId, { hobi, cita, ig, audioSrc, profileColor, profileBorder, profileBackground });
+    if (selectedAvatarFile) {
+        const fileToUpload = selectedAvatarFile;
+        const client = window.supabaseClient || window.CM_AUTH_CLIENT;
+        try {
+            if (!client) throw new Error('Koneksi Supabase belum tersedia.');
+            const { data: sessionData, error: sessionError } = await client.auth.getSession();
+            if (sessionError || !sessionData?.session) throw new Error('Sesi login tidak ditemukan. Silakan login ulang.');
+            const compressedFile = await compressAvatarImage(fileToUpload);
+            await uploadAvatarToCloud(compressedFile, activeUserId);
+            return; // uploadAvatarToCloud menyimpan URL cloud lalu memuat ulang halaman
+        } catch (error) {
+            console.error('Gagal mengganti foto profil:', error);
+            alert('Foto profil belum berhasil disimpan: ' + (error.message || 'Terjadi kesalahan.'));
+            return;
+        }
+    }
     closeCustomProfileModal();
     if (activeUserCard) openIgProfileModal(activeUserCard);
     alert('Profil berhasil diperbarui!');
@@ -2357,24 +2442,51 @@ async function updateProfileToCloud(userId, updatedData) {
 
 async function uploadAvatarToCloud(file, userId) {
     try {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${userId}-${Date.now()}.${fileExt}`;
-        
-        const { error: uploadError } = await window.supabaseClient.storage
+        const client = window.supabaseClient || window.CM_AUTH_CLIENT;
+        if (!client) throw new Error('Koneksi Supabase belum tersedia.');
+        const fileName = `${String(userId).replace(/[^a-zA-Z0-9_-]/g, '-')}/${Date.now()}.jpg`;
+        const { error: uploadError } = await client.storage
             .from('avatars')
-            .upload(fileName, file);
-
+            .upload(fileName, file, { contentType: 'image/jpeg', upsert: false });
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = window.supabaseClient.storage
-            .from('avatars')
-            .getPublicUrl(fileName);
+        const { data } = client.storage.from('avatars').getPublicUrl(fileName);
+        const publicUrl = data?.publicUrl;
+        if (!publicUrl) throw new Error('URL foto profil tidak berhasil dibuat.');
 
-        await updateProfileToCloud(userId, { avatar_url: publicUrl });
+        // Simpan berdasarkan ID kartu profil agar cocok dengan data-id di Wawa.html.
+        const { error: updateError } = await client
+            .from('profiles')
+            .upsert({ id: userId, avatar_url: publicUrl }, { onConflict: 'id' });
+        if (updateError) throw updateError;
 
+        saveUserCustomData(userId, { avatarUrl: publicUrl });
+        if (activeUserCard) activeUserCard.querySelector('.foto').src = publicUrl;
+
+        // Publikasikan foto profil yang baru ke Gallery secara otomatis.
+        // source_key mencegah foto yang sama terposting dua kali.
+        try {
+            const authorName = activeUserCard?.querySelector('h3')?.innerText?.trim() ||
+                sessionData?.session?.user?.user_metadata?.full_name || 'Anggota CyberMimpi';
+            const { error: galleryError } = await client.from('gallery_posts').upsert({
+                user_id: sessionData.session.user.id,
+                author_name: authorName,
+                author_avatar: publicUrl,
+                image_url: publicUrl,
+                caption: 'Foto profil diperbarui ✨',
+                source: 'profile_avatar',
+                source_key: `profile-avatar:${sessionData.session.user.id}:${publicUrl}`
+            }, { onConflict: 'source_key', ignoreDuplicates: true });
+            if (galleryError) console.warn('Foto profil tersimpan, tetapi belum masuk Gallery:', galleryError.message);
+        } catch (galleryError) {
+            console.warn('Foto profil tersimpan, tetapi sinkronisasi Gallery gagal:', galleryError);
+        }
+
+        alert('Foto profil berhasil diganti dan disimpan online! ✨');
+        location.reload();
     } catch (error) {
         console.error('Gagal upload foto:', error.message);
-        alert('Terjadi kesalahan saat mengupload foto.');
+        throw error;
     }
 }
 </script>

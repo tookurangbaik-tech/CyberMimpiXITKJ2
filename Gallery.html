@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f8fafc">
+<meta name="description" content="CyberMimpi Gallery — cerita, karya, dan momen XI TKJ 2.">
+<title>CyberMimpi Gallery • XI TKJ 2</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --navy:#1d3557; --blue:#457b9d; --cyan:#0284c7; --soft-blue:#e0f2fe;
+  --bg-pastel:#f0f7ff; --ink:#1e293b; --muted:#64748b; --line:#e2e8f0;
+  --paper:#ffffff; --bg:#f8fafc; --radius:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:84px}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+/* TOPBAR */
+.topbar{height:68px;position:sticky;top:0;z-index:30;background:rgba(255,255,255,0.92);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}
+.topbar-inner{height:100%;max-width:1120px;margin:auto;padding:0 20px;display:flex;align-items:center;gap:20px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-img-box{
+  width:38px; height:38px; border-radius:12px; overflow:hidden;
+  border:1.5px solid var(--line); display:flex; align-items:center; justify-content:center;
+  background:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+.brand-img-box img{width:100%; height:100%; object-fit:cover}
+.brand-title{font-size:17px;font-weight:800;color:var(--navy)}
+.brand-sub{font-size:9px;letter-spacing:1.5px;font-weight:800;color:var(--muted);text-transform:uppercase}
+.search-wrap{height:40px;display:flex;align-items:center;gap:8px;background:#f1f5f9;border-radius:12px;padding:0 12px;flex:1;max-width:400px}
+.search-wrap input{width:100%;border:0;outline:0;background:transparent;font-size:13px;color:var(--ink)}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+.primary-btn{border:0;border-radius:12px;background:var(--navy);color:white;padding:10px 16px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(29,53,87,0.15)}
+
+/* PAGE LAYOUT */
+.page{max-width:1120px;margin:0 auto;padding:24px 20px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start}
+
+/* BANNER MENGGUNAKAN FOTO ASLI (IMAGE BANNER) */
+.welcome{
+  position:relative; overflow:hidden; border-radius:24px; padding:24px;
+  background: var(--paper);
+  border: 1.5px solid var(--line); color: var(--navy);
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+}
+
+.welcome-text-wrap{flex:1; z-index:2;}
+.eyebrow{font-size:10px;letter-spacing:2px;font-weight:800;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.welcome h1{font-size:clamp(20px,3vw,26px);line-height:1.2;font-weight:900;margin-bottom:6px;color:var(--navy)}
+.welcome p{font-size:12px;line-height:1.5;color:var(--muted);max-width:380px}
+
+/* KOTAK FOTO BANNER DI SEBELAH KANAN */
+.banner-img-wrap {
+  width: 150px;
+  height: 110px;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.banner-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* STORIES */
+.section-head{display:flex;align-items:end;justify-content:space-between;margin:24px 0 12px}
+.section-title{font-size:16px;font-weight:800;color:var(--navy)}
+.stories{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none}
+.story{width:64px;flex:0 0 64px;text-align:center;border:0;background:none;color:var(--ink)}
+.story-ring{width:60px;height:60px;padding:2.5px;border-radius:50%;display:block;margin:0 auto 6px;background:linear-gradient(135deg,#f77f00,#0284c7,#38bdf8)}
+.story-ring.add{background:#cbd5e1}
+.story-inner{width:100%;height:100%;border:2px solid white;border-radius:50%;display:grid;place-items:center;background:#f1f5f9;color:var(--navy);overflow:hidden}
+.story-inner svg{width:22px;height:22px;stroke:var(--navy);fill:none;stroke-width:2}
+.story-label{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-weight:600}
+
+/* FEED & MULTI-GRID ADAPTIF */
+.post-list{display:flex;flex-direction:column;gap:20px}
+.post-card{background:var(--paper);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.03)}
+.post-header{padding:14px 16px;display:flex;align-items:center;gap:10px}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--soft-blue);display:grid;place-items:center;font-weight:800;color:var(--cyan);overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.username{font-size:13px;font-weight:800;color:var(--navy)}
+.user-meta{font-size:10px;color:var(--muted)}
+
+.media-container{width:100%; background:#f8fafc; cursor:pointer; overflow:hidden;}
+.media-single-portrait img{width:100%; max-height:580px; object-fit:contain; display:block; background:#0f172a;}
+.media-single-landscape img{width:100%; height:auto; max-height:480px; object-fit:cover; display:block;}
+
+.media-grid{display:grid; gap:2px; background:#e2e8f0; width:100%; max-height:480px; overflow:hidden;}
+.media-grid.grid-2{grid-template-columns:1fr 1fr}
+.media-grid.grid-3{grid-template-columns:2fr 1fr; grid-template-rows:1fr 1fr}
+.media-grid.grid-3 img:first-child{grid-row:span 2}
+.media-grid.grid-4{grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr}
+.media-grid img{width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.3s}
+.media-grid:hover img{transform:scale(1.02)}
+
+.post-body{padding:14px 16px}
+.post-actions{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.action-btn{border:0;background:none;display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:18px;cursor:pointer}
+.action-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+.action-btn.liked svg{fill:#ef4444;stroke:#ef4444}
+.caption{font-size:13px;line-height:1.6;color:#334155}
+.caption strong{color:var(--navy);margin-right:6px}
+
+/* MODAL LIGHTBOX FULLSCREEN */
+.lightbox-modal{position:fixed;inset:0;background:rgba(15,23,42,0.95);z-index:100;display:none;flex-direction:column;justify-content:center;align-items:center;padding:20px}
+.lightbox-modal.active{display:flex}
+.lightbox-content{max-width:800px;width:100%;max-height:85vh;overflow-y:auto;display:flex;flex-direction:column;gap:15px;padding:10px;scroll-snap-type:y mandatory}
+.lightbox-content img{width:100%;max-height:78vh;object-fit:contain;border-radius:12px;scroll-snap-align:center}
+.lightbox-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.2);border:0;color:white;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer}
+
+/* SIDEBAR */
+.sidebar{position:sticky;top:88px;display:flex;flex-direction:column;gap:16px}
+.side-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px}
+
+@media(max-width:850px){.page{grid-template-columns:1fr}.sidebar{display:none}}
+
+/* MODAL POSTING & STORY */
+.form-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.65)}
+.form-modal.active{display:flex}
+.form-panel{background:#fff;width:min(100%,460px);max-height:90vh;overflow:auto;border-radius:20px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.form-panel h3{font-size:18px;color:var(--navy);margin-bottom:14px}
+.form-panel label{display:block;font-size:12px;font-weight:700;color:var(--ink);margin:12px 0 6px}
+.form-panel input[type=file],.form-panel textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:13px;background:#fff}
+.form-panel textarea{min-height:85px;resize:vertical}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.secondary-btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:700}
+.form-hint{font-size:11px;color:var(--muted);line-height:1.5;margin-top:8px}
+.preview-image{display:none;width:100%;max-height:250px;object-fit:contain;background:#f1f5f9;border-radius:12px;margin-top:10px}
+.comment-list{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.comment-item{font-size:12px;background:#f8fafc;border-radius:10px;padding:8px 10px;line-height:1.5}
+.comment-form{display:flex;gap:7px;margin-top:10px}
+.comment-form input{min-width:0;flex:1;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:12px}
+.comment-form button{border:0;background:var(--navy);color:#fff;border-radius:10px;padding:8px 11px;font-size:11px;font-weight:700}
+.story-photo{width:100%;height:100%;object-fit:cover}
+.post-empty{background:#fff;border:1px dashed var(--line);border-radius:16px;padding:24px;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:520px){.topbar-inner{padding:0 12px;gap:10px}.brand-sub{display:none}.primary-btn{padding:10px 11px}.page{padding:16px 12px}.welcome{padding:18px}.banner-img-wrap{width:90px;height:90px}}
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#">
+      <div class="brand-img-box">
+        <img src="logo.jpg" alt="Logo Kelas" onerror="this.src='https://via.placeholder.com/38'">
+      </div>
+      <div>
+        <div class="brand-title">CyberMimpi</div>
+        <div class="brand-sub">Class Gallery</div>
+      </div>
+    </a>
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+      <input id="searchInput" type="search" placeholder="Cari teman atau momen...">
+    </div>
+    <div class="top-actions">
+      <button class="primary-btn" id="openUpload">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"></path></svg>
+        <span>Posting</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <section class="main-column">
+    
+    <!-- BANNER MENGGUNAKAN FOTO KELAS -->
+    <section class="welcome">
+      <div class="welcome-text-wrap">
+        <div class="eyebrow">XI TKJ 2 • OUR GALLERY</div>
+        <h1>Ruang Cerita & Momen Kita</h1>
+        <p>Simpan kenangan, hasil praktek, dan keseruan belajar di satu tempat.</p>
+      </div>
+      
+      <!-- Ganti 'banner-kelas.jpg' dengan foto banner pilihanmu -->
+      <div class="banner-img-wrap">
+        <img src="banner-kelas.jpg" alt="Banner Kelas" onerror="this.src='belajar.jpg'">
+      </div>
+    </section>
+
+    <!-- STORIES -->
+    <div class="section-head">
+      <h2 class="section-title">Stories 24 Jam</h2>
+    </div>
+    <section class="stories">
+      <button class="story" id="addStory" type="button">
+        <span class="story-ring add">
+          <span class="story-inner">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+          </span>
+        </span>
+        <span class="story-label">Buat Story</span>
+      </button>
+      
+      <button class="story">
+        <span class="story-ring">
+          <span class="story-inner">
+            <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+          </span>
+        </span>
+        <span class="story-label">Kelas XI</span>
+      </button>
+
+      <button class="story">
+        <span class="story-ring">
+          <span class="story-inner">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>
+          </span>
+        </span>
+        <span class="story-label">Praktek</span>
+      </button>
+    </section>
+
+    <!-- FEED -->
+    <div class="section-head" style="margin-top:20px;">
+      <h2 class="section-title">Feed Utama</h2>
+    </div>
+    <section class="post-list" id="postList">
+      
+      <div id="feedStatus" style="padding:18px;text-align:center;color:var(--muted);font-size:13px;">Memuat postingan...</div>
+
+    </section>
+  </section>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <section class="side-card">
+      <h3 style="color:var(--navy);font-size:14px;margin-bottom:8px;">CyberMimpi Gallery</h3>
+      <p style="font-size:12px;color:var(--muted);line-height:1.6;">Platform galeri kelas berbasis Full-Stack Web untuk menyimpan momen XI TKJ 2.</p>
+    </section>
+  </aside>
+</main>
+
+
+<!-- MODAL UPLOAD POST -->
+<div class="form-modal" id="postModal" role="dialog" aria-modal="true" aria-labelledby="postModalTitle">
+  <form class="form-panel" id="postForm">
+    <h3 id="postModalTitle">Bagikan momen ✨</h3>
+    <label for="postFile">Pilih foto</label>
+    <input id="postFile" type="file" accept="image/*" required>
+    <img id="postPreview" class="preview-image" alt="Pratinjau foto">
+    <label for="postCaption">Caption</label>
+    <textarea id="postCaption" maxlength="1000" placeholder="Ceritakan momen ini..."></textarea>
+    <p class="form-hint">Foto akan dikompres otomatis sebelum diunggah. Kamu harus login melalui halaman login CyberMimpi untuk membuat postingan.</p>
+    <div class="form-actions"><button class="secondary-btn" type="button" onclick="closePostModal()">Batal</button><button class="primary-btn" id="submitPost" type="submit">Posting</button></div>
+  </form>
+</div>
+<!-- MODAL STORY -->
+<div class="form-modal" id="storyModal" role="dialog" aria-modal="true" aria-labelledby="storyModalTitle">
+  <form class="form-panel" id="storyForm">
+    <h3 id="storyModalTitle">Buat Story 24 Jam</h3>
+    <label for="storyFile">Pilih foto story</label><input id="storyFile" type="file" accept="image/*" required>
+    <img id="storyPreview" class="preview-image" alt="Pratinjau story">
+    <p class="form-hint">Story otomatis kedaluwarsa 24 jam setelah dibuat.</p>
+    <div class="form-actions"><button class="secondary-btn" type="button" onclick="closeStoryModal()">Batal</button><button class="primary-btn" id="submitStory" type="submit">Bagikan Story</button></div>
+  </form>
+</div>
+
+<!-- MODAL LIGHTBOX -->
+<div class="lightbox-modal" id="lightboxModal">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-content" id="lightboxContent"></div>
+</div>
+
+
+<script>
+const SUPABASE_URL = 'https://hcxsrabeaxkkknamrrle.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_9M77eMaJT1Bcb2EOSedePQ_X2ku031T';
+const sb = window.CM_AUTH_CLIENT || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let currentUser = null, currentProfile = null, currentPosts = [], currentStories = [];
+const $ = id => document.getElementById(id);
+const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function relativeTime(value){const diff=Math.max(0,Date.now()-new Date(value).getTime());const m=Math.floor(diff/60000);if(m<1)return 'baru saja';if(m<60)return `${m} menit lalu`;const h=Math.floor(m/60);if(h<24)return `${h} jam lalu`;return new Date(value).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'});}
+function openLightbox(imagesArray){const c=$('lightboxContent');c.innerHTML=imagesArray.map(src=>`<img src="${escapeHtml(src)}" alt="Foto Gallery">`).join('');$('lightboxModal').classList.add('active');}
+function closeLightbox(){$('lightboxModal').classList.remove('active');}
+function openPostModal(){if(!currentUser){alert('Login dulu melalui halaman login CyberMimpi untuk posting.');location.href='login.html';return;}$('postModal').classList.add('active');}
+function closePostModal(){$('postModal').classList.remove('active');$('postForm').reset();$('postPreview').style.display='none';}
+function closeStoryModal(){$('storyModal').classList.remove('active');$('storyForm').reset();$('storyPreview').style.display='none';}
+function openStoryModal(){if(!currentUser){alert('Login dulu untuk membuat story.');location.href='login.html';return;}$('storyModal').classList.add('active');}
+async function compressImage(file,maxSide=1400,quality=.82){const src=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=src});const scale=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));if(!blob)throw new Error('Foto gagal dikompres.');return new File([blob],`cm-${Date.now()}.jpg`,{type:'image/jpeg'});}
+async function getProfile(user){let name=user.user_metadata?.full_name||user.user_metadata?.name||user.email?.split('@')[0]||'Anggota CyberMimpi', avatar=user.user_metadata?.avatar_url||'';const {data}=await sb.from('profiles').select('name,avatar_url').eq('id',user.id).maybeSingle();if(data){name=data.name||name;avatar=data.avatar_url||avatar;}return {name,avatar};}
+function renderPosts(){const list=$('postList');const q=$('searchInput').value.trim().toLowerCase();const filtered=currentPosts.filter(p=>(p.author_name+' '+(p.caption||'')).toLowerCase().includes(q));if(!filtered.length){list.innerHTML=`<div class="post-empty">${currentPosts.length?'Tidak ada postingan yang cocok.':'Belum ada postingan. Jadilah yang pertama membagikan momen! 📸'}</div>`;return;}list.innerHTML=filtered.map(p=>{const liked=(p.gallery_likes||[]).some(l=>l.user_id===currentUser?.id);const count=(p.gallery_likes||[]).length;const comments=p.gallery_comments||[];return `<article class="post-card" data-post="${p.id}"><header class="post-header"><div class="avatar">${p.author_avatar?`<img src="${escapeHtml(p.author_avatar)}" alt="">`:escapeHtml((p.author_name||'?').slice(0,1).toUpperCase())}</div><div><div class="username">${escapeHtml(p.author_name||'Anggota')}</div><div class="user-meta">${escapeHtml(relativeTime(p.created_at))}</div></div></header><div class="media-container media-single-portrait" onclick="openLightbox(['${escapeHtml(p.image_url)}'])"><img src="${escapeHtml(p.image_url)}" alt="Foto postingan" loading="lazy"></div><div class="post-body"><div class="post-actions"><button class="action-btn ${liked?'liked':''}" onclick="toggleLike('${p.id}')" aria-label="Sukai postingan"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span>${count}</span></button><span style="font-size:11px;color:var(--muted)">${comments.length} komentar</span></div><p class="caption"><strong>${escapeHtml(p.author_name||'Anggota')}</strong>${escapeHtml(p.caption||'')}</p><div class="comment-list">${comments.slice(-3).map(c=>`<div class="comment-item"><strong>${escapeHtml(c.author_name||'Anggota')}</strong> ${escapeHtml(c.content)}</div>`).join('')}</div><form class="comment-form" onsubmit="submitComment(event,'${p.id}')"><input maxlength="500" placeholder="Tulis komentar..." aria-label="Tulis komentar"><button type="submit">Kirim</button></form></div></article>`}).join('');}
+function renderStories(){const wrap=document.querySelector('.stories');const active=currentStories.filter(s=>new Date(s.expires_at)>new Date());const existing=$('addStory');wrap.innerHTML='';wrap.appendChild(existing);active.forEach(s=>{const b=document.createElement('button');b.className='story';b.type='button';b.innerHTML=`<span class="story-ring"><span class="story-inner">${s.image_url?`<img class="story-photo" src="${escapeHtml(s.image_url)}" alt="">`:'✦'}</span></span><span class="story-label">${escapeHtml(s.author_name||'Story')}</span>`;b.onclick=()=>openLightbox([s.image_url]);wrap.appendChild(b);});}
+async function loadFeed(){const {data,error}=await sb.from('gallery_posts').select('*, gallery_likes(user_id), gallery_comments(id,author_name,content,created_at)').order('created_at',{ascending:false}).limit(100);if(error){$('feedStatus').textContent='Feed belum bisa dimuat. Pastikan SQL setup Gallery sudah dijalankan di Supabase.';console.error(error);return;}currentPosts=data||[];const status=$('feedStatus');if(status)status.remove();renderPosts();}
+async function loadStories(){const {data,error}=await sb.from('gallery_stories').select('*').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(30);if(!error){currentStories=data||[];renderStories();}}
+async function toggleLike(postId){if(!currentUser){alert('Login dulu untuk menyukai postingan.');location.href='login.html';return;}const exists=currentPosts.find(p=>p.id===postId)?.gallery_likes?.some(l=>l.user_id===currentUser.id);let result;if(exists)result=await sb.from('gallery_likes').delete().eq('post_id',postId).eq('user_id',currentUser.id);else result=await sb.from('gallery_likes').insert({post_id:postId,user_id:currentUser.id});if(result.error){alert('Like belum berhasil: '+result.error.message);return;}await loadFeed();}
+async function submitComment(event,postId){event.preventDefault();if(!currentUser){alert('Login dulu untuk berkomentar.');location.href='login.html';return;}const input=event.target.querySelector('input');const content=input.value.trim();if(!content)return;const {error}=await sb.from('gallery_comments').insert({post_id:postId,user_id:currentUser.id,author_name:currentProfile.name,content});if(error){alert('Komentar gagal dikirim: '+error.message);return;}input.value='';await loadFeed();}
+async function uploadImage(file,folder){if(!file||!file.type.startsWith('image/'))throw new Error('Pilih file gambar yang valid.');if(file.size>15*1024*1024)throw new Error('Ukuran foto maksimal 15 MB sebelum dikompres.');const compressed=await compressImage(file);const path=`${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;const {error}=await sb.storage.from('gallery').upload(path,compressed,{contentType:'image/jpeg',upsert:false});if(error)throw error;return sb.storage.from('gallery').getPublicUrl(path).data.publicUrl;}
+$('openUpload').addEventListener('click',openPostModal);$('addStory').addEventListener('click',openStoryModal);$('searchInput').addEventListener('input',renderPosts);
+$('postFile').addEventListener('change',e=>previewFile(e.target.files[0],'postPreview'));$('storyFile').addEventListener('change',e=>previewFile(e.target.files[0],'storyPreview'));
+function previewFile(file,id){const img=$(id);if(!file){img.style.display='none';return;}if(!file.type.startsWith('image/')){alert('Pilih file gambar yang valid.');return;}img.src=URL.createObjectURL(file);img.style.display='block';}
+$('postForm').addEventListener('submit',async e=>{e.preventDefault();if(!currentUser){alert('Sesi login tidak ditemukan.');return;}const btn=$('submitPost');btn.disabled=true;btn.textContent='Mengunggah...';try{const image_url=await uploadImage($('postFile').files[0],'posts');const {error}=await sb.from('gallery_posts').insert({user_id:currentUser.id,author_name:currentProfile.name,author_avatar:currentProfile.avatar,image_url,caption:$('postCaption').value.trim(),source:'gallery'});if(error)throw error;closePostModal();await loadFeed();}catch(err){alert('Posting gagal: '+(err.message||err));}finally{btn.disabled=false;btn.textContent='Posting';}});
+$('storyForm').addEventListener('submit',async e=>{e.preventDefault();if(!currentUser)return;const btn=$('submitStory');btn.disabled=true;btn.textContent='Mengunggah...';try{const image_url=await uploadImage($('storyFile').files[0],'stories');const {error}=await sb.from('gallery_stories').insert({user_id:currentUser.id,author_name:currentProfile.name,author_avatar:currentProfile.avatar,image_url});if(error)throw error;closeStoryModal();await loadStories();}catch(err){alert('Story gagal dibuat: '+(err.message||err));}finally{btn.disabled=false;btn.textContent='Bagikan Story';}});
+async function initGallery(){try{const {data:{user}}=await sb.auth.getUser();currentUser=user||null;if(currentUser)currentProfile=await getProfile(currentUser);else currentProfile={name:'Pengunjung',avatar:''};await Promise.all([loadFeed(),loadStories()]);sb.channel('cybermimpi-gallery-live').on('postgres_changes',{event:'*',schema:'public',table:'gallery_posts'},loadFeed).on('postgres_changes',{event:'*',schema:'public',table:'gallery_likes'},loadFeed).on('postgres_changes',{event:'*',schema:'public',table:'gallery_comments'},loadFeed).on('postgres_changes',{event:'*',schema:'public',table:'gallery_stories'},loadStories).subscribe();}catch(e){console.error(e);$('feedStatus').textContent='Tidak dapat terhubung ke Supabase. Periksa konfigurasi dan koneksi internet.';}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLightbox();$('postModal').classList.remove('active');$('storyModal').classList.remove('active');}});
+initGallery();
+</script>
+</body>
+</html>
