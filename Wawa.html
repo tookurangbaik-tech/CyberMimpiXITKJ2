@@ -2066,9 +2066,66 @@ function getUserCustomData(id) {
 }
 
 function saveUserCustomData(id, obj) {
+    // Cache lokal hanya sebagai cadangan; sumber utama disimpan di Supabase.
     const custom = JSON.parse(localStorage.getItem('cyber_user_custom') || '{}');
     custom[id] = { ...custom[id], ...obj };
     localStorage.setItem('cyber_user_custom', JSON.stringify(custom));
+}
+
+function getSupabaseClient() { return window.supabaseClient || window.CM_AUTH_CLIENT || null; }
+
+async function loadUserCustomDataFromCloud(id) {
+    const client = getSupabaseClient();
+    const local = getUserCustomData(id);
+    if (!client) return local;
+    try {
+        const { data, error } = await client.from('profile_customizations').select('*').eq('profile_id', String(id)).maybeSingle();
+        if (error) throw error;
+        if (!data) return local;
+        const cloud = {
+            hobi: data.hobi || '', cita: data.cita || '', ig: data.ig || '', audioSrc: data.audio_src || '',
+            profileColor: data.profile_color || '#f77f00', profileBorder: data.profile_border || 'solid',
+            profileBackground: data.profile_background || 'dark', profileEffect: data.profile_effect || 'none',
+            avatarUrl: data.avatar_url || ''
+        };
+        saveUserCustomData(id, cloud);
+        return { ...local, ...cloud };
+    } catch (error) {
+        console.warn('Data kustomisasi cloud belum bisa dimuat. Periksa tabel/RLS Supabase:', error.message);
+        return local;
+    }
+}
+
+async function saveUserCustomDataToCloud(id, obj) {
+    const client = getSupabaseClient();
+    if (!client) throw new Error('Koneksi Supabase belum tersedia.');
+    const { data: existing, error: readError } = await client.from('profile_customizations').select('*').eq('profile_id', String(id)).maybeSingle();
+    if (readError) throw readError;
+    const row = {
+        profile_id: String(id), hobi: existing?.hobi || '', cita: existing?.cita || '', ig: existing?.ig || '',
+        audio_src: existing?.audio_src || '', profile_color: existing?.profile_color || '#f77f00',
+        profile_border: existing?.profile_border || 'solid', profile_background: existing?.profile_background || 'dark',
+        profile_effect: existing?.profile_effect || 'none', avatar_url: existing?.avatar_url || '',
+        updated_at: new Date().toISOString()
+    };
+    const map = { hobi:'hobi', cita:'cita', ig:'ig', audioSrc:'audio_src', profileColor:'profile_color', profileBorder:'profile_border', profileBackground:'profile_background', profileEffect:'profile_effect', avatarUrl:'avatar_url' };
+    Object.entries(map).forEach(([key, column]) => { if (Object.prototype.hasOwnProperty.call(obj, key)) row[column] = obj[key]; });
+    const { error } = await client.from('profile_customizations').upsert(row, { onConflict: 'profile_id' });
+    if (error) throw error;
+    saveUserCustomData(id, obj);
+}
+
+async function loadGalleryFromCloud(id) {
+    const client = getSupabaseClient();
+    if (!client) return (getGalleryData()[id] || []);
+    try {
+        const { data, error } = await client.from('profile_gallery_posts').select('id,image_url,caption,created_at').eq('profile_id', String(id)).order('created_at', { ascending: false });
+        if (error) throw error;
+        return (data || []).map(post => ({ id: post.id, img: post.image_url, caption: post.caption || '', date: post.created_at ? new Date(post.created_at).toLocaleDateString() : '' }));
+    } catch (error) {
+        console.warn('Gallery cloud belum bisa dimuat. Periksa tabel/RLS Supabase:', error.message);
+        return (getGalleryData()[id] || []);
+    }
 }
 
 document.querySelectorAll('.orang').forEach(card => {
@@ -2092,7 +2149,7 @@ async function openIgProfileModal(card) {
     const modalData = card.querySelector('.modal-data');
     const status = modalData ? modalData.querySelector('.status').innerText : 'Aktif';
     
-    const custom = getUserCustomData(activeUserId);
+    const custom = await loadUserCustomDataFromCloud(activeUserId);
     applyProfileStyle(custom);
     startProfileEffects(custom.profileEffect || 'none');
 
@@ -2190,8 +2247,7 @@ function seekIgAudio(event) {
 }
 
 async function renderUserGalleryGrid() {
-    const galleryData = getGalleryData();
-    const userPosts = galleryData[activeUserId] || [];
+    const userPosts = await loadGalleryFromCloud(activeUserId);
     const container = document.getElementById('igGridContainer');
     document.getElementById('igTotalUploads').innerText = userPosts.length;
     const canDelete = await canEditActiveProfile();
@@ -2201,6 +2257,7 @@ async function renderUserGalleryGrid() {
         return;
     }
 
+    window.__cmCurrentGalleryPosts = userPosts;
     container.innerHTML = userPosts.map((post, index) => `
         <div class="ig-grid-item" style="position:relative" onclick="openLightboxByIndex(${index})">
             <img src="${String(post.img).replace(/&/g, '&amp;').replace(/"/g, '&quot;')}" alt="Post">
@@ -2210,7 +2267,8 @@ async function renderUserGalleryGrid() {
 }
 
 function openLightboxByIndex(index) {
-    const post = (getGalleryData()[activeUserId] || [])[index];
+    // Grid memakai urutan data cloud terbaru; simpan hasil render agar lightbox konsisten.
+    const post = (window.__cmCurrentGalleryPosts || [])[index] || (getGalleryData()[activeUserId] || [])[index];
     if (post && post.img) openLightbox(post.img);
 }
 
@@ -2219,14 +2277,20 @@ async function deleteProfileGalleryPost(index) {
         alert('Hanya pemilik profil yang sedang login yang bisa menghapus postingan ini.');
         return;
     }
-    const galleryData = getGalleryData();
-    const userPosts = galleryData[activeUserId] || [];
-    if (!userPosts[index]) return;
+    const userPosts = await loadGalleryFromCloud(activeUserId);
+    const post = userPosts[index];
+    if (!post) return;
     if (!confirm('Yakin ingin menghapus postingan ini dari profil?')) return;
-    userPosts.splice(index, 1);
-    galleryData[activeUserId] = userPosts;
-    saveGalleryData(galleryData);
-    renderUserGalleryGrid();
+    const client = getSupabaseClient();
+    if (post.id && client) {
+        const { error } = await client.from('profile_gallery_posts').delete().eq('id', post.id).eq('profile_id', String(activeUserId));
+        if (error) { alert('Postingan belum bisa dihapus dari cloud: ' + error.message); return; }
+    } else {
+        const galleryData = getGalleryData();
+        galleryData[activeUserId] = (galleryData[activeUserId] || []).filter((_, i) => i !== index);
+        saveGalleryData(galleryData);
+    }
+    await renderUserGalleryGrid();
 }
 
 function applyProfileStyle(custom) {
@@ -2265,7 +2329,7 @@ function startProfileEffects(effect){const layer=document.getElementById('profil
 
 async function openCustomProfileModal() {
     if (!(await canEditActiveProfile())) { alert('Silakan login dengan akun pemilik profil untuk mengedit.'); return; }
-    const custom = getUserCustomData(activeUserId);
+    const custom = await loadUserCustomDataFromCloud(activeUserId);
     selectedAvatarFile = null;
     selectedMusicFile = null;
     resetMusicSelection();
@@ -2367,7 +2431,13 @@ async function saveCustomProfile() {
             audioSrc = publicData.publicUrl;
         } catch (error) { console.error('Upload musik gagal:', error); alert('Musik belum berhasil diunggah. Pastikan bucket Storage bernama music tersedia dan kebijakannya benar. Detail: '+(error.message||'')); return; }
     }
-    saveUserCustomData(activeUserId, { hobi, cita, ig, audioSrc, profileColor, profileBorder, profileBackground, profileEffect });
+    try {
+        await saveUserCustomDataToCloud(activeUserId, { hobi, cita, ig, audioSrc, profileColor, profileBorder, profileBackground, profileEffect });
+    } catch (error) {
+        console.error('Gagal menyimpan kustomisasi ke cloud:', error);
+        alert('Kustomisasi belum tersimpan online. Pastikan tabel profile_customizations dan kebijakan RLS sudah dibuat. Detail: ' + (error.message || ''));
+        return;
+    }
     if (selectedAvatarFile) {
         const fileToUpload = selectedAvatarFile;
         try {
@@ -2414,29 +2484,42 @@ function handleFileSelect(event) {
     }
 }
 
-function submitGalleryUpload() {
-    const urlImg = document.getElementById('uploadUrlImage').value;
-    const caption = document.getElementById('uploadCaption').value;
+async function submitGalleryUpload() {
+    if (!(await canEditActiveProfile())) { alert('Silakan login dengan akun pemilik profil untuk mengunggah foto.'); return; }
+    const urlImg = document.getElementById('uploadUrlImage').value.trim();
+    const caption = document.getElementById('uploadCaption').value.trim();
     const finalImg = selectedBase64Image || urlImg;
-
-    if (!finalImg) {
-        alert('Pilih file gambar atau masukkan URL gambar dulu ya!');
-        return;
+    if (!finalImg) { alert('Pilih file gambar atau masukkan URL gambar dulu ya!'); return; }
+    const client = getSupabaseClient();
+    if (!client) { alert('Koneksi Supabase belum tersedia.'); return; }
+    try {
+        let imageUrl = finalImg;
+        if (selectedBase64Image.startsWith('data:')) {
+            const response = await fetch(selectedBase64Image);
+            const blob = await response.blob();
+            const { data: sessionData, error: sessionError } = await client.auth.getSession();
+            if (sessionError || !sessionData?.session) throw new Error('Sesi login tidak ditemukan.');
+            const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg','jpg');
+            const path = `${sessionData.session.user.id}/${Date.now()}.${ext}`;
+            const { error: uploadError } = await client.storage.from('profile-gallery').upload(path, blob, { upsert: false, contentType: blob.type || 'image/jpeg' });
+            if (uploadError) throw uploadError;
+            const { data: publicData } = client.storage.from('profile-gallery').getPublicUrl(path);
+            imageUrl = publicData.publicUrl;
+        }
+        const { error } = await client.from('profile_gallery_posts').insert({ profile_id: String(activeUserId), image_url: imageUrl, caption });
+        if (error) throw error;
+        const galleryData = getGalleryData();
+        if (!galleryData[activeUserId]) galleryData[activeUserId] = [];
+        galleryData[activeUserId].unshift({ img: imageUrl, caption, date: new Date().toLocaleDateString() });
+        saveGalleryData(galleryData);
+        selectedBase64Image = '';
+        closeUploadModal();
+        await renderUserGalleryGrid();
+        alert('Foto berhasil diunggah dan disimpan online! ✨');
+    } catch (error) {
+        console.error('Upload gallery gagal:', error);
+        alert('Foto belum berhasil disimpan online. Pastikan tabel profile_gallery_posts dan bucket profile-gallery sudah dibuat. Detail: ' + (error.message || ''));
     }
-
-    const galleryData = getGalleryData();
-    if (!galleryData[activeUserId]) galleryData[activeUserId] = [];
-
-    galleryData[activeUserId].unshift({
-        img: finalImg,
-        caption: caption,
-        date: new Date().toLocaleDateString()
-    });
-
-    saveGalleryData(galleryData);
-    closeUploadModal();
-    renderUserGalleryGrid();
-    alert('Foto berhasil di-upload ke profil!');
 }
 
 function openLightbox(src) {
@@ -2516,6 +2599,8 @@ async function uploadAvatarToCloud(file, userId) {
     try {
         const client = window.supabaseClient || window.CM_AUTH_CLIENT;
         if (!client) throw new Error('Koneksi Supabase belum tersedia.');
+        const { data: sessionData, error: sessionError } = await client.auth.getSession();
+        if (sessionError || !sessionData?.session) throw new Error('Sesi login tidak ditemukan. Silakan login ulang.');
         const fileName = `${String(userId).replace(/[^a-zA-Z0-9_-]/g, '-')}/${Date.now()}.jpg`;
         const { error: uploadError } = await client.storage
             .from('avatars')
@@ -2532,7 +2617,7 @@ async function uploadAvatarToCloud(file, userId) {
             .upsert({ id: userId, avatar_url: publicUrl }, { onConflict: 'id' });
         if (updateError) throw updateError;
 
-        saveUserCustomData(userId, { avatarUrl: publicUrl });
+        await saveUserCustomDataToCloud(userId, { avatarUrl: publicUrl });
         if (activeUserCard) activeUserCard.querySelector('.foto').src = publicUrl;
 
         // Publikasikan foto profil yang baru ke Gallery secara otomatis.
