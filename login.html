@@ -434,7 +434,7 @@ form h1 {
             <h1>Login CyberMimpi</h1>
             
             <div class="input-box">
-                <input type="text" id="usernameInput" placeholder="Username (contoh: fito)" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+                <input type="text" id="usernameInput" placeholder="Username" autocomplete="username" autocapitalize="none" spellcheck="false" required>
             </div>
             <div class="input-box">
                 <input type="password" id="passwordInput" placeholder="Sandi akun" autocomplete="current-password" required>
@@ -538,7 +538,7 @@ const loginButton = document.getElementById('loginButton');
 const params = new URLSearchParams(window.location.search);
 const requestedNext = params.get('next');
 const allowedNext = new Set(['index.html']);
-const nextPage = allowedNext.has(requestedNext) ? requestedNext : 'belajarm.html';
+const nextPage = allowedNext.has(requestedNext) ? requestedNext : 'index.html';
 
 function togglePasswordVisibility() {
     const toggleIcon = document.getElementById('togglePassword');
